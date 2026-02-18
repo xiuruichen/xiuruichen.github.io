@@ -1,2 +1,2 @@
 # xiuruichen.github.io
-personal website et al
+personal website et al.
