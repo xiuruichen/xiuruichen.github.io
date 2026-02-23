@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xiurui (Ray) Chen | Cincinnati Country Day School '28</title>
+  <meta name="description" content="Personal portfolio of Ray Chen" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['"Geist Mono"', 'ui-monospace', 'monospace'],
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+          },
+          colors: {
+            background: '#0a0a0a',
+            foreground: '#e5e5e5',
+            muted: { DEFAULT: '#1a1a1a', foreground: '#737373' },
+            border: '#262626',
+          },
+          borderRadius: {
+            DEFAULT: '0px',
+            sm: '0px',
+            md: '0px',
+            lg: '0px',
+            xl: '0px',
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    *, *::before, *::after { border-color: #262626; }
+    body { background-color: #0a0a0a; color: #e5e5e5; font-family: 'Geist Mono', ui-monospace, monospace; }
+    .arrow-icon { opacity: 0; transition: opacity 150ms; }
+    a:hover .arrow-icon { opacity: 1; }
+    a { transition: color 150ms; }
+    .interest-badge {
+      transition: color 300ms ease, border-color 300ms ease, box-shadow 300ms ease;
+      cursor: default;
+    }
+    .interest-badge:hover {
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.15), 0 0 20px rgba(255, 255, 255, 0.08);
+    }
+    /* Sidenote tooltip */
+    .sidenote {
+      position: relative;
+      cursor: help;
+      font-size: 0.6rem;
+      color: #737373;
+      vertical-align: super;
+      line-height: 0;
+      margin-left: 2px;
+      transition: color 200ms;
+    }
+    .sidenote:hover { color: #e5e5e5; }
+    .sidenote .sidenote-tooltip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: normal;
+      width: max-content;
+      max-width: 220px;
+      background: #141414;
+      border: 1px solid #262626;
+      padding: 8px 14px;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 0.7rem;
+      font-style: italic;
+      font-weight: 400;
+      line-height: 1.5;
+      letter-spacing: 0.01em;
+      color: #a3a3a3;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 200ms;
+    }
+    .sidenote:hover .sidenote-tooltip { opacity: 1; }
+    /* Custom text selection */
+    ::selection {
+      background: #e5e5e5;
+      color: #0a0a0a;
+    }
+    ::-moz-selection {
+      background: #e5e5e5;
+      color: #0a0a0a;
+    }
+    /* Flashing green dot */
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+    .status-dot {
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      background: #22c55e;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+      animation: blink 1.6s ease-in-out infinite;
+      box-shadow: 0 0 4px rgba(34, 197, 94, 0.4);
+    }
+    /* Coordinate overlay */
+    #coord-display {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: 0.6rem;
+      color: rgba(115, 115, 115, 0.6);
+      z-index: 5;
+      pointer-events: none;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- Grid background canvas -->
+  <canvas id="grid-canvas" class="fixed inset-0 pointer-events-none" style="z-index:0" aria-hidden="true"></canvas>
+
+  <!-- Rotating wireframe icosahedron canvas -->
+  <canvas id="shape-canvas" class="fixed inset-0 pointer-events-none" style="z-index:1" aria-hidden="true"></canvas>
+
+  <!-- Coordinate display -->
+  <div id="coord-display" aria-hidden="true">
+    <span id="coord-x">x: 0000</span><br/>
+    <span id="coord-y">y: 0000</span>
+  </div>
+
+  <main class="relative z-10 mx-auto flex w-full max-w-[700px] flex-col gap-12 px-6 py-16 sm:py-24">
+
+    <!-- Header -->
+    <header class="flex flex-col gap-6">
+      <div class="flex flex-col gap-2">
+        <h1 class="font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+          Xiurui (Ray) Chen
+        </h1>
+        <p class="text-sm tracking-widest uppercase text-muted-foreground">
+          Cincinnati Country Day School '28
+        </p>
+      </div>
+      <nav aria-label="External links">
+        <ul class="flex flex-wrap gap-x-6 gap-y-2">
+          <li>
+            <a href="https://linkedin.com/in/xiuruichen" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+              LinkedIn
+              <svg class="arrow-icon w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/xiuruichen" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+              GitHub
+              <svg class="arrow-icon w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            </a>
+          </li>
+          <li>
+            <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+              Resume
+              <svg class="arrow-icon w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            </a>
+          </li>
+          <li>
+            <a href="mailto:chenxiurui.2028@gmail.com" class="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+              Email
+              <svg class="arrow-icon w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Divider -->
+    <div class="border-t border-border"></div>
+
+    <!-- Introduction -->
+    <section aria-label="Introduction">
+      <p class="text-sm leading-relaxed text-foreground/80">
+        I am a high school student with a focused interest in computational
+        approaches to biological problems. My work sits at the intersection of
+        machine learning, bioinformatics, and scientific computing. I am
+        currently exploring how neural network architectures can be applied to
+        protein structure prediction and genomic sequence analysis. I am actively
+        seeking research mentorship and undergraduate opportunities in
+        quantitative biology and computer science.
+      </p>
+    </section>
+
+    <!-- Research Interests -->
+    <section aria-labelledby="research-interests-heading">
+      <h2 id="research-interests-heading" class="font-serif text-lg font-semibold tracking-tight text-foreground">
+        Research Interests<span class="sidenote">1<span class="sidenote-tooltip">subject to change :)</span></span>
+      </h2>
+      <div class="mt-4 flex flex-wrap gap-2" id="interests-container"></div>
+    </section>
+
+    <!-- Divider -->
+    <div class="border-t border-border"></div>
+
+    <!-- Selected Work -->
+    <section aria-labelledby="selected-work-heading">
+      <div class="flex items-baseline gap-3">
+        <h2 id="selected-work-heading" class="font-serif text-lg font-semibold tracking-tight text-foreground">
+          Selected Work
+        </h2>
+        <span class="text-xs italic text-muted-foreground">in fieri</span>
+      </div>
+      <div class="mt-4 flex flex-col" id="projects-container"></div>
+    </section>
+
+    <!-- Divider -->
+    <div class="border-t border-border"></div>
+
+    <!-- Digital Garden -->
+    <section aria-labelledby="digital-garden-heading">
+      <div class="flex items-baseline gap-3">
+        <h2 id="digital-garden-heading" class="font-serif text-lg font-semibold tracking-tight text-foreground">
+          Digital Garden
+        </h2>
+        <span class="text-xs italic text-muted-foreground">in fieri</span>
+      </div>
+      <div class="mt-4 flex flex-col" id="garden-container"></div>
+    </section>
+
+    <!-- Divider -->
+    <div class="border-t border-border"></div>
+
+    <!-- Footer -->
+    <footer class="pt-0">
+      <p class="text-xs text-muted-foreground"><span class="status-dot"></span>Last updated February 2026.</p>
+    </footer>
+
+  </main>
+
+  <script>
+    // ==========================================
+    // Data
+    // ==========================================
+    const interests = [
+      "Quantitative Finance",
+      "Behavioral Economics",
+      "Prediction Markets",
+      "Neuroeconomics",
+      "Behavioral Game Theory",
+    ];
+
+    const projects = [];
+    const gardenEntries = [];
+
+    // ==========================================
+    // Render Interests (Badges)
+    // ==========================================
+    const interestsContainer = document.getElementById("interests-container");
+    interests.forEach(function (interest) {
+      const badge = document.createElement("span");
+      badge.className = "interest-badge inline-flex items-center border border-border px-2.5 py-0.5 text-xs text-muted-foreground";
+      badge.textContent = interest;
+      interestsContainer.appendChild(badge);
+    });
+
+    // ==========================================
+    // Render Projects
+    // ==========================================
+    const arrowSvg = '<svg class="arrow-icon w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>';
+
+    const projectsContainer = document.getElementById("projects-container");
+    projects.forEach(function (project, index) {
+      const article = document.createElement("article");
+      const borderClass = index !== projects.length - 1 ? "border-b border-border" : "";
+      article.className = "flex flex-col gap-2 py-5 " + borderClass;
+      article.innerHTML =
+        '<h3 class="text-sm font-semibold text-foreground">' + project.title + '</h3>' +
+        '<p class="text-sm leading-relaxed text-foreground/70">' + project.description + '</p>' +
+        '<div class="flex items-center justify-between gap-4">' +
+          '<span class="text-xs text-muted-foreground">' + project.technologies.join(" / ") + '</span>' +
+          '<a href="' + project.sourceUrl + '" target="_blank" rel="noopener noreferrer" class="flex shrink-0 items-center gap-1 text-xs text-muted-foreground hover:text-foreground">Source ' + arrowSvg + '</a>' +
+        '</div>';
+      projectsContainer.appendChild(article);
+    });
+
+    // ==========================================
+    // Render Digital Garden
+    // ==========================================
+    function formatDate(dateStr) {
+      var date = new Date(dateStr + "T00:00:00");
+      return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+    }
+
+    const gardenContainer = document.getElementById("garden-container");
+    gardenEntries.forEach(function (entry, index) {
+      var div = document.createElement("div");
+      var borderClass = index !== gardenEntries.length - 1 ? "border-b border-border" : "";
+      div.className = "flex flex-col gap-1 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6 " + borderClass;
+      div.innerHTML =
+        '<p class="text-sm leading-relaxed text-foreground/80">' + entry.title + '</p>' +
+        '<time datetime="' + entry.date + '" class="shrink-0 text-xs text-muted-foreground">' + formatDate(entry.date) + '</time>';
+      gardenContainer.appendChild(div);
+    });
+
+    // ==========================================
+    // Rotating Wireframe Icosahedron (Canvas)
+    // ==========================================
+    (function () {
+      // Golden ratio
+      var phi = (1 + Math.sqrt(5)) / 2;
+
+      // 12 vertices of a regular icosahedron
+      var VERTICES = [
+        [ 0,  1,  phi],
+        [ 0, -1,  phi],
+        [ 0,  1, -phi],
+        [ 0, -1, -phi],
+        [ 1,  phi,  0],
+        [-1,  phi,  0],
+        [ 1, -phi,  0],
+        [-1, -phi,  0],
+        [ phi,  0,  1],
+        [-phi,  0,  1],
+        [ phi,  0, -1],
+        [-phi,  0, -1],
+      ];
+
+      // Normalize vertices to unit sphere for uniform size
+      var len = Math.sqrt(1 + phi * phi);
+      VERTICES = VERTICES.map(function (v) {
+        return [v[0] / len, v[1] / len, v[2] / len];
+      });
+
+      // 30 edges of a regular icosahedron
+      var EDGES = [
+        // Top fan (around vertex 0)
+        [0, 1], [0, 4], [0, 5], [0, 8], [0, 9],
+        // Upper ring
+        [1, 8], [8, 4], [4, 5], [5, 9], [9, 1],
+        // Middle band
+        [1, 6], [8, 6], [8, 10], [4, 10], [4, 2],
+        [5, 2], [5, 11], [9, 11], [9, 7], [1, 7],
+        // Lower ring
+        [6, 10], [10, 2], [2, 11], [11, 7], [7, 6],
+        // Bottom fan (around vertex 3)
+        [3, 6], [3, 10], [3, 2], [3, 11], [3, 7],
+      ];
+
+      function rotateX(p, a) {
+        var c = Math.cos(a), s = Math.sin(a);
+        return [p[0], p[1] * c - p[2] * s, p[1] * s + p[2] * c];
+      }
+      function rotateY(p, a) {
+        var c = Math.cos(a), s = Math.sin(a);
+        return [p[0] * c + p[2] * s, p[1], -p[0] * s + p[2] * c];
+      }
+      function project(p, cx, cy, scale, fov) {
+        var z = fov / (fov + p[2]);
+        return [p[0] * scale * z + cx, p[1] * scale * z + cy];
+      }
+
+      var canvas = document.getElementById("shape-canvas");
+      var ctx = canvas.getContext("2d");
+      var rotation = { x: 0.4, y: -0.5 };
+      var mouse = { x: 0, y: 0 };
+      var lastMoveTime = 0;
+      var wasIdle = true;
+      var baseX = 0;
+      var baseY = 0;
+
+      function resize() {
+        var dpr = window.devicePixelRatio || 1;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        canvas.style.width = window.innerWidth + "px";
+        canvas.style.height = window.innerHeight + "px";
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      window.addEventListener("mousemove", function (e) {
+        mouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
+        mouse.y = (e.clientY / window.innerHeight - 0.5) * 2;
+        lastMoveTime = Date.now();
+      });
+
+      var prev = performance.now();
+
+      function animate(now) {
+        var dt = Math.min((now - prev) / 1000, 0.1);
+        prev = now;
+
+        var idle = Date.now() - lastMoveTime > 200;
+
+        if (idle) {
+          rotation.y += dt * 0.3;
+          rotation.x += dt * 0.15;
+          wasIdle = true;
+        } else {
+          // When resuming from idle, re-anchor the base to current rotation
+          // so the mouse target is relative to where we are now, not absolute
+          if (wasIdle) {
+            baseX = rotation.x;
+            baseY = rotation.y;
+            wasIdle = false;
+          }
+
+          var targetX = baseX + mouse.y * -1.2;
+          var targetY = baseY + mouse.x * 1.2;
+          rotation.x += (targetX - rotation.x) * dt * 3;
+          rotation.y += (targetY - rotation.y) * dt * 3;
+        }
+
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+        var cx = w / 2;
+        var cy = h / 2;
+        var scale = Math.min(w, h) * 0.18;
+        var fov = 4;
+
+        ctx.clearRect(0, 0, w, h);
+
+        var projected = VERTICES.map(function (v) {
+          var p = rotateX(v, rotation.x);
+          p = rotateY(p, rotation.y);
+          return project(p, cx, cy, scale, fov);
+        });
+
+        ctx.strokeStyle = "rgba(229, 229, 229, 0.10)";
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        for (var i = 0; i < EDGES.length; i++) {
+          var a = EDGES[i][0], b = EDGES[i][1];
+          ctx.moveTo(projected[a][0], projected[a][1]);
+          ctx.lineTo(projected[b][0], projected[b][1]);
+        }
+        ctx.stroke();
+
+        requestAnimationFrame(animate);
+      }
+
+      requestAnimationFrame(animate);
+    })();
+
+    // ==========================================
+    // Grid Background
+    // ==========================================
+    (function () {
+      var gridCanvas = document.getElementById("grid-canvas");
+      var gCtx = gridCanvas.getContext("2d");
+      var GRID_SPACING = 60;
+
+      function resizeGrid() {
+        var dpr = window.devicePixelRatio || 1;
+        gridCanvas.width = window.innerWidth * dpr;
+        gridCanvas.height = window.innerHeight * dpr;
+        gridCanvas.style.width = window.innerWidth + "px";
+        gridCanvas.style.height = window.innerHeight + "px";
+        gCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        drawGrid();
+      }
+
+      function drawGrid() {
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+        gCtx.clearRect(0, 0, w, h);
+        gCtx.strokeStyle = "rgba(229, 229, 229, 0.08)";
+        gCtx.lineWidth = 0.5;
+        gCtx.beginPath();
+        for (var x = 0; x <= w; x += GRID_SPACING) {
+          gCtx.moveTo(x, 0);
+          gCtx.lineTo(x, h);
+        }
+        for (var y = 0; y <= h; y += GRID_SPACING) {
+          gCtx.moveTo(0, y);
+          gCtx.lineTo(w, y);
+        }
+        gCtx.stroke();
+      }
+
+      resizeGrid();
+      window.addEventListener("resize", resizeGrid);
+    })();
+
+    // ==========================================
+    // Coordinate Display
+    // ==========================================
+    (function () {
+      var coordX = document.getElementById("coord-x");
+      var coordY = document.getElementById("coord-y");
+
+      function pad(n) {
+        return String(Math.round(n)).padStart(4, '0');
+      }
+
+      window.addEventListener("mousemove", function (e) {
+        coordX.textContent = "x: " + pad(e.clientX);
+        coordY.textContent = "y: " + pad(e.clientY);
+      });
+    })();
+  </script>
+
+</body>
+</html>
