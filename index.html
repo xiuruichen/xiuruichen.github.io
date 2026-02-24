@@ -37,6 +37,16 @@
   <style>
     *, *::before, *::after { border-color: #262626; }
     body { background-color: #0a0a0a; color: #e5e5e5; font-family: 'Geist Mono', ui-monospace, monospace; }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      pointer-events: none;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+    }
     .arrow-icon { opacity: 0; transition: opacity 150ms; }
     a:hover .arrow-icon { opacity: 1; }
     a { transition: color 150ms; }
@@ -185,7 +195,7 @@
     <!-- Introduction -->
     <section aria-label="Introduction">
       <p class="text-sm leading-relaxed text-foreground/80">
-        FILLER CONTENT
+        [about me coming soon]
       </p>
     </section>
 
@@ -236,6 +246,14 @@
   </main>
 
   <script>
+    // ==========================================
+    // Console Easter Egg
+    // ==========================================
+    console.log(
+      "%cLooking under the hood? Let's talk :) [chenxiurui.2028@gmail.com]",
+      "font-family: 'Courier New', monospace; font-size: 13px; color: #737373; padding: 8px 0;"
+    );
+
     // ==========================================
     // Data
     // ==========================================
@@ -501,4 +519,3 @@
 
 </body>
 </html>
-
