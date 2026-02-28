@@ -208,10 +208,362 @@
       pointer-events: none;
       letter-spacing: 0.05em;
     }
+
+    /* ============ Secret Page ============ */
+    #secret-page {
+      position: fixed;
+      inset: 0;
+      background: #f5f0eb;
+      color: #2a2520;
+      font-family: 'Playfair Display', Georgia, serif;
+      overflow-y: auto;
+      z-index: 1;
+    }
+    #secret-page::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+    }
+    #secret-page ::selection {
+      background: #2a2520;
+      color: #f5f0eb;
+    }
+    #main-page {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      background: #0a0a0a;
+      transform-origin: left center;
+      transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
+    }
+    #main-page.peeled {
+      transform: translateX(-92vw) rotateY(4deg);
+      box-shadow: -16px 0 50px rgba(0,0,0,0.4);
+    }
+    /* Flutter hint - periodic lift of right edge */
+    @keyframes flutter {
+      0%, 100% { transform: perspective(1200px) rotateY(0deg); box-shadow: none; }
+      40% { transform: perspective(1200px) rotateY(-1.8deg); box-shadow: -8px 0 30px rgba(0,0,0,0.15); }
+      60% { transform: perspective(1200px) rotateY(-1deg); box-shadow: -4px 0 15px rgba(0,0,0,0.08); }
+    }
+    #main-page.flutter-hint {
+      animation: flutter 1.8s ease-in-out;
+      transform-origin: left center;
+    }
+    .secret-back-btn {
+      cursor: pointer;
+      color: #8a7e72;
+      transition: color 200ms, letter-spacing 200ms;
+      border: none;
+      background: none;
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .secret-back-btn:hover { color: #2a2520; letter-spacing: 0.14em; }
+    .secret-heading {
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: #2a2520;
+      letter-spacing: -0.01em;
+    }
+    .secret-subtext {
+      color: #8a7e72;
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+    .secret-section-label {
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #b5aa9e;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e0d8cf;
+      margin-bottom: 4px;
+    }
+    .secret-card {
+      padding: 18px 16px;
+      margin: 0 -16px;
+      border-bottom: 1px solid #ece6de;
+      cursor: pointer;
+      transition: background 300ms ease, box-shadow 300ms ease;
+      position: relative;
+    }
+    .secret-card:hover {
+      background: rgba(42, 37, 32, 0.025);
+    }
+    .secret-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .secret-card-title {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #2a2520;
+      transition: color 200ms;
+      line-height: 1.4;
+    }
+    .secret-card:hover .secret-card-title { color: #0a0a0a; }
+    .secret-card-meta {
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: 0.6rem;
+      color: #b5aa9e;
+      margin-top: 3px;
+    }
+    .secret-card-note {
+      font-size: 0.8rem;
+      font-style: italic;
+      color: #6b6058;
+      margin-top: 0;
+      padding-top: 0;
+      line-height: 1.65;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 400ms cubic-bezier(0.22, 1, 0.36, 1), opacity 300ms ease, margin-top 300ms ease, padding-top 300ms ease;
+    }
+    .secret-card.open .secret-card-note {
+      max-height: 150px;
+      opacity: 1;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #f0e9e1;
+    }
+    .secret-card-expand {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.5rem;
+      color: #c4b9ae;
+      border: 1px solid #e0d8cf;
+      border-radius: 50%;
+      transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1), color 200ms, border-color 200ms, background 200ms;
+      margin-top: 2px;
+    }
+    .secret-card:hover .secret-card-expand { color: #8a7e72; border-color: #c4b9ae; }
+    .secret-card.open .secret-card-expand {
+      transform: rotate(90deg);
+      color: #6b6058;
+      border-color: #b5aa9e;
+      background: rgba(42, 37, 32, 0.04);
+    }
+    /* Interest pills on secret page */
+    .secret-pill {
+      display: inline-block;
+      padding: 6px 16px;
+      border: 1px solid #e0d8cf;
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: 0.65rem;
+      color: #8a7e72;
+      transition: all 300ms ease;
+      cursor: default;
+    }
+    .secret-pill:hover {
+      color: #2a2520;
+      border-color: #2a2520;
+      background: rgba(42, 37, 32, 0.04);
+      transform: translateY(-2px);
+    }
+    /* Drag hint */
+    #drag-hint {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: 0.55rem;
+      color: rgba(115, 115, 115, 0.35);
+      z-index: 15;
+      pointer-events: none;
+      letter-spacing: 0.05em;
+      transition: opacity 300ms;
+    }
+    /* Drag edge zone indicator */
+    #drag-edge {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 40px;
+      height: 100%;
+      z-index: 12;
+      cursor: w-resize;
+    }
+    #drag-edge::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      width: 3px;
+      height: 40px;
+      transform: translateY(-50%);
+      background: rgba(229, 229, 229, 0.06);
+      border-radius: 2px;
+      transition: background 200ms, height 200ms;
+    }
+    #drag-edge:hover::after {
+      background: rgba(229, 229, 229, 0.15);
+      height: 60px;
+    }
   </style>
 </head>
 
-<body class="antialiased">
+<body class="antialiased" style="overflow:hidden; background:#f5f0eb;">
+
+  <!-- Secret page (underneath) -->
+  <div id="secret-page">
+    <div style="max-width:600px; margin:0 auto; padding: 64px 24px 120px; position:relative; z-index:2;">
+
+      <button class="secret-back-btn" id="secret-back-btn">
+        &larr; back to portfolio
+      </button>
+
+      <div style="margin-top:48px;">
+        <h1 class="secret-heading" style="font-style:italic;">Off the Record</h1>
+        <p class="secret-subtext" style="margin-top:16px;">
+          The quieter side. Things I think about when I'm not thinking about markets or models.<br/>
+          <span style="font-size:0.7rem; color:#b5aa9e; font-family:'Geist Mono',monospace;">Click any card to expand.</span>
+        </p>
+      </div>
+
+      <div style="margin-top:48px; border-top: 1px solid #e0d8cf;"></div>
+
+      <!-- Currently Reading -->
+      <div style="margin-top:40px;">
+        <div class="secret-section-label">Currently Reading</div>
+        <div class="secret-card" onclick="this.classList.toggle('open')">
+          <div class="secret-card-header">
+            <div>
+              <div class="secret-card-title">Thinking, Fast and Slow</div>
+              <div class="secret-card-meta">Daniel Kahneman &middot; Psychology / Economics</div>
+            </div>
+            <span class="secret-card-expand">&#9654;</span>
+          </div>
+          <div class="secret-card-note">The two-system framework keeps reappearing in everything I study. System 1 is why markets overshoot; System 2 is what we pretend we're always using.</div>
+        </div>
+        <div class="secret-card" onclick="this.classList.toggle('open')">
+          <div class="secret-card-header">
+            <div>
+              <div class="secret-card-title">The Black Swan</div>
+              <div class="secret-card-meta">Nassim Nicholas Taleb &middot; Probability / Philosophy</div>
+            </div>
+            <span class="secret-card-expand">&#9654;</span>
+          </div>
+          <div class="secret-card-note">Re-reading. The antifragility chapters hit differently the second time. Taleb's contempt for forecasters is genuinely funny.</div>
+        </div>
+        <div class="secret-card" onclick="this.classList.toggle('open')">
+          <div class="secret-card-header">
+            <div>
+              <div class="secret-card-title">Godel, Escher, Bach</div>
+              <div class="secret-card-meta">Douglas Hofstadter &middot; Logic / Music / Art</div>
+            </div>
+            <span class="secret-card-expand">&#9654;</span>
+          </div>
+          <div class="secret-card-note">Slowly working through this one. Strange loops everywhere. The fugue chapters are mind-bending.</div>
+        </div>
+        <div class="secret-card" onclick="this.classList.toggle('open')">
+          <div class="secret-card-header">
+            <div>
+              <div class="secret-card-title">When Genius Failed</div>
+              <div class="secret-card-meta">Roger Lowenstein &middot; Finance / History</div>
+            </div>
+            <span class="secret-card-expand">&#9654;</span>
+          </div>
+          <div class="secret-card-note">The LTCM story is a masterclass in what happens when brilliant people forget about tail risk.</div>
+        </div>
+      </div>
+
+      <!-- Things I Care About -->
+      <div style="margin-top:40px;">
+        <div class="secret-section-label">Things I Care About</div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">
+          <span class="secret-pill">Chess</span>
+          <span class="secret-pill">Golf</span>
+          <span class="secret-pill">Hiking</span>
+          <span class="secret-pill">Chinese Cooking</span>
+          <span class="secret-pill">Jazz</span>
+          <span class="secret-pill">Typography</span>
+          <span class="secret-pill">Hand-pulled Noodles</span>
+          <span class="secret-pill">Long Walks</span>
+        </div>
+      </div>
+
+      <!-- Places -->
+      <div style="margin-top:40px;">
+        <div class="secret-section-label">Places That Shaped Me</div>
+        <div class="secret-card" onclick="this.classList.toggle('open')">
+          <div class="secret-card-header">
+            <div>
+              <div class="secret-card-title">Cincinnati, OH</div>
+              <div class="secret-card-meta">Home</div>
+            </div>
+            <span class="secret-card-expand">&#9654;</span>
+          </div>
+          <div class="secret-card-note">The river, the hills, the quiet mornings. Where I first learned the value of paying attention.</div>
+        </div>
+        <div class="secret-card" onclick="this.classList.toggle('open')">
+          <div class="secret-card-header">
+            <div>
+              <div class="secret-card-title">Shanghai</div>
+              <div class="secret-card-meta">Where I was born</div>
+            </div>
+            <span class="secret-card-expand">&#9654;</span>
+          </div>
+          <div class="secret-card-note">Where I learned to navigate chaos and find beauty in density. 24 million people and somehow it still feels intimate in the right alleyways.</div>
+        </div>
+      </div>
+
+      <!-- Music -->
+      <div style="margin-top:40px;">
+        <div class="secret-section-label">On Repeat</div>
+        <div class="secret-card" onclick="this.classList.toggle('open')">
+          <div class="secret-card-header">
+            <div>
+              <div class="secret-card-title">Clair de Lune &mdash; Debussy</div>
+              <div class="secret-card-meta">Classical / Impressionism</div>
+            </div>
+            <span class="secret-card-expand">&#9654;</span>
+          </div>
+          <div class="secret-card-note">The only piece that makes late-night problem sets feel romantic.</div>
+        </div>
+        <div class="secret-card" onclick="this.classList.toggle('open')">
+          <div class="secret-card-header">
+            <div>
+              <div class="secret-card-title">Blue in Green &mdash; Miles Davis</div>
+              <div class="secret-card-meta">Jazz / Modal</div>
+            </div>
+            <span class="secret-card-expand">&#9654;</span>
+          </div>
+          <div class="secret-card-note">If I could live inside a song, it'd be this one. Bill Evans on the piano just dissolves time.</div>
+        </div>
+      </div>
+
+      <!-- Closing thought -->
+      <div style="margin-top:56px; border-top: 1px solid #e0d8cf; padding-top: 28px;">
+        <p class="secret-subtext" style="font-style:italic; font-size:0.95rem; color:#6b6058;">
+          "The most interesting people are the ones who are interested in everything."
+        </p>
+        <p style="font-family:'Geist Mono',monospace; font-size:0.6rem; color:#b5aa9e; margin-top:10px;">
+          &mdash; I don't remember who said this
+        </p>
+      </div>
+
+    </div>
+  </div><!-- end #secret-page -->
+
+  <!-- Main page (on top, peels away) -->
+  <div id="main-page">
 
   <!-- Grid background canvas -->
   <canvas id="grid-canvas" class="fixed inset-0 pointer-events-none" style="z-index:0" aria-hidden="true"></canvas>
@@ -271,7 +623,7 @@
                 <path d="M7 17 17 7" />
               </svg>
             </a>
-            <span class="resume-tooltip">Feb. 2026 version; soon will be in LaTeX</span>
+            <span class="resume-tooltip">coming soon in LaTeX</span>
           </li>
           <li>
             <a href="mailto:chenxiurui.2028@gmail.com"
@@ -343,6 +695,13 @@
     </footer>
 
   </main>
+  </div><!-- end #main-page -->
+
+  <!-- Drag edge zone -->
+  <div id="drag-edge"></div>
+
+  <!-- Drag hint -->
+  <div id="drag-hint">drag &larr; from edge</div>
 
   <script>
     // ==========================================
@@ -561,12 +920,15 @@
     })();
 
     // ==========================================
-    // Grid Background
+    // Grid Background (subtle reaction on peel only)
     // ==========================================
     (function () {
       var gridCanvas = document.getElementById("grid-canvas");
       var gCtx = gridCanvas.getContext("2d");
-      var GRID_SPACING = 60;
+      var BASE_SPACING = 60;
+      var currentSpacing = BASE_SPACING;
+      var targetSpacing = BASE_SPACING;
+      var gridAnimating = false;
 
       function resizeGrid() {
         var dpr = window.devicePixelRatio || 1;
@@ -575,26 +937,73 @@
         gridCanvas.style.width = window.innerWidth + "px";
         gridCanvas.style.height = window.innerHeight + "px";
         gCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        drawGrid();
+        drawGrid(currentSpacing);
       }
 
-      function drawGrid() {
+      function drawGrid(spacing) {
         var w = window.innerWidth;
         var h = window.innerHeight;
         gCtx.clearRect(0, 0, w, h);
         gCtx.strokeStyle = "rgba(229, 229, 229, 0.08)";
         gCtx.lineWidth = 0.5;
         gCtx.beginPath();
-        for (var x = 0; x <= w; x += GRID_SPACING) {
+        for (var x = 0; x <= w; x += spacing) {
           gCtx.moveTo(x, 0);
           gCtx.lineTo(x, h);
         }
-        for (var y = 0; y <= h; y += GRID_SPACING) {
+        for (var y = 0; y <= h; y += spacing) {
           gCtx.moveTo(0, y);
           gCtx.lineTo(w, y);
         }
         gCtx.stroke();
       }
+
+      function animateGrid() {
+        if (!gridAnimating) return;
+        var diff = targetSpacing - currentSpacing;
+        if (Math.abs(diff) < 0.15) {
+          currentSpacing = targetSpacing;
+          drawGrid(currentSpacing);
+          gridAnimating = false;
+          return;
+        }
+        currentSpacing += diff * 0.035;
+        drawGrid(currentSpacing);
+        requestAnimationFrame(animateGrid);
+      }
+
+      function setTarget(s) {
+        targetSpacing = s;
+        if (!gridAnimating) { gridAnimating = true; animateGrid(); }
+      }
+
+      // Zoom in slightly when cursor near right edge (opposite of close)
+      var edgeActive = false;
+      var peeled = false;
+      window.addEventListener("mousemove", function (e) {
+        if (peeled) return;
+        var distFromRight = window.innerWidth - e.clientX;
+        if (distFromRight < 80) {
+          var t = 1 - (distFromRight / 80); // 0..1
+          setTarget(BASE_SPACING - t * 6); // tighten by up to 6px
+          edgeActive = true;
+        } else if (edgeActive) {
+          setTarget(BASE_SPACING);
+          edgeActive = false;
+        }
+      });
+
+      // On peel open: lock the tightened grid
+      window._gridContract = function () {
+        peeled = true;
+        setTarget(54);
+      };
+      // On close: simple zoom back out to base
+      window._gridReset = function () {
+        peeled = false;
+        edgeActive = false;
+        setTarget(BASE_SPACING);
+      };
 
       resizeGrid();
       window.addEventListener("resize", resizeGrid);
@@ -615,6 +1024,99 @@
         coordX.textContent = "x: " + pad(e.clientX);
         coordY.textContent = "y: " + pad(e.clientY);
       });
+    })();
+
+    // ==========================================
+    // Secret Page: Peel from Right Edge
+    // ==========================================
+    (function () {
+      var mainPage = document.getElementById('main-page');
+      var dragEdge = document.getElementById('drag-edge');
+      var hint = document.getElementById('drag-hint');
+      var backBtn = document.getElementById('secret-back-btn');
+      var secretPage = document.getElementById('secret-page');
+      var isOpen = false;
+      var dragging = false;
+      var startX = 0;
+      var THRESHOLD = 140;
+
+      // Open: drag left from right edge
+      dragEdge.addEventListener('mousedown', function (e) {
+        if (isOpen) return;
+        dragging = true;
+        startX = e.clientX;
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', function (e) {
+        if (!dragging || isOpen) return;
+        var dx = startX - e.clientX; // positive = dragging left
+        if (dx > THRESHOLD) {
+          mainPage.classList.add('peeled');
+          isOpen = true;
+          dragging = false;
+          if (hint) hint.style.opacity = '0';
+          dragEdge.style.display = 'none';
+          secretPage.style.overflow = 'auto';
+          // Grid contracts subtly as the page peels away
+          if (window._gridContract) window._gridContract();
+        }
+      });
+
+      document.addEventListener('mouseup', function () {
+        dragging = false;
+      });
+
+      // Back button
+      backBtn.addEventListener('click', function () {
+        mainPage.classList.remove('peeled');
+        isOpen = false;
+        dragEdge.style.display = '';
+        // Grid expands back to normal as the page returns
+        if (window._gridReset) window._gridReset();
+        setTimeout(function () {
+          if (hint) hint.style.opacity = '1';
+        }, 700);
+      });
+
+      // Touch support
+      dragEdge.addEventListener('touchstart', function (e) {
+        if (isOpen) return;
+        dragging = true;
+        startX = e.touches[0].clientX;
+      });
+
+      document.addEventListener('touchmove', function (e) {
+        if (!dragging || isOpen) return;
+        var dx = startX - e.touches[0].clientX;
+        if (dx > THRESHOLD) {
+          mainPage.classList.add('peeled');
+          isOpen = true;
+          dragging = false;
+          if (hint) hint.style.opacity = '0';
+          dragEdge.style.display = 'none';
+        }
+      });
+
+      document.addEventListener('touchend', function () {
+        dragging = false;
+      });
+
+      // Flutter hint: periodically lift the right edge
+      function scheduleFlutter() {
+        var delay = 8000 + Math.random() * 12000; // 8-20s
+        setTimeout(function () {
+          if (!isOpen && !mainPage.classList.contains('peeled')) {
+            mainPage.classList.add('flutter-hint');
+            mainPage.addEventListener('animationend', function handler() {
+              mainPage.classList.remove('flutter-hint');
+              mainPage.removeEventListener('animationend', handler);
+            });
+          }
+          scheduleFlutter();
+        }, delay);
+      }
+      scheduleFlutter();
     })();
   </script>
 
