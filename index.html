@@ -2,1123 +2,1160 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Xiurui (Ray) Chen | Cincinnati Country Day School '28</title>
-  <meta name="description" content="Personal portfolio of Ray Chen" />
-  <link rel="icon" type="image/svg+xml"
-    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0a0a'/%3E%3Ctext x='16' y='24' text-anchor='middle' font-family='serif' font-size='22' font-weight='bold' fill='%23e5e5e5'%3E%E2%84%9D%3C/text%3E%3C/svg%3E" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
-    rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            mono: ['"Geist Mono"', 'ui-monospace', 'monospace'],
-            serif: ['"Playfair Display"', 'Georgia', 'serif'],
-          },
-          colors: {
-            background: '#0a0a0a',
-            foreground: '#e5e5e5',
-            muted: { DEFAULT: '#1a1a1a', foreground: '#737373' },
-            border: '#262626',
-          },
-          borderRadius: {
-            DEFAULT: '0px',
-            sm: '0px',
-            md: '0px',
-            lg: '0px',
-            xl: '0px',
-          },
-        },
-      },
-    }
-  </script>
-  <style>
-    *,
-    *::before,
-    *::after {
-      border-color: #262626;
-    }
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Xiurui (Ray) Chen | Cincinnati Country Day School '28</title>
+      <meta name="description" content="Personal portfolio of Ray Chen" />
+      <link rel="icon" type="image/svg+xml"
+            href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0a0a'/%3E%3Ctext x='16' y='24' text-anchor='middle' font-family='serif' font-size='22' font-weight='bold' fill='%23e5e5e5'%3E%E2%84%9D%3C/text%3E%3C/svg%3E" />
+      <script src="https://cdn.tailwindcss.com"></script>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+            rel="stylesheet" />
+      <script>
+            tailwind.config = {
+                  theme: {
+                        extend: {
+                              fontFamily: {
+                                    mono: ['"Geist Mono"', 'ui-monospace', 'monospace'],
+                                    serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                              },
+                              colors: {
+                                    background: '#0a0a0a',
+                                    foreground: '#e5e5e5',
+                                    muted: { DEFAULT: '#1a1a1a', foreground: '#737373' },
+                                    border: '#262626',
+                              },
+                              borderRadius: {
+                                    DEFAULT: '0px',
+                                    sm: '0px',
+                                    md: '0px',
+                                    lg: '0px',
+                                    xl: '0px',
+                              },
+                        },
+                  },
+            }
+      </script>
+      <style>
+            *,
+            *::before,
+            *::after {
+                  border-color: #262626;
+            }
 
-    body {
-      background-color: #0a0a0a;
-      color: #e5e5e5;
-      font-family: 'Geist Mono', ui-monospace, monospace;
-    }
+            body {
+                  background-color: #0a0a0a;
+                  color: #e5e5e5;
+                  font-family: 'Geist Mono', ui-monospace, monospace;
+            }
 
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      z-index: 50;
-      pointer-events: none;
-      opacity: 0.04;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-      background-repeat: repeat;
-    }
+            body::before {
+                  content: '';
+                  position: fixed;
+                  inset: 0;
+                  z-index: 50;
+                  pointer-events: none;
+                  opacity: 0.04;
+                  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+                  background-repeat: repeat;
+            }
 
-    .arrow-icon {
-      opacity: 0;
-      transition: opacity 150ms;
-    }
+            .arrow-icon {
+                  opacity: 0;
+                  transition: opacity 150ms;
+            }
 
-    a:hover .arrow-icon {
-      opacity: 1;
-    }
+            a:hover .arrow-icon {
+                  opacity: 1;
+            }
 
-    a {
-      transition: color 150ms;
-    }
+            a {
+                  transition: color 150ms;
+            }
 
-    .interest-badge {
-      transition: color 300ms ease, border-color 300ms ease, box-shadow 300ms ease;
-      cursor: default;
-    }
+            .interest-badge {
+                  transition: color 300ms ease, border-color 300ms ease, box-shadow 300ms ease;
+                  cursor: default;
+            }
 
-    .interest-badge:hover {
-      color: #ffffff;
-      border-color: rgba(255, 255, 255, 0.4);
-      box-shadow: 0 0 8px rgba(255, 255, 255, 0.15), 0 0 20px rgba(255, 255, 255, 0.08);
-    }
+            .interest-badge:hover {
+                  color: #ffffff;
+                  border-color: rgba(255, 255, 255, 0.4);
+                  box-shadow: 0 0 8px rgba(255, 255, 255, 0.15), 0 0 20px rgba(255, 255, 255, 0.08);
+            }
 
-    /* Sidenote tooltip */
-    .sidenote {
-      position: relative;
-      cursor: help;
-      font-size: 0.6rem;
-      color: #737373;
-      vertical-align: super;
-      line-height: 0;
-      margin-left: 2px;
-      transition: color 200ms;
-    }
+            /* Sidenote tooltip */
+            .sidenote {
+                  position: relative;
+                  cursor: help;
+                  font-size: 0.6rem;
+                  color: #737373;
+                  vertical-align: super;
+                  line-height: 0;
+                  margin-left: 2px;
+                  transition: color 200ms;
+            }
 
-    .sidenote:hover {
-      color: #e5e5e5;
-    }
+            .sidenote:hover {
+                  color: #e5e5e5;
+            }
 
-    .sidenote .sidenote-tooltip {
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%);
-      white-space: normal;
-      width: max-content;
-      max-width: 220px;
-      background: #141414;
-      border: 1px solid #262626;
-      padding: 8px 14px;
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 0.7rem;
-      font-style: italic;
-      font-weight: 400;
-      line-height: 1.5;
-      letter-spacing: 0.01em;
-      color: #a3a3a3;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 200ms;
-    }
+            .sidenote .sidenote-tooltip {
+                  position: absolute;
+                  bottom: calc(100% + 8px);
+                  left: 50%;
+                  transform: translateX(-50%);
+                  white-space: normal;
+                  width: max-content;
+                  max-width: 220px;
+                  background: #141414;
+                  border: 1px solid #262626;
+                  padding: 8px 14px;
+                  font-family: 'Playfair Display', Georgia, serif;
+                  font-size: 0.7rem;
+                  font-style: italic;
+                  font-weight: 400;
+                  line-height: 1.5;
+                  letter-spacing: 0.01em;
+                  color: #a3a3a3;
+                  opacity: 0;
+                  pointer-events: none;
+                  transition: opacity 200ms;
+            }
 
-    .sidenote:hover .sidenote-tooltip {
-      opacity: 1;
-    }
+            .sidenote:hover .sidenote-tooltip {
+                  opacity: 1;
+            }
 
-    /* Resume tooltip (opens downward) */
-    .resume-wrap {
-      position: relative;
-    }
+            /* Resume tooltip (opens downward) */
+            .resume-wrap {
+                  position: relative;
+            }
 
-    .resume-tooltip {
-      position: absolute;
-      top: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%);
-      white-space: nowrap;
-      background: #141414;
-      border: 1px solid #262626;
-      padding: 8px 14px;
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 0.7rem;
-      font-style: italic;
-      font-weight: 400;
-      line-height: 1.5;
-      letter-spacing: 0.01em;
-      color: #a3a3a3;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 200ms;
-    }
+            .resume-tooltip {
+                  position: absolute;
+                  top: calc(100% + 8px);
+                  left: 50%;
+                  transform: translateX(-50%);
+                  white-space: nowrap;
+                  background: #141414;
+                  border: 1px solid #262626;
+                  padding: 8px 14px;
+                  font-family: 'Playfair Display', Georgia, serif;
+                  font-size: 0.7rem;
+                  font-style: italic;
+                  font-weight: 400;
+                  line-height: 1.5;
+                  letter-spacing: 0.01em;
+                  color: #a3a3a3;
+                  opacity: 0;
+                  pointer-events: none;
+                  transition: opacity 200ms;
+            }
 
-    .resume-wrap:hover .resume-tooltip {
-      opacity: 1;
-    }
+            .resume-wrap:hover .resume-tooltip {
+                  opacity: 1;
+            }
 
-    /* Custom text selection */
-    ::selection {
-      background: #e5e5e5;
-      color: #0a0a0a;
-    }
+            /* Custom text selection */
+            ::selection {
+                  background: #e5e5e5;
+                  color: #0a0a0a;
+            }
 
-    ::-moz-selection {
-      background: #e5e5e5;
-      color: #0a0a0a;
-    }
+            ::-moz-selection {
+                  background: #e5e5e5;
+                  color: #0a0a0a;
+            }
 
-    /* Flashing green dot */
-    @keyframes blink {
+            /* Flashing green dot */
+            @keyframes blink {
 
-      0%,
-      100% {
-        opacity: 1;
-      }
+                  0%,
+                  100% {
+                        opacity: 1;
+                  }
 
-      50% {
-        opacity: 0.2;
-      }
-    }
+                  50% {
+                        opacity: 0.2;
+                  }
+            }
 
-    .status-dot {
-      display: inline-block;
-      width: 5px;
-      height: 5px;
-      background: #22c55e;
-      border-radius: 50%;
-      margin-right: 6px;
-      vertical-align: middle;
-      animation: blink 1.6s ease-in-out infinite;
-      box-shadow: 0 0 4px rgba(34, 197, 94, 0.4);
-    }
+            .status-dot {
+                  display: inline-block;
+                  width: 5px;
+                  height: 5px;
+                  background: #22c55e;
+                  border-radius: 50%;
+                  margin-right: 6px;
+                  vertical-align: middle;
+                  animation: blink 1.6s ease-in-out infinite;
+                  box-shadow: 0 0 4px rgba(34, 197, 94, 0.4);
+            }
 
-    /* Coordinate overlay */
-    #coord-display {
-      position: fixed;
-      top: 16px;
-      left: 16px;
-      font-family: 'Geist Mono', ui-monospace, monospace;
-      font-size: 0.6rem;
-      color: rgba(115, 115, 115, 0.6);
-      z-index: 5;
-      pointer-events: none;
-      letter-spacing: 0.05em;
-    }
+            /* Coordinate overlay */
+            #coord-display {
+                  position: fixed;
+                  top: 16px;
+                  left: 16px;
+                  font-family: 'Geist Mono', ui-monospace, monospace;
+                  font-size: 0.6rem;
+                  color: rgba(115, 115, 115, 0.6);
+                  z-index: 5;
+                  pointer-events: none;
+                  letter-spacing: 0.05em;
+            }
 
-    /* ============ Secret Page ============ */
-    #secret-page {
-      position: fixed;
-      inset: 0;
-      background: #f5f0eb;
-      color: #2a2520;
-      font-family: 'Playfair Display', Georgia, serif;
-      overflow-y: auto;
-      z-index: 1;
-    }
-    #secret-page::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-      opacity: 0.035;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
-      background-repeat: repeat;
-    }
-    #secret-page ::selection {
-      background: #2a2520;
-      color: #f5f0eb;
-    }
-    #main-page {
-      position: relative;
-      z-index: 10;
-      min-height: 100vh;
-      background: #0a0a0a;
-      transform-origin: left center;
-      transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: transform;
-    }
-    #main-page.peeled {
-      transform: translateX(-92vw) rotateY(4deg);
-      box-shadow: -16px 0 50px rgba(0,0,0,0.4);
-    }
-    /* Flutter hint - periodic lift of right edge */
-    @keyframes flutter {
-      0%, 100% { transform: perspective(1200px) rotateY(0deg); box-shadow: none; }
-      40% { transform: perspective(1200px) rotateY(-1.8deg); box-shadow: -8px 0 30px rgba(0,0,0,0.15); }
-      60% { transform: perspective(1200px) rotateY(-1deg); box-shadow: -4px 0 15px rgba(0,0,0,0.08); }
-    }
-    #main-page.flutter-hint {
-      animation: flutter 1.8s ease-in-out;
-      transform-origin: left center;
-    }
+            /* ============ Secret Page ============ */
+            #secret-page {
+                  position: fixed;
+                  inset: 0;
+                  background: #f5f0eb;
+                  color: #2a2520;
+                  font-family: 'Playfair Display', Georgia, serif;
+                  overflow-y: auto;
+                  z-index: 1;
+            }
+
+            #secret-page::before {
+                  content: '';
+                  position: fixed;
+                  inset: 0;
+                  pointer-events: none;
+                  z-index: 1;
+                  opacity: 0.035;
+                  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+                  background-repeat: repeat;
+            }
+
+            #secret-page ::selection {
+                  background: #2a2520;
+                  color: #f5f0eb;
+            }
+
+            #main-page {
+                  position: relative;
+                  z-index: 10;
+                  min-height: 100vh;
+                  background: #0a0a0a;
+                  transform-origin: left center;
+                  transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+                  will-change: transform;
+            }
+
+            #main-page.peeled {
+                  transform: translateX(-92vw) rotateY(4deg);
+                  box-shadow: -16px 0 50px rgba(0, 0, 0, 0.4);
+            }
+
     .secret-back-btn {
-      cursor: pointer;
-      color: #8a7e72;
-      transition: color 200ms, letter-spacing 200ms;
-      border: none;
-      background: none;
-      font-family: 'Geist Mono', ui-monospace, monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .secret-back-btn:hover { color: #2a2520; letter-spacing: 0.14em; }
-    .secret-heading {
-      font-size: 2.2rem;
-      font-weight: 600;
-      color: #2a2520;
-      letter-spacing: -0.01em;
-    }
-    .secret-subtext {
-      color: #8a7e72;
-      font-size: 0.85rem;
-      line-height: 1.7;
-    }
-    .secret-section-label {
-      font-family: 'Geist Mono', ui-monospace, monospace;
-      font-size: 0.6rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #b5aa9e;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #e0d8cf;
-      margin-bottom: 4px;
-    }
-    .secret-card {
-      padding: 18px 16px;
-      margin: 0 -16px;
-      border-bottom: 1px solid #ece6de;
-      cursor: pointer;
-      transition: background 300ms ease, box-shadow 300ms ease;
-      position: relative;
-    }
-    .secret-card:hover {
-      background: rgba(42, 37, 32, 0.025);
-    }
-    .secret-card-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .secret-card-title {
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: #2a2520;
-      transition: color 200ms;
-      line-height: 1.4;
-    }
-    .secret-card:hover .secret-card-title { color: #0a0a0a; }
-    .secret-card-meta {
-      font-family: 'Geist Mono', ui-monospace, monospace;
-      font-size: 0.6rem;
-      color: #b5aa9e;
-      margin-top: 3px;
-    }
-    .secret-card-note {
-      font-size: 0.8rem;
-      font-style: italic;
-      color: #6b6058;
-      margin-top: 0;
-      padding-top: 0;
-      line-height: 1.65;
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      transition: max-height 400ms cubic-bezier(0.22, 1, 0.36, 1), opacity 300ms ease, margin-top 300ms ease, padding-top 300ms ease;
-    }
-    .secret-card.open .secret-card-note {
-      max-height: 150px;
-      opacity: 1;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid #f0e9e1;
-    }
-    .secret-card-expand {
-      flex-shrink: 0;
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.5rem;
-      color: #c4b9ae;
-      border: 1px solid #e0d8cf;
-      border-radius: 50%;
-      transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1), color 200ms, border-color 200ms, background 200ms;
-      margin-top: 2px;
-    }
-    .secret-card:hover .secret-card-expand { color: #8a7e72; border-color: #c4b9ae; }
-    .secret-card.open .secret-card-expand {
-      transform: rotate(90deg);
-      color: #6b6058;
-      border-color: #b5aa9e;
-      background: rgba(42, 37, 32, 0.04);
-    }
-    /* Interest pills on secret page */
-    .secret-pill {
-      display: inline-block;
-      padding: 6px 16px;
-      border: 1px solid #e0d8cf;
-      font-family: 'Geist Mono', ui-monospace, monospace;
-      font-size: 0.65rem;
-      color: #8a7e72;
-      transition: all 300ms ease;
-      cursor: default;
-    }
-    .secret-pill:hover {
-      color: #2a2520;
-      border-color: #2a2520;
-      background: rgba(42, 37, 32, 0.04);
-      transform: translateY(-2px);
-    }
-    /* Drag hint */
-    #drag-hint {
-      position: fixed;
-      bottom: 16px;
-      right: 16px;
-      font-family: 'Geist Mono', ui-monospace, monospace;
-      font-size: 0.55rem;
-      color: rgba(115, 115, 115, 0.35);
-      z-index: 15;
-      pointer-events: none;
-      letter-spacing: 0.05em;
-      transition: opacity 300ms;
-    }
-    /* Drag edge zone indicator */
-    #drag-edge {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: 40px;
-      height: 100%;
-      z-index: 12;
-      cursor: w-resize;
-    }
-    #drag-edge::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      right: 10px;
-      width: 3px;
-      height: 40px;
-      transform: translateY(-50%);
-      background: rgba(229, 229, 229, 0.06);
-      border-radius: 2px;
-      transition: background 200ms, height 200ms;
-    }
-    #drag-edge:hover::after {
-      background: rgba(229, 229, 229, 0.15);
-      height: 60px;
-    }
-  </style>
+                  cursor: pointer;
+                  color: #8a7e72;
+                  transition: color 200ms, letter-spacing 200ms;
+                  border: none;
+                  background: none;
+                  font-family: 'Geist Mono', ui-monospace, monospace;
+                  font-size: 0.7rem;
+                  letter-spacing: 0.08em;
+                  text-transform: uppercase;
+            }
+
+            .secret-back-btn:hover {
+                  color: #2a2520;
+                  letter-spacing: 0.14em;
+            }
+
+            .secret-heading {
+                  font-size: 2.2rem;
+                  font-weight: 600;
+                  color: #2a2520;
+                  letter-spacing: -0.01em;
+            }
+
+            .secret-subtext {
+                  color: #8a7e72;
+                  font-size: 0.85rem;
+                  line-height: 1.7;
+            }
+
+            .secret-section-label {
+                  font-family: 'Geist Mono', ui-monospace, monospace;
+                  font-size: 0.6rem;
+                  letter-spacing: 0.12em;
+                  text-transform: uppercase;
+                  color: #b5aa9e;
+                  padding-bottom: 8px;
+                  border-bottom: 1px solid #e0d8cf;
+                  margin-bottom: 4px;
+            }
+
+            .secret-card {
+                  padding: 18px 16px;
+                  margin: 0 -16px;
+                  border-bottom: 1px solid #ece6de;
+                  cursor: pointer;
+                  transition: background 300ms ease, box-shadow 300ms ease;
+                  position: relative;
+            }
+
+            .secret-card:hover {
+                  background: rgba(42, 37, 32, 0.025);
+            }
+
+            .secret-card-header {
+                  display: flex;
+                  align-items: flex-start;
+                  justify-content: space-between;
+                  gap: 12px;
+            }
+
+            .secret-card-title {
+                  font-size: 0.95rem;
+                  font-weight: 500;
+                  color: #2a2520;
+                  transition: color 200ms;
+                  line-height: 1.4;
+            }
+
+            .secret-card:hover .secret-card-title {
+                  color: #0a0a0a;
+            }
+
+            .secret-card-meta {
+                  font-family: 'Geist Mono', ui-monospace, monospace;
+                  font-size: 0.6rem;
+                  color: #b5aa9e;
+                  margin-top: 3px;
+            }
+
+            .secret-card-note {
+                  font-size: 0.8rem;
+                  font-style: italic;
+                  color: #6b6058;
+                  margin-top: 0;
+                  padding-top: 0;
+                  line-height: 1.65;
+                  max-height: 0;
+                  overflow: hidden;
+                  opacity: 0;
+                  transition: max-height 400ms cubic-bezier(0.22, 1, 0.36, 1), opacity 300ms ease, margin-top 300ms ease, padding-top 300ms ease;
+            }
+
+            .secret-card.open .secret-card-note {
+                  max-height: 150px;
+                  opacity: 1;
+                  margin-top: 10px;
+                  padding-top: 10px;
+                  border-top: 1px solid #f0e9e1;
+            }
+
+            .secret-card-expand {
+                  flex-shrink: 0;
+                  width: 20px;
+                  height: 20px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 0.5rem;
+                  color: #c4b9ae;
+                  border: 1px solid #e0d8cf;
+                  border-radius: 50%;
+                  transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1), color 200ms, border-color 200ms, background 200ms;
+                  margin-top: 2px;
+            }
+
+            .secret-card:hover .secret-card-expand {
+                  color: #8a7e72;
+                  border-color: #c4b9ae;
+            }
+
+            .secret-card.open .secret-card-expand {
+                  transform: rotate(90deg);
+                  color: #6b6058;
+                  border-color: #b5aa9e;
+                  background: rgba(42, 37, 32, 0.04);
+            }
+
+            /* Interest pills on secret page */
+            .secret-pill {
+                  display: inline-block;
+                  padding: 6px 16px;
+                  border: 1px solid #e0d8cf;
+                  font-family: 'Geist Mono', ui-monospace, monospace;
+                  font-size: 0.65rem;
+                  color: #8a7e72;
+                  transition: all 300ms ease;
+                  cursor: default;
+            }
+
+            .secret-pill:hover {
+                  color: #2a2520;
+                  border-color: #2a2520;
+                  background: rgba(42, 37, 32, 0.04);
+                  transform: translateY(-2px);
+            }
+
+            /* Drag hint */
+            #drag-hint {
+                  position: fixed;
+                  bottom: 16px;
+                  right: 16px;
+                  font-family: 'Geist Mono', ui-monospace, monospace;
+                  font-size: 0.55rem;
+                  color: rgba(115, 115, 115, 0.35);
+                  z-index: 15;
+                  pointer-events: none;
+                  letter-spacing: 0.05em;
+                  transition: opacity 300ms;
+            }
+
+            /* Drag edge zone indicator */
+            #drag-edge {
+                  position: fixed;
+                  top: 0;
+                  right: 0;
+                  width: 40px;
+                  height: 100%;
+                  z-index: 12;
+                  cursor: w-resize;
+            }
+
+            #drag-edge::after {
+                  content: '';
+                  position: absolute;
+                  top: 50%;
+                  right: 10px;
+                  width: 3px;
+                  height: 40px;
+                  transform: translateY(-50%);
+                  background: rgba(229, 229, 229, 0.06);
+                  border-radius: 2px;
+                  transition: background 200ms, height 200ms;
+            }
+
+            #drag-edge:hover::after {
+                  background: rgba(229, 229, 229, 0.15);
+                  height: 60px;
+            }
+      </style>
 </head>
 
 <body class="antialiased" style="overflow:hidden; background:#f5f0eb;">
 
-  <!-- Secret page (underneath) -->
-  <div id="secret-page">
-    <div style="max-width:600px; margin:0 auto; padding: 64px 24px 120px; position:relative; z-index:2;">
+      <!-- Secret page (underneath) -->
+      <div id="secret-page">
+            <div style="max-width:600px; margin:0 auto; padding: 64px 24px 120px; position:relative; z-index:2;">
 
-      <button class="secret-back-btn" id="secret-back-btn">
-        &larr; back to portfolio
-      </button>
+                  <button class="secret-back-btn" id="secret-back-btn">
+                        &larr; back to portfolio
+                  </button>
 
-      <div style="margin-top:48px;">
-        <h1 class="secret-heading" style="font-style:italic;">Off the Record</h1>
-        <p class="secret-subtext" style="margin-top:16px;">
-          The quieter side. Things I think about when I'm not thinking about markets or models.<br/>
-          <span style="font-size:0.7rem; color:#b5aa9e; font-family:'Geist Mono',monospace;">Click any card to expand.</span>
-        </p>
-      </div>
+                  <div style="margin-top:48px;">
+                        <h1 class="secret-heading" style="font-style:italic;">Off the Record</h1>
+                        <p class="secret-subtext" style="margin-top:16px;">
+                              The quieter side. Things I think about when I'm not thinking about markets or
+                              models.<br />
+                              <span style="font-size:0.7rem; color:#b5aa9e; font-family:'Geist Mono',monospace;">Click
+                                    any card to expand.</span>
+                        </p>
+                  </div>
 
-      <div style="margin-top:48px; border-top: 1px solid #e0d8cf;"></div>
+                  <div style="margin-top:48px; border-top: 1px solid #e0d8cf;"></div>
 
-      <!-- Currently Reading -->
-      <div style="margin-top:40px;">
-        <div class="secret-section-label">Currently Reading</div>
-        <div class="secret-card" onclick="this.classList.toggle('open')">
-          <div class="secret-card-header">
-            <div>
-              <div class="secret-card-title">Thinking, Fast and Slow</div>
-              <div class="secret-card-meta">Daniel Kahneman &middot; Psychology / Economics</div>
+                  <!-- Currently Reading -->
+                  <div style="margin-top:40px;">
+                        <div class="secret-section-label">Currently Reading</div>
+                        <div class="secret-card" onclick="this.classList.toggle('open')">
+                              <div class="secret-card-header">
+                                    <div>
+                                          <div class="secret-card-title">Thinking, Fast and Slow</div>
+                                          <div class="secret-card-meta">Daniel Kahneman &middot; Psychology / Economics
+                                          </div>
+                                    </div>
+                                    <span class="secret-card-expand">&#9654;</span>
+                              </div>
+                              <div class="secret-card-note">The two-system framework keeps reappearing in everything I
+                                    study. System 1 is why markets overshoot; System 2 is what we pretend we're always
+                                    using.</div>
+                        </div>
+                        <div class="secret-card" onclick="this.classList.toggle('open')">
+                              <div class="secret-card-header">
+                                    <div>
+                                          <div class="secret-card-title">The Black Swan</div>
+                                          <div class="secret-card-meta">Nassim Nicholas Taleb &middot; Probability /
+                                                Philosophy</div>
+                                    </div>
+                                    <span class="secret-card-expand">&#9654;</span>
+                              </div>
+                              <div class="secret-card-note">Re-reading. The antifragility chapters hit differently the
+                                    second time. Taleb's contempt for forecasters is genuinely funny.</div>
+                        </div>
+                        <div class="secret-card" onclick="this.classList.toggle('open')">
+                              <div class="secret-card-header">
+                                    <div>
+                                          <div class="secret-card-title">Godel, Escher, Bach</div>
+                                          <div class="secret-card-meta">Douglas Hofstadter &middot; Logic / Music / Art
+                                          </div>
+                                    </div>
+                                    <span class="secret-card-expand">&#9654;</span>
+                              </div>
+                              <div class="secret-card-note">Slowly working through this one. Strange loops everywhere.
+                                    The fugue chapters are mind-bending.</div>
+                        </div>
+                        <div class="secret-card" onclick="this.classList.toggle('open')">
+                              <div class="secret-card-header">
+                                    <div>
+                                          <div class="secret-card-title">When Genius Failed</div>
+                                          <div class="secret-card-meta">Roger Lowenstein &middot; Finance / History
+                                          </div>
+                                    </div>
+                                    <span class="secret-card-expand">&#9654;</span>
+                              </div>
+                              <div class="secret-card-note">The LTCM story is a masterclass in what happens when
+                                    brilliant people forget about tail risk.</div>
+                        </div>
+                  </div>
+
+                  <!-- Things I Care About -->
+                  <div style="margin-top:40px;">
+                        <div class="secret-section-label">Things I Care About</div>
+                        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">
+                              <span class="secret-pill">Chess</span>
+                              <span class="secret-pill">Golf</span>
+                              <span class="secret-pill">Hiking</span>
+                              <span class="secret-pill">Chinese Cooking</span>
+                              <span class="secret-pill">Jazz</span>
+                              <span class="secret-pill">Typography</span>
+                              <span class="secret-pill">Hand-pulled Noodles</span>
+                              <span class="secret-pill">Long Walks</span>
+                        </div>
+                  </div>
+
+                  <!-- Places -->
+                  <div style="margin-top:40px;">
+                        <div class="secret-section-label">Places That Shaped Me</div>
+                        <div class="secret-card" onclick="this.classList.toggle('open')">
+                              <div class="secret-card-header">
+                                    <div>
+                                          <div class="secret-card-title">Cincinnati, OH</div>
+                                          <div class="secret-card-meta">Home</div>
+                                    </div>
+                                    <span class="secret-card-expand">&#9654;</span>
+                              </div>
+                              <div class="secret-card-note">The river, the hills, the quiet mornings. Where I first
+                                    learned the value of paying attention.</div>
+                        </div>
+                        <div class="secret-card" onclick="this.classList.toggle('open')">
+                              <div class="secret-card-header">
+                                    <div>
+                                          <div class="secret-card-title">Shanghai</div>
+                                          <div class="secret-card-meta">Where I was born</div>
+                                    </div>
+                                    <span class="secret-card-expand">&#9654;</span>
+                              </div>
+                              <div class="secret-card-note">Where I learned to navigate chaos and find beauty in
+                                    density. 24 million people and somehow it still feels intimate in the right
+                                    alleyways.</div>
+                        </div>
+                  </div>
+
+                  <!-- Music -->
+                  <div style="margin-top:40px;">
+                        <div class="secret-section-label">On Repeat</div>
+                        <div class="secret-card" onclick="this.classList.toggle('open')">
+                              <div class="secret-card-header">
+                                    <div>
+                                          <div class="secret-card-title">Clair de Lune &mdash; Debussy</div>
+                                          <div class="secret-card-meta">Classical / Impressionism</div>
+                                    </div>
+                                    <span class="secret-card-expand">&#9654;</span>
+                              </div>
+                              <div class="secret-card-note">The only piece that makes late-night problem sets feel
+                                    romantic.</div>
+                        </div>
+                        <div class="secret-card" onclick="this.classList.toggle('open')">
+                              <div class="secret-card-header">
+                                    <div>
+                                          <div class="secret-card-title">Blue in Green &mdash; Miles Davis</div>
+                                          <div class="secret-card-meta">Jazz / Modal</div>
+                                    </div>
+                                    <span class="secret-card-expand">&#9654;</span>
+                              </div>
+                              <div class="secret-card-note">If I could live inside a song, it'd be this one. Bill Evans
+                                    on the piano just dissolves time.</div>
+                        </div>
+                  </div>
+
+                  <!-- Closing thought -->
+                  <div style="margin-top:56px; border-top: 1px solid #e0d8cf; padding-top: 28px;">
+                        <p class="secret-subtext" style="font-style:italic; font-size:0.95rem; color:#6b6058;">
+                              "The most interesting people are the ones who are interested in everything."
+                        </p>
+                        <p
+                              style="font-family:'Geist Mono',monospace; font-size:0.6rem; color:#b5aa9e; margin-top:10px;">
+                              &mdash; I don't remember who said this
+                        </p>
+                  </div>
+
             </div>
-            <span class="secret-card-expand">&#9654;</span>
-          </div>
-          <div class="secret-card-note">The two-system framework keeps reappearing in everything I study. System 1 is why markets overshoot; System 2 is what we pretend we're always using.</div>
-        </div>
-        <div class="secret-card" onclick="this.classList.toggle('open')">
-          <div class="secret-card-header">
-            <div>
-              <div class="secret-card-title">The Black Swan</div>
-              <div class="secret-card-meta">Nassim Nicholas Taleb &middot; Probability / Philosophy</div>
+      </div><!-- end #secret-page -->
+
+      <!-- Main page (on top, peels away) -->
+      <div id="main-page">
+
+            <!-- Grid background canvas -->
+            <canvas id="grid-canvas" class="fixed inset-0 pointer-events-none" style="z-index:0"
+                  aria-hidden="true"></canvas>
+
+            <!-- Rotating wireframe icosahedron canvas -->
+            <canvas id="shape-canvas" class="fixed inset-0 pointer-events-none" style="z-index:1"
+                  aria-hidden="true"></canvas>
+
+            <!-- Coordinate display -->
+            <div id="coord-display" aria-hidden="true">
+                  <span id="coord-x">x: 0000</span><br />
+                  <span id="coord-y">y: 0000</span>
             </div>
-            <span class="secret-card-expand">&#9654;</span>
-          </div>
-          <div class="secret-card-note">Re-reading. The antifragility chapters hit differently the second time. Taleb's contempt for forecasters is genuinely funny.</div>
-        </div>
-        <div class="secret-card" onclick="this.classList.toggle('open')">
-          <div class="secret-card-header">
-            <div>
-              <div class="secret-card-title">Godel, Escher, Bach</div>
-              <div class="secret-card-meta">Douglas Hofstadter &middot; Logic / Music / Art</div>
-            </div>
-            <span class="secret-card-expand">&#9654;</span>
-          </div>
-          <div class="secret-card-note">Slowly working through this one. Strange loops everywhere. The fugue chapters are mind-bending.</div>
-        </div>
-        <div class="secret-card" onclick="this.classList.toggle('open')">
-          <div class="secret-card-header">
-            <div>
-              <div class="secret-card-title">When Genius Failed</div>
-              <div class="secret-card-meta">Roger Lowenstein &middot; Finance / History</div>
-            </div>
-            <span class="secret-card-expand">&#9654;</span>
-          </div>
-          <div class="secret-card-note">The LTCM story is a masterclass in what happens when brilliant people forget about tail risk.</div>
-        </div>
-      </div>
 
-      <!-- Things I Care About -->
-      <div style="margin-top:40px;">
-        <div class="secret-section-label">Things I Care About</div>
-        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">
-          <span class="secret-pill">Chess</span>
-          <span class="secret-pill">Golf</span>
-          <span class="secret-pill">Hiking</span>
-          <span class="secret-pill">Chinese Cooking</span>
-          <span class="secret-pill">Jazz</span>
-          <span class="secret-pill">Typography</span>
-          <span class="secret-pill">Hand-pulled Noodles</span>
-          <span class="secret-pill">Long Walks</span>
-        </div>
-      </div>
+            <main class="relative z-10 mx-auto flex w-full max-w-[700px] flex-col gap-12 px-6 py-16 sm:py-24">
 
-      <!-- Places -->
-      <div style="margin-top:40px;">
-        <div class="secret-section-label">Places That Shaped Me</div>
-        <div class="secret-card" onclick="this.classList.toggle('open')">
-          <div class="secret-card-header">
-            <div>
-              <div class="secret-card-title">Cincinnati, OH</div>
-              <div class="secret-card-meta">Home</div>
-            </div>
-            <span class="secret-card-expand">&#9654;</span>
-          </div>
-          <div class="secret-card-note">The river, the hills, the quiet mornings. Where I first learned the value of paying attention.</div>
-        </div>
-        <div class="secret-card" onclick="this.classList.toggle('open')">
-          <div class="secret-card-header">
-            <div>
-              <div class="secret-card-title">Shanghai</div>
-              <div class="secret-card-meta">Where I was born</div>
-            </div>
-            <span class="secret-card-expand">&#9654;</span>
-          </div>
-          <div class="secret-card-note">Where I learned to navigate chaos and find beauty in density. 24 million people and somehow it still feels intimate in the right alleyways.</div>
-        </div>
-      </div>
+                  <!-- Header -->
+                  <header class="flex flex-col gap-6">
+                        <div class="flex flex-col gap-2">
+                              <h1 class="font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+                                    Xiurui (Ray) Chen
+                              </h1>
+                              <p class="text-sm tracking-widest uppercase text-muted-foreground">
+                                    Cincinnati Country Day School '28
+                              </p>
+                        </div>
+                        <nav aria-label="External links">
+                              <ul class="flex flex-wrap gap-x-6 gap-y-2">
+                                    <li>
+                                          <a href="https://linkedin.com/in/xiuruichen" target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+                                                LinkedIn
+                                                <svg class="arrow-icon w-3 h-3" xmlns="http://www.w3.org/2000/svg"
+                                                      viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                      <path d="M7 7h10v10" />
+                                                      <path d="M7 17 17 7" />
+                                                </svg>
+                                          </a>
+                                    </li>
+                                    <li>
+                                          <a href="https://github.com/xiuruichen" target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+                                                GitHub
+                                                <svg class="arrow-icon w-3 h-3" xmlns="http://www.w3.org/2000/svg"
+                                                      viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                      <path d="M7 7h10v10" />
+                                                      <path d="M7 17 17 7" />
+                                                </svg>
+                                          </a>
+                                    </li>
+                                    <li class="resume-wrap">
+                                          <a href="/resume.pdf" target="_blank" rel="noopener noreferrer"
+                                                class="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+                                                Resume
+                                                <svg class="arrow-icon w-3 h-3" xmlns="http://www.w3.org/2000/svg"
+                                                      viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                      <path d="M7 7h10v10" />
+                                                      <path d="M7 17 17 7" />
+                                                </svg>
+                                          </a>
+                                          <span class="resume-tooltip">coming soon in LaTeX</span>
+                                    </li>
+                                    <li>
+                                          <a href="mailto:chenxiurui.2028@gmail.com"
+                                                class="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+                                                Email
+                                                <svg class="arrow-icon w-3 h-3" xmlns="http://www.w3.org/2000/svg"
+                                                      viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                      <path d="M7 7h10v10" />
+                                                      <path d="M7 17 17 7" />
+                                                </svg>
+                                          </a>
+                                    </li>
+                              </ul>
+                        </nav>
+                  </header>
 
-      <!-- Music -->
-      <div style="margin-top:40px;">
-        <div class="secret-section-label">On Repeat</div>
-        <div class="secret-card" onclick="this.classList.toggle('open')">
-          <div class="secret-card-header">
-            <div>
-              <div class="secret-card-title">Clair de Lune &mdash; Debussy</div>
-              <div class="secret-card-meta">Classical / Impressionism</div>
-            </div>
-            <span class="secret-card-expand">&#9654;</span>
-          </div>
-          <div class="secret-card-note">The only piece that makes late-night problem sets feel romantic.</div>
-        </div>
-        <div class="secret-card" onclick="this.classList.toggle('open')">
-          <div class="secret-card-header">
-            <div>
-              <div class="secret-card-title">Blue in Green &mdash; Miles Davis</div>
-              <div class="secret-card-meta">Jazz / Modal</div>
-            </div>
-            <span class="secret-card-expand">&#9654;</span>
-          </div>
-          <div class="secret-card-note">If I could live inside a song, it'd be this one. Bill Evans on the piano just dissolves time.</div>
-        </div>
-      </div>
+                  <!-- Divider -->
+                  <div class="border-t border-border"></div>
 
-      <!-- Closing thought -->
-      <div style="margin-top:56px; border-top: 1px solid #e0d8cf; padding-top: 28px;">
-        <p class="secret-subtext" style="font-style:italic; font-size:0.95rem; color:#6b6058;">
-          "The most interesting people are the ones who are interested in everything."
-        </p>
-        <p style="font-family:'Geist Mono',monospace; font-size:0.6rem; color:#b5aa9e; margin-top:10px;">
-          &mdash; I don't remember who said this
-        </p>
-      </div>
+                  <!-- Introduction -->
+                  <section aria-label="Introduction">
+                        <p class="text-sm leading-relaxed text-foreground/80">
+                              [about me coming soon]
+                        </p>
+                  </section>
 
-    </div>
-  </div><!-- end #secret-page -->
+                  <!-- Research Interests -->
+                  <section aria-labelledby="research-interests-heading">
+                        <h2 id="research-interests-heading"
+                              class="font-serif text-lg font-semibold tracking-tight text-foreground">
+                              Research Interests<span class="sidenote">1<span class="sidenote-tooltip">subject to change
+                                          :)</span></span>
+                        </h2>
+                        <div class="mt-4 flex flex-wrap gap-2" id="interests-container"></div>
+                  </section>
 
-  <!-- Main page (on top, peels away) -->
-  <div id="main-page">
+                  <!-- Divider -->
+                  <div class="border-t border-border"></div>
 
-  <!-- Grid background canvas -->
-  <canvas id="grid-canvas" class="fixed inset-0 pointer-events-none" style="z-index:0" aria-hidden="true"></canvas>
+                  <!-- Selected Work -->
+                  <section aria-labelledby="selected-work-heading">
+                        <div class="flex items-baseline gap-3">
+                              <h2 id="selected-work-heading"
+                                    class="font-serif text-lg font-semibold tracking-tight text-foreground">
+                                    Selected Work
+                              </h2>
+                              <span class="text-xs italic text-muted-foreground">in fieri</span>
+                        </div>
+                        <div class="mt-4 flex flex-col" id="projects-container"></div>
+                  </section>
 
-  <!-- Rotating wireframe icosahedron canvas -->
-  <canvas id="shape-canvas" class="fixed inset-0 pointer-events-none" style="z-index:1" aria-hidden="true"></canvas>
+                  <!-- Divider -->
+                  <div class="border-t border-border"></div>
 
-  <!-- Coordinate display -->
-  <div id="coord-display" aria-hidden="true">
-    <span id="coord-x">x: 0000</span><br />
-    <span id="coord-y">y: 0000</span>
-  </div>
+                  <!-- Digital Garden -->
+                  <section aria-labelledby="digital-garden-heading">
+                        <div class="flex items-baseline gap-3">
+                              <h2 id="digital-garden-heading"
+                                    class="font-serif text-lg font-semibold tracking-tight text-foreground">
+                                    Digital Garden
+                              </h2>
+                              <span class="text-xs italic text-muted-foreground">in fieri</span>
+                        </div>
+                        <div class="mt-4 flex flex-col" id="garden-container"></div>
+                  </section>
 
-  <main class="relative z-10 mx-auto flex w-full max-w-[700px] flex-col gap-12 px-6 py-16 sm:py-24">
+                  <!-- Divider -->
+                  <div class="border-t border-border"></div>
 
-    <!-- Header -->
-    <header class="flex flex-col gap-6">
-      <div class="flex flex-col gap-2">
-        <h1 class="font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-          Xiurui (Ray) Chen
-        </h1>
-        <p class="text-sm tracking-widest uppercase text-muted-foreground">
-          Cincinnati Country Day School '28
-        </p>
-      </div>
-      <nav aria-label="External links">
-        <ul class="flex flex-wrap gap-x-6 gap-y-2">
-          <li>
-            <a href="https://linkedin.com/in/xiuruichen" target="_blank" rel="noopener noreferrer"
-              class="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-              LinkedIn
-              <svg class="arrow-icon w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M7 7h10v10" />
-                <path d="M7 17 17 7" />
-              </svg>
-            </a>
-          </li>
-          <li>
-            <a href="https://github.com/xiuruichen" target="_blank" rel="noopener noreferrer"
-              class="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-              GitHub
-              <svg class="arrow-icon w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M7 7h10v10" />
-                <path d="M7 17 17 7" />
-              </svg>
-            </a>
-          </li>
-          <li class="resume-wrap">
-            <a href="/resume.pdf" target="_blank" rel="noopener noreferrer"
-              class="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-              Resume
-              <svg class="arrow-icon w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M7 7h10v10" />
-                <path d="M7 17 17 7" />
-              </svg>
-            </a>
-            <span class="resume-tooltip">coming soon in LaTeX</span>
-          </li>
-          <li>
-            <a href="mailto:chenxiurui.2028@gmail.com"
-              class="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-              Email
-              <svg class="arrow-icon w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M7 7h10v10" />
-                <path d="M7 17 17 7" />
-              </svg>
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </header>
+                  <!-- Footer -->
+                  <footer class="pt-0">
+                        <p class="text-xs text-muted-foreground"><span class="status-dot"></span>Last updated February
+                              2026.</p>
+                  </footer>
 
-    <!-- Divider -->
-    <div class="border-t border-border"></div>
+            </main>
+      </div><!-- end #main-page -->
 
-    <!-- Introduction -->
-    <section aria-label="Introduction">
-      <p class="text-sm leading-relaxed text-foreground/80">
-        [about me coming soon]
-      </p>
-    </section>
+      <!-- Drag edge zone -->
+      <div id="drag-edge"></div>
 
-    <!-- Research Interests -->
-    <section aria-labelledby="research-interests-heading">
-      <h2 id="research-interests-heading" class="font-serif text-lg font-semibold tracking-tight text-foreground">
-        Research Interests<span class="sidenote">1<span class="sidenote-tooltip">subject to change :)</span></span>
-      </h2>
-      <div class="mt-4 flex flex-wrap gap-2" id="interests-container"></div>
-    </section>
+      <!-- Drag hint -->
+      <div id="drag-hint">drag &larr; from edge</div>
 
-    <!-- Divider -->
-    <div class="border-t border-border"></div>
+      <script>
+            // ==========================================
+            // Console Easter Egg
+            // ==========================================
+            console.log(
+                  "%cLooking under the hood? Let's talk :) [chenxiurui.2028@gmail.com]",
+                  "font-family: 'Courier New', monospace; font-size: 13px; color: #737373; padding: 8px 0;"
+            );
 
-    <!-- Selected Work -->
-    <section aria-labelledby="selected-work-heading">
-      <div class="flex items-baseline gap-3">
-        <h2 id="selected-work-heading" class="font-serif text-lg font-semibold tracking-tight text-foreground">
-          Selected Work
-        </h2>
-        <span class="text-xs italic text-muted-foreground">in fieri</span>
-      </div>
-      <div class="mt-4 flex flex-col" id="projects-container"></div>
-    </section>
+            // ==========================================
+            // Data
+            // ==========================================
+            const interests = [
+                  "Behavioral Economics",
+                  "Rationality",
+                  "Decision Theory",
+                  "Neuroeconomics",
+                  "Prediction Markets",
+                  "Quantitative Finance",
+                  "Behavioral Game Theory",
+            ];
 
-    <!-- Divider -->
-    <div class="border-t border-border"></div>
+            const projects = [];
+            const gardenEntries = [];
 
-    <!-- Digital Garden -->
-    <section aria-labelledby="digital-garden-heading">
-      <div class="flex items-baseline gap-3">
-        <h2 id="digital-garden-heading" class="font-serif text-lg font-semibold tracking-tight text-foreground">
-          Digital Garden
-        </h2>
-        <span class="text-xs italic text-muted-foreground">in fieri</span>
-      </div>
-      <div class="mt-4 flex flex-col" id="garden-container"></div>
-    </section>
+            // ==========================================
+            // Render Interests (Badges)
+            // ==========================================
+            const interestsContainer = document.getElementById("interests-container");
+            interests.forEach(function (interest) {
+                  const badge = document.createElement("span");
+                  badge.className = "interest-badge inline-flex items-center border border-border px-2.5 py-0.5 text-xs text-muted-foreground";
+                  badge.textContent = interest;
+                  interestsContainer.appendChild(badge);
+            });
 
-    <!-- Divider -->
-    <div class="border-t border-border"></div>
+            // ==========================================
+            // Render Projects
+            // ==========================================
+            const arrowSvg = '<svg class="arrow-icon w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>';
 
-    <!-- Footer -->
-    <footer class="pt-0">
-      <p class="text-xs text-muted-foreground"><span class="status-dot"></span>Last updated February 2026.</p>
-    </footer>
+            const projectsContainer = document.getElementById("projects-container");
+            projects.forEach(function (project, index) {
+                  const article = document.createElement("article");
+                  const borderClass = index !== projects.length - 1 ? "border-b border-border" : "";
+                  article.className = "flex flex-col gap-2 py-5 " + borderClass;
+                  article.innerHTML =
+                        '<h3 class="text-sm font-semibold text-foreground">' + project.title + '</h3>' +
+                        '<p class="text-sm leading-relaxed text-foreground/70">' + project.description + '</p>' +
+                        '<div class="flex items-center justify-between gap-4">' +
+                        '<span class="text-xs text-muted-foreground">' + project.technologies.join(" / ") + '</span>' +
+                        '<a href="' + project.sourceUrl + '" target="_blank" rel="noopener noreferrer" class="flex shrink-0 items-center gap-1 text-xs text-muted-foreground hover:text-foreground">Source ' + arrowSvg + '</a>' +
+                        '</div>';
+                  projectsContainer.appendChild(article);
+            });
 
-  </main>
-  </div><!-- end #main-page -->
+            // ==========================================
+            // Render Digital Garden
+            // ==========================================
+            function formatDate(dateStr) {
+                  var date = new Date(dateStr + "T00:00:00");
+                  return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+            }
 
-  <!-- Drag edge zone -->
-  <div id="drag-edge"></div>
+            const gardenContainer = document.getElementById("garden-container");
+            gardenEntries.forEach(function (entry, index) {
+                  var div = document.createElement("div");
+                  var borderClass = index !== gardenEntries.length - 1 ? "border-b border-border" : "";
+                  div.className = "flex flex-col gap-1 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6 " + borderClass;
+                  div.innerHTML =
+                        '<p class="text-sm leading-relaxed text-foreground/80">' + entry.title + '</p>' +
+                        '<time datetime="' + entry.date + '" class="shrink-0 text-xs text-muted-foreground">' + formatDate(entry.date) + '</time>';
+                  gardenContainer.appendChild(div);
+            });
 
-  <!-- Drag hint -->
-  <div id="drag-hint">drag &larr; from edge</div>
+            // ==========================================
+            // Rotating Wireframe Icosahedron (Canvas)
+            // ==========================================
+            (function () {
+                  // Golden ratio
+                  var phi = (1 + Math.sqrt(5)) / 2;
 
-  <script>
-    // ==========================================
-    // Console Easter Egg
-    // ==========================================
-    console.log(
-      "%cLooking under the hood? Let's talk :) [chenxiurui.2028@gmail.com]",
-      "font-family: 'Courier New', monospace; font-size: 13px; color: #737373; padding: 8px 0;"
-    );
+                  // 12 vertices of a regular icosahedron
+                  var VERTICES = [
+                        [0, 1, phi],
+                        [0, -1, phi],
+                        [0, 1, -phi],
+                        [0, -1, -phi],
+                        [1, phi, 0],
+                        [-1, phi, 0],
+                        [1, -phi, 0],
+                        [-1, -phi, 0],
+                        [phi, 0, 1],
+                        [-phi, 0, 1],
+                        [phi, 0, -1],
+                        [-phi, 0, -1],
+                  ];
 
-    // ==========================================
-    // Data
-    // ==========================================
-    const interests = [
-      "Behavioral Economics",
-      "Rationality",
-      "Decision Theory",
-      "Neuroeconomics",
-      "Prediction Markets",
-      "Quantitative Finance",
-      "Behavioral Game Theory",
-    ];
+                  // Normalize vertices to unit sphere for uniform size
+                  var len = Math.sqrt(1 + phi * phi);
+                  VERTICES = VERTICES.map(function (v) {
+                        return [v[0] / len, v[1] / len, v[2] / len];
+                  });
 
-    const projects = [];
-    const gardenEntries = [];
+                  // 30 edges of a regular icosahedron
+                  var EDGES = [
+                        // Top fan (around vertex 0)
+                        [0, 1], [0, 4], [0, 5], [0, 8], [0, 9],
+                        // Upper ring
+                        [1, 8], [8, 4], [4, 5], [5, 9], [9, 1],
+                        // Middle band
+                        [1, 6], [8, 6], [8, 10], [4, 10], [4, 2],
+                        [5, 2], [5, 11], [9, 11], [9, 7], [1, 7],
+                        // Lower ring
+                        [6, 10], [10, 2], [2, 11], [11, 7], [7, 6],
+                        // Bottom fan (around vertex 3)
+                        [3, 6], [3, 10], [3, 2], [3, 11], [3, 7],
+                  ];
 
-    // ==========================================
-    // Render Interests (Badges)
-    // ==========================================
-    const interestsContainer = document.getElementById("interests-container");
-    interests.forEach(function (interest) {
-      const badge = document.createElement("span");
-      badge.className = "interest-badge inline-flex items-center border border-border px-2.5 py-0.5 text-xs text-muted-foreground";
-      badge.textContent = interest;
-      interestsContainer.appendChild(badge);
-    });
+                  function rotateX(p, a) {
+                        var c = Math.cos(a), s = Math.sin(a);
+                        return [p[0], p[1] * c - p[2] * s, p[1] * s + p[2] * c];
+                  }
+                  function rotateY(p, a) {
+                        var c = Math.cos(a), s = Math.sin(a);
+                        return [p[0] * c + p[2] * s, p[1], -p[0] * s + p[2] * c];
+                  }
+                  function project(p, cx, cy, scale, fov) {
+                        var z = fov / (fov + p[2]);
+                        return [p[0] * scale * z + cx, p[1] * scale * z + cy];
+                  }
 
-    // ==========================================
-    // Render Projects
-    // ==========================================
-    const arrowSvg = '<svg class="arrow-icon w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>';
+                  var canvas = document.getElementById("shape-canvas");
+                  var ctx = canvas.getContext("2d");
+                  var rotation = { x: 0.4, y: -0.5 };
+                  var mouse = { x: 0, y: 0 };
+                  var lastMoveTime = 0;
+                  var wasIdle = true;
+                  var baseX = 0;
+                  var baseY = 0;
 
-    const projectsContainer = document.getElementById("projects-container");
-    projects.forEach(function (project, index) {
-      const article = document.createElement("article");
-      const borderClass = index !== projects.length - 1 ? "border-b border-border" : "";
-      article.className = "flex flex-col gap-2 py-5 " + borderClass;
-      article.innerHTML =
-        '<h3 class="text-sm font-semibold text-foreground">' + project.title + '</h3>' +
-        '<p class="text-sm leading-relaxed text-foreground/70">' + project.description + '</p>' +
-        '<div class="flex items-center justify-between gap-4">' +
-        '<span class="text-xs text-muted-foreground">' + project.technologies.join(" / ") + '</span>' +
-        '<a href="' + project.sourceUrl + '" target="_blank" rel="noopener noreferrer" class="flex shrink-0 items-center gap-1 text-xs text-muted-foreground hover:text-foreground">Source ' + arrowSvg + '</a>' +
-        '</div>';
-      projectsContainer.appendChild(article);
-    });
+                  function resize() {
+                        var dpr = window.devicePixelRatio || 1;
+                        canvas.width = window.innerWidth * dpr;
+                        canvas.height = window.innerHeight * dpr;
+                        canvas.style.width = window.innerWidth + "px";
+                        canvas.style.height = window.innerHeight + "px";
+                        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                  }
+                  resize();
+                  window.addEventListener("resize", resize);
 
-    // ==========================================
-    // Render Digital Garden
-    // ==========================================
-    function formatDate(dateStr) {
-      var date = new Date(dateStr + "T00:00:00");
-      return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
-    }
+                  window.addEventListener("mousemove", function (e) {
+                        mouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
+                        mouse.y = (e.clientY / window.innerHeight - 0.5) * 2;
+                        lastMoveTime = Date.now();
+                  });
 
-    const gardenContainer = document.getElementById("garden-container");
-    gardenEntries.forEach(function (entry, index) {
-      var div = document.createElement("div");
-      var borderClass = index !== gardenEntries.length - 1 ? "border-b border-border" : "";
-      div.className = "flex flex-col gap-1 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6 " + borderClass;
-      div.innerHTML =
-        '<p class="text-sm leading-relaxed text-foreground/80">' + entry.title + '</p>' +
-        '<time datetime="' + entry.date + '" class="shrink-0 text-xs text-muted-foreground">' + formatDate(entry.date) + '</time>';
-      gardenContainer.appendChild(div);
-    });
+                  var prev = performance.now();
 
-    // ==========================================
-    // Rotating Wireframe Icosahedron (Canvas)
-    // ==========================================
-    (function () {
-      // Golden ratio
-      var phi = (1 + Math.sqrt(5)) / 2;
+                  function animate(now) {
+                        var dt = Math.min((now - prev) / 1000, 0.1);
+                        prev = now;
 
-      // 12 vertices of a regular icosahedron
-      var VERTICES = [
-        [0, 1, phi],
-        [0, -1, phi],
-        [0, 1, -phi],
-        [0, -1, -phi],
-        [1, phi, 0],
-        [-1, phi, 0],
-        [1, -phi, 0],
-        [-1, -phi, 0],
-        [phi, 0, 1],
-        [-phi, 0, 1],
-        [phi, 0, -1],
-        [-phi, 0, -1],
-      ];
+                        var idle = Date.now() - lastMoveTime > 200;
 
-      // Normalize vertices to unit sphere for uniform size
-      var len = Math.sqrt(1 + phi * phi);
-      VERTICES = VERTICES.map(function (v) {
-        return [v[0] / len, v[1] / len, v[2] / len];
-      });
+                        if (idle) {
+                              rotation.y += dt * 0.3;
+                              rotation.x += dt * 0.15;
+                              wasIdle = true;
+                        } else {
+                              // When resuming from idle, re-anchor the base to current rotation
+                              // so the mouse target is relative to where we are now, not absolute
+                              if (wasIdle) {
+                                    baseX = rotation.x;
+                                    baseY = rotation.y;
+                                    wasIdle = false;
+                              }
 
-      // 30 edges of a regular icosahedron
-      var EDGES = [
-        // Top fan (around vertex 0)
-        [0, 1], [0, 4], [0, 5], [0, 8], [0, 9],
-        // Upper ring
-        [1, 8], [8, 4], [4, 5], [5, 9], [9, 1],
-        // Middle band
-        [1, 6], [8, 6], [8, 10], [4, 10], [4, 2],
-        [5, 2], [5, 11], [9, 11], [9, 7], [1, 7],
-        // Lower ring
-        [6, 10], [10, 2], [2, 11], [11, 7], [7, 6],
-        // Bottom fan (around vertex 3)
-        [3, 6], [3, 10], [3, 2], [3, 11], [3, 7],
-      ];
+                              var targetX = baseX + mouse.y * -1.2;
+                              var targetY = baseY + mouse.x * 1.2;
+                              rotation.x += (targetX - rotation.x) * dt * 3;
+                              rotation.y += (targetY - rotation.y) * dt * 3;
+                        }
 
-      function rotateX(p, a) {
-        var c = Math.cos(a), s = Math.sin(a);
-        return [p[0], p[1] * c - p[2] * s, p[1] * s + p[2] * c];
-      }
-      function rotateY(p, a) {
-        var c = Math.cos(a), s = Math.sin(a);
-        return [p[0] * c + p[2] * s, p[1], -p[0] * s + p[2] * c];
-      }
-      function project(p, cx, cy, scale, fov) {
-        var z = fov / (fov + p[2]);
-        return [p[0] * scale * z + cx, p[1] * scale * z + cy];
-      }
+                        var w = window.innerWidth;
+                        var h = window.innerHeight;
+                        var cx = w / 2;
+                        var cy = h / 2;
+                        var scale = Math.min(w, h) * 0.18;
+                        var fov = 4;
 
-      var canvas = document.getElementById("shape-canvas");
-      var ctx = canvas.getContext("2d");
-      var rotation = { x: 0.4, y: -0.5 };
-      var mouse = { x: 0, y: 0 };
-      var lastMoveTime = 0;
-      var wasIdle = true;
-      var baseX = 0;
-      var baseY = 0;
+                        ctx.clearRect(0, 0, w, h);
 
-      function resize() {
-        var dpr = window.devicePixelRatio || 1;
-        canvas.width = window.innerWidth * dpr;
-        canvas.height = window.innerHeight * dpr;
-        canvas.style.width = window.innerWidth + "px";
-        canvas.style.height = window.innerHeight + "px";
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-      resize();
-      window.addEventListener("resize", resize);
+                        var projected = VERTICES.map(function (v) {
+                              var p = rotateX(v, rotation.x);
+                              p = rotateY(p, rotation.y);
+                              return project(p, cx, cy, scale, fov);
+                        });
 
-      window.addEventListener("mousemove", function (e) {
-        mouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
-        mouse.y = (e.clientY / window.innerHeight - 0.5) * 2;
-        lastMoveTime = Date.now();
-      });
+                        ctx.strokeStyle = "rgba(229, 229, 229, 0.10)";
+                        ctx.lineWidth = 0.8;
+                        ctx.beginPath();
+                        for (var i = 0; i < EDGES.length; i++) {
+                              var a = EDGES[i][0], b = EDGES[i][1];
+                              ctx.moveTo(projected[a][0], projected[a][1]);
+                              ctx.lineTo(projected[b][0], projected[b][1]);
+                        }
+                        ctx.stroke();
 
-      var prev = performance.now();
+                        requestAnimationFrame(animate);
+                  }
 
-      function animate(now) {
-        var dt = Math.min((now - prev) / 1000, 0.1);
-        prev = now;
+                  requestAnimationFrame(animate);
+            })();
 
-        var idle = Date.now() - lastMoveTime > 200;
+            // ==========================================
+            // Grid Background (subtle reaction on peel only)
+            // ==========================================
+            (function () {
+                  var gridCanvas = document.getElementById("grid-canvas");
+                  var gCtx = gridCanvas.getContext("2d");
+                  var BASE_SPACING = 60;
+                  var currentSpacing = BASE_SPACING;
+                  var targetSpacing = BASE_SPACING;
+                  var gridAnimating = false;
 
-        if (idle) {
-          rotation.y += dt * 0.3;
-          rotation.x += dt * 0.15;
-          wasIdle = true;
-        } else {
-          // When resuming from idle, re-anchor the base to current rotation
-          // so the mouse target is relative to where we are now, not absolute
-          if (wasIdle) {
-            baseX = rotation.x;
-            baseY = rotation.y;
-            wasIdle = false;
-          }
+                  function resizeGrid() {
+                        var dpr = window.devicePixelRatio || 1;
+                        gridCanvas.width = window.innerWidth * dpr;
+                        gridCanvas.height = window.innerHeight * dpr;
+                        gridCanvas.style.width = window.innerWidth + "px";
+                        gridCanvas.style.height = window.innerHeight + "px";
+                        gCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                        drawGrid(currentSpacing);
+                  }
 
-          var targetX = baseX + mouse.y * -1.2;
-          var targetY = baseY + mouse.x * 1.2;
-          rotation.x += (targetX - rotation.x) * dt * 3;
-          rotation.y += (targetY - rotation.y) * dt * 3;
-        }
-
-        var w = window.innerWidth;
-        var h = window.innerHeight;
-        var cx = w / 2;
-        var cy = h / 2;
-        var scale = Math.min(w, h) * 0.18;
-        var fov = 4;
-
-        ctx.clearRect(0, 0, w, h);
-
-        var projected = VERTICES.map(function (v) {
-          var p = rotateX(v, rotation.x);
-          p = rotateY(p, rotation.y);
-          return project(p, cx, cy, scale, fov);
-        });
-
-        ctx.strokeStyle = "rgba(229, 229, 229, 0.10)";
-        ctx.lineWidth = 0.8;
-        ctx.beginPath();
-        for (var i = 0; i < EDGES.length; i++) {
-          var a = EDGES[i][0], b = EDGES[i][1];
-          ctx.moveTo(projected[a][0], projected[a][1]);
-          ctx.lineTo(projected[b][0], projected[b][1]);
-        }
-        ctx.stroke();
-
-        requestAnimationFrame(animate);
-      }
-
-      requestAnimationFrame(animate);
-    })();
-
-    // ==========================================
-    // Grid Background (subtle reaction on peel only)
-    // ==========================================
-    (function () {
-      var gridCanvas = document.getElementById("grid-canvas");
-      var gCtx = gridCanvas.getContext("2d");
-      var BASE_SPACING = 60;
-      var currentSpacing = BASE_SPACING;
-      var targetSpacing = BASE_SPACING;
-      var gridAnimating = false;
-
-      function resizeGrid() {
-        var dpr = window.devicePixelRatio || 1;
-        gridCanvas.width = window.innerWidth * dpr;
-        gridCanvas.height = window.innerHeight * dpr;
-        gridCanvas.style.width = window.innerWidth + "px";
-        gridCanvas.style.height = window.innerHeight + "px";
-        gCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        drawGrid(currentSpacing);
-      }
-
-      function drawGrid(spacing) {
-        var w = window.innerWidth;
-        var h = window.innerHeight;
-        gCtx.clearRect(0, 0, w, h);
-        gCtx.strokeStyle = "rgba(229, 229, 229, 0.08)";
-        gCtx.lineWidth = 0.5;
-        gCtx.beginPath();
-        for (var x = 0; x <= w; x += spacing) {
-          gCtx.moveTo(x, 0);
-          gCtx.lineTo(x, h);
-        }
-        for (var y = 0; y <= h; y += spacing) {
-          gCtx.moveTo(0, y);
-          gCtx.lineTo(w, y);
-        }
-        gCtx.stroke();
-      }
+                  function drawGrid(spacing) {
+                        var w = window.innerWidth;
+                        var h = window.innerHeight;
+                        gCtx.clearRect(0, 0, w, h);
+                        gCtx.strokeStyle = "rgba(229, 229, 229, 0.08)";
+                        gCtx.lineWidth = 0.5;
+                        gCtx.beginPath();
+                        for (var x = 0; x <= w; x += spacing) {
+                              gCtx.moveTo(x, 0);
+                              gCtx.lineTo(x, h);
+                        }
+                        for (var y = 0; y <= h; y += spacing) {
+                              gCtx.moveTo(0, y);
+                              gCtx.lineTo(w, y);
+                        }
+                        gCtx.stroke();
+                  }
 
       function animateGrid() {
         if (!gridAnimating) return;
         var diff = targetSpacing - currentSpacing;
-        if (Math.abs(diff) < 0.15) {
+        if (Math.abs(diff) < 0.01) {
           currentSpacing = targetSpacing;
           drawGrid(currentSpacing);
           gridAnimating = false;
           return;
         }
-        currentSpacing += diff * 0.035;
+        currentSpacing += diff * 0.025;
         drawGrid(currentSpacing);
         requestAnimationFrame(animateGrid);
       }
 
-      function setTarget(s) {
-        targetSpacing = s;
-        if (!gridAnimating) { gridAnimating = true; animateGrid(); }
-      }
+                  function setTarget(s) {
+                        targetSpacing = s;
+                        if (!gridAnimating) { gridAnimating = true; animateGrid(); }
+                  }
 
-      // Zoom in slightly when cursor near right edge (opposite of close)
-      var edgeActive = false;
-      var peeled = false;
-      window.addEventListener("mousemove", function (e) {
-        if (peeled) return;
-        var distFromRight = window.innerWidth - e.clientX;
-        if (distFromRight < 80) {
-          var t = 1 - (distFromRight / 80); // 0..1
-          setTarget(BASE_SPACING - t * 6); // tighten by up to 6px
-          edgeActive = true;
-        } else if (edgeActive) {
-          setTarget(BASE_SPACING);
-          edgeActive = false;
-        }
-      });
+                  // Zoom in slightly when cursor near right edge (opposite of close)
+                  var edgeActive = false;
+                  var peeled = false;
+                  window.addEventListener("mousemove", function (e) {
+                        if (peeled) return;
+                        var distFromRight = window.innerWidth - e.clientX;
+                        if (distFromRight < 80) {
+                              var t = 1 - (distFromRight / 80); // 0..1
+                              setTarget(BASE_SPACING - t * 6); // tighten by up to 6px
+                              edgeActive = true;
+                        } else if (edgeActive) {
+                              setTarget(BASE_SPACING);
+                              edgeActive = false;
+                        }
+                  });
 
-      // On peel open: lock the tightened grid
-      window._gridContract = function () {
-        peeled = true;
-        setTarget(54);
-      };
-      // On close: simple zoom back out to base
-      window._gridReset = function () {
-        peeled = false;
-        edgeActive = false;
-        setTarget(BASE_SPACING);
-      };
+                  // On peel open: lock the tightened grid
+                  window._gridContract = function () {
+                        peeled = true;
+                        setTarget(54);
+                  };
+                  // On close: simple zoom back out to base
+                  window._gridReset = function () {
+                        peeled = false;
+                        edgeActive = false;
+                        setTarget(BASE_SPACING);
+                  };
 
-      resizeGrid();
-      window.addEventListener("resize", resizeGrid);
-    })();
+                  resizeGrid();
+                  window.addEventListener("resize", resizeGrid);
+            })();
 
-    // ==========================================
-    // Coordinate Display
-    // ==========================================
-    (function () {
-      var coordX = document.getElementById("coord-x");
-      var coordY = document.getElementById("coord-y");
+            // ==========================================
+            // Coordinate Display
+            // ==========================================
+            (function () {
+                  var coordX = document.getElementById("coord-x");
+                  var coordY = document.getElementById("coord-y");
 
-      function pad(n) {
-        return String(Math.round(n)).padStart(4, '0');
-      }
+                  function pad(n) {
+                        return String(Math.round(n)).padStart(4, '0');
+                  }
 
-      window.addEventListener("mousemove", function (e) {
-        coordX.textContent = "x: " + pad(e.clientX);
-        coordY.textContent = "y: " + pad(e.clientY);
-      });
-    })();
+                  window.addEventListener("mousemove", function (e) {
+                        coordX.textContent = "x: " + pad(e.clientX);
+                        coordY.textContent = "y: " + pad(e.clientY);
+                  });
+            })();
 
-    // ==========================================
-    // Secret Page: Peel from Right Edge
-    // ==========================================
-    (function () {
-      var mainPage = document.getElementById('main-page');
-      var dragEdge = document.getElementById('drag-edge');
-      var hint = document.getElementById('drag-hint');
-      var backBtn = document.getElementById('secret-back-btn');
-      var secretPage = document.getElementById('secret-page');
-      var isOpen = false;
-      var dragging = false;
-      var startX = 0;
-      var THRESHOLD = 140;
+            // ==========================================
+            // Secret Page: Peel from Right Edge
+            // ==========================================
+            (function () {
+                  var mainPage = document.getElementById('main-page');
+                  var dragEdge = document.getElementById('drag-edge');
+                  var hint = document.getElementById('drag-hint');
+                  var backBtn = document.getElementById('secret-back-btn');
+                  var secretPage = document.getElementById('secret-page');
+                  var isOpen = false;
+                  var dragging = false;
+                  var startX = 0;
+                  var THRESHOLD = 140;
 
-      // Open: drag left from right edge
-      dragEdge.addEventListener('mousedown', function (e) {
-        if (isOpen) return;
-        dragging = true;
-        startX = e.clientX;
-        e.preventDefault();
-      });
+                  // Open: drag left from right edge
+                  dragEdge.addEventListener('mousedown', function (e) {
+                        if (isOpen) return;
+                        dragging = true;
+                        startX = e.clientX;
+                        e.preventDefault();
+                  });
 
-      document.addEventListener('mousemove', function (e) {
-        if (!dragging || isOpen) return;
-        var dx = startX - e.clientX; // positive = dragging left
-        if (dx > THRESHOLD) {
-          mainPage.classList.add('peeled');
-          isOpen = true;
-          dragging = false;
-          if (hint) hint.style.opacity = '0';
-          dragEdge.style.display = 'none';
-          secretPage.style.overflow = 'auto';
-          // Grid contracts subtly as the page peels away
-          if (window._gridContract) window._gridContract();
-        }
-      });
+                  document.addEventListener('mousemove', function (e) {
+                        if (!dragging || isOpen) return;
+                        var dx = startX - e.clientX; // positive = dragging left
+                        if (dx > THRESHOLD) {
+                              mainPage.classList.add('peeled');
+                              isOpen = true;
+                              dragging = false;
+                              if (hint) hint.style.opacity = '0';
+                              dragEdge.style.display = 'none';
+                              secretPage.style.overflow = 'auto';
+                              // Grid contracts subtly as the page peels away
+                              if (window._gridContract) window._gridContract();
+                        }
+                  });
 
-      document.addEventListener('mouseup', function () {
-        dragging = false;
-      });
+                  document.addEventListener('mouseup', function () {
+                        dragging = false;
+                  });
 
-      // Back button
-      backBtn.addEventListener('click', function () {
-        mainPage.classList.remove('peeled');
-        isOpen = false;
-        dragEdge.style.display = '';
-        // Grid expands back to normal as the page returns
-        if (window._gridReset) window._gridReset();
-        setTimeout(function () {
-          if (hint) hint.style.opacity = '1';
-        }, 700);
-      });
+                  // Back button
+                  backBtn.addEventListener('click', function () {
+                        mainPage.classList.remove('peeled');
+                        isOpen = false;
+                        dragEdge.style.display = '';
+                        // Grid expands back to normal as the page returns
+                        if (window._gridReset) window._gridReset();
+                        setTimeout(function () {
+                              if (hint) hint.style.opacity = '1';
+                        }, 700);
+                  });
 
-      // Touch support
-      dragEdge.addEventListener('touchstart', function (e) {
-        if (isOpen) return;
-        dragging = true;
-        startX = e.touches[0].clientX;
-      });
+                  // Touch support
+                  dragEdge.addEventListener('touchstart', function (e) {
+                        if (isOpen) return;
+                        dragging = true;
+                        startX = e.touches[0].clientX;
+                  });
 
-      document.addEventListener('touchmove', function (e) {
-        if (!dragging || isOpen) return;
-        var dx = startX - e.touches[0].clientX;
-        if (dx > THRESHOLD) {
-          mainPage.classList.add('peeled');
-          isOpen = true;
-          dragging = false;
-          if (hint) hint.style.opacity = '0';
-          dragEdge.style.display = 'none';
-        }
-      });
+                  document.addEventListener('touchmove', function (e) {
+                        if (!dragging || isOpen) return;
+                        var dx = startX - e.touches[0].clientX;
+                        if (dx > THRESHOLD) {
+                              mainPage.classList.add('peeled');
+                              isOpen = true;
+                              dragging = false;
+                              if (hint) hint.style.opacity = '0';
+                              dragEdge.style.display = 'none';
+                        }
+                  });
 
       document.addEventListener('touchend', function () {
         dragging = false;
       });
-
-      // Flutter hint: periodically lift the right edge
-      function scheduleFlutter() {
-        var delay = 8000 + Math.random() * 12000; // 8-20s
-        setTimeout(function () {
-          if (!isOpen && !mainPage.classList.contains('peeled')) {
-            mainPage.classList.add('flutter-hint');
-            mainPage.addEventListener('animationend', function handler() {
-              mainPage.classList.remove('flutter-hint');
-              mainPage.removeEventListener('animationend', handler);
-            });
-          }
-          scheduleFlutter();
-        }, delay);
-      }
-      scheduleFlutter();
     })();
-  </script>
+      </script>
 
 </body>
 
