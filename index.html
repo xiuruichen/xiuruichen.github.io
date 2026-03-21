@@ -535,7 +535,7 @@
         <h2 id="selected-work-heading" class="font-serif text-lg font-semibold tracking-tight text-foreground">
           Selected Work
         </h2>
-        <span class="text-xs italic text-muted-foreground">in fieri</span>
+        <span class="text-xs italic text-muted-foreground">more to come...</span>
       </div>
       <div class="mt-4 flex flex-col" id="projects-container"></div>
     </section>
@@ -689,7 +689,14 @@
       "Behavioral Game Theory",
     ];
 
-    var projects = [];
+    var projects = [
+	{
+        title: "HFT Bot for Manifold Markets",
+        description: "An implementation of behavioral economic theories, quantitative finance, and more to arbitrage on Manifold Markets with play money",
+        technologies: ["Python"],
+        sourceUrl: "https://github.com/xiuruichen/manifold-markets-hft",
+      }
+	];
     var gardenEntries = [];
 
     // ==========================================
@@ -718,7 +725,7 @@
         '<p class="text-sm leading-relaxed text-foreground/70">' + project.description + '</p>' +
         '<div class="flex items-center justify-between gap-4">' +
         '<span class="text-xs text-muted-foreground">' + project.technologies.join(" / ") + '</span>' +
-        '<a href="' + project.sourceUrl + '" target="_blank" rel="noopener noreferrer" class="flex shrink-0 items-center gap-1 text-xs text-muted-foreground hover:text-foreground">Source ' + arrowSvg + '</a>' +
+        '<a href="' + project.sourceUrl + '" target="_blank" rel="noopener noreferrer" class="flex shrink-0 items-center gap-1 text-xs text-muted-foreground hover:text-foreground">View Source ' + arrowSvg + '</a>' +
         '</div>';
       projectsContainer.appendChild(article);
     });
