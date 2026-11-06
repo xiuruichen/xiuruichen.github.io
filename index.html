@@ -226,7 +226,7 @@
       background: radial-gradient(ellipse 70% 55% at 50% 0%, rgba(var(--sa-rgb), 0.6), transparent 72%), radial-gradient(ellipse 70% 55% at 50% 100%, rgba(var(--sa-rgb), 0.32), transparent 74%); }
     #shelf.open .sh-glow { opacity: 0.5; animation: shBreathe 6s ease-in-out 800ms infinite; }
     @keyframes shBreathe { 50% { opacity: 0.28; } }
-    .sh-card { position: relative; border-radius: 20px; overflow: hidden auto; max-height: calc(100vh - 20px); overscroll-behavior: contain; transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 380ms var(--ease); will-change: transform; background: var(--panel); border: 1px solid var(--panel-border); box-shadow: 0 22px 54px -20px rgba(0, 0, 0, 0.6); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+    .sh-card { position: relative; border-radius: 20px; overflow: hidden auto; max-height: var(--mh, calc(100vh - 20px)); overscroll-behavior: contain; transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 380ms var(--ease); will-change: transform; background: var(--panel); border: 1px solid var(--panel-border); box-shadow: 0 22px 54px -20px rgba(0, 0, 0, 0.6); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
     .sh-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 3; box-shadow: inset 0 1px 0 rgba(var(--fg-rgb), 0.06); }
     .sh-art-wrap { position: relative; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, rgba(var(--sa-rgb), 0.08), transparent); }
     .sh-art { display: block; width: 100%; height: 118px; cursor: crosshair; touch-action: pan-y; }
@@ -2358,13 +2358,26 @@
         // ---------- placement ----------
         function place() {
           if (!curBadge) return;
+          host.style.removeProperty("--mh");
           var r = curBadge.getBoundingClientRect(), w = host.offsetWidth, hgt = host.offsetHeight, vw = window.innerWidth, vh = window.innerHeight, gap = 12;
           var pad = 10, roomB = vh - pad - (r.bottom + gap), roomA = r.top - gap - pad, left = Math.max(12, Math.min(r.left, vw - w - 12));
-          var below = roomB >= hgt ? true : roomA >= hgt ? false : roomB >= roomA;      // the side that fits; if neither does, the roomier one
-          var top = below ? r.bottom + gap : r.top - gap - hgt;
-          top = Math.max(pad, Math.min(top, vh - hgt - pad));                              // and never off-screen: slide it back in, over the badge if it must
+          var mode = roomB >= hgt ? "below" : roomA >= hgt ? "above" : null, top, oy = "0%", ox, ty = "-8px", eff = hgt;
+          if (!mode) {
+            var best = Math.max(roomA, roomB);
+            if (best >= 250) { mode = roomB >= roomA ? "below" : "above"; eff = best; }   // shrink the card (it scrolls inside) rather than cover the badge
+            else if (vw - r.right - gap - 12 >= w) mode = "right";                        // otherwise sit beside the badge
+            else if (r.left - gap - 12 >= w) mode = "left";
+            else { mode = roomB >= roomA ? "below" : "above"; eff = Math.max(best, 120); } // a tiny window: the biggest gap there is
+            if (eff < hgt || mode === "right" || mode === "left") eff = Math.min(hgt, mode === "right" || mode === "left" ? vh - 2 * pad : eff);
+          }
+          host.style.setProperty("--mh", eff + "px");
+          if (mode === "below") { top = r.bottom + gap; }
+          else if (mode === "above") { top = r.top - gap - eff; oy = "100%"; ty = "8px"; }
+          else { top = r.top + r.height / 2 - eff / 2; left = mode === "right" ? r.right + gap : r.left - gap - w; oy = "50%"; ty = "0px"; }
+          top = Math.max(pad, Math.min(top, vh - eff - pad));
+          ox = mode === "right" ? "0%" : mode === "left" ? "100%" : Math.max(10, Math.min(w - 10, r.left + r.width / 2 - left)) + "px";
           host.style.left = left + "px"; host.style.top = top + "px";
-          host.style.setProperty("--ox", Math.max(10, Math.min(w - 10, r.left + r.width / 2 - left)) + "px"); host.style.setProperty("--oy", below ? "0%" : "100%"); host.style.setProperty("--ty", below ? "-8px" : "8px");
+          host.style.setProperty("--ox", ox); host.style.setProperty("--oy", oy); host.style.setProperty("--ty", ty);
         }
 
         function open(b) {
