@@ -78,12 +78,11 @@
     html {
       background: var(--bg);
       scroll-behavior: smooth;
-      scrollbar-width: thin;
-      scrollbar-color: var(--line) transparent;
       -webkit-text-size-adjust: 100%;
     }
-    html::-webkit-scrollbar { width: 6px; }
-    html::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+    /* the browser's own scrollbar is hidden everywhere (page, palette, playground, viewers); scrolling by wheel, touch, keys and the top spark bar all still work */
+    * { scrollbar-width: none !important; -ms-overflow-style: none; }
+    *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
 
     body {
       background: var(--bg);
@@ -1803,18 +1802,22 @@
         for (var q = 0; q < EN.length; q++) seed += EN.charAt(q) === " " ? " " : mathChar();
         nn.nodeValue = seed;                                           // starts as symbols, then resolves into the name
         // The name box shrink-wraps its text, so it would shrink out from under the cursor mid-morph, fire "mouse left", grow back, and loop.
-        // Locking its width at the English name's width removes that feedback loop.
-        function lockWidth() { h1.style.minWidth = ""; h1.style.minWidth = Math.ceil(h1.getBoundingClientRect().width) + "px"; }
+        // Locking its width and height at the English name's size removes that feedback loop.
+        function lockWidth() { h1.style.minWidth = ""; h1.style.height = ""; var r = h1.getBoundingClientRect(); h1.style.minWidth = Math.ceil(r.width) + "px"; h1.style.height = Math.ceil(r.height * 100) / 100 + "px"; }   // width AND height: the math symbols come from fallback fonts with taller line boxes, which grew the heading under a cursor resting on its bottom edge and looped
         function go(t) { if (t === want) return; want = t; morphName(nn, t, 850); }
         setTimeout(function () {
-          morphName(nn, EN, 1000, function () { lockWidth(); ready = true; want = EN; if (h1.matches(":hover")) go(ZH); });
+          morphName(nn, EN, 1000, function () { lockWidth(); ready = true; want = EN; if (over(false)) go(ZH); });
           scramble(textNodeOf(tag), 900);
         }, 250);
-        h1.addEventListener("pointerenter", function (e) { if (!ready || e.pointerType !== "mouse") return; clearTimeout(leaveT); go(ZH); });
-        h1.addEventListener("pointerleave", function (e) {
-          if (!ready || e.pointerType !== "mouse") return; clearTimeout(leaveT);
-          leaveT = setTimeout(function () { if (!h1.matches(":hover")) go(EN); }, 90);          // re-check so a flicker at the edge can't flip it
-        });
+        // Hover is decided by geometry, not by pointerenter/leave: while the symbols spin, glyphs from fallback fonts overflow the heading's line box,
+        // which changes what the browser considers "over the name" a pixel or two outside it, so a cursor resting on the bottom edge flipped it back and forth forever.
+        // The box is locked, so the test is: inside it to switch to 陈修锐, and only 8px outside it to switch back.
+        var px = -1, py = -1;
+        function over(sticky) { var r = h1.getBoundingClientRect(), m = sticky ? 8 : 0; return px >= r.left - m && px <= r.right + m && py >= r.top - m && py <= r.bottom + m; }
+        function decide() { if (!ready) return; var o = over(want === ZH); if (o && want !== ZH) go(ZH); else if (!o && want === ZH) go(EN); }
+        document.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; px = e.clientX; py = e.clientY; decide(); }, { passive: true });
+        document.documentElement.addEventListener("mouseleave", function () { px = py = -1; decide(); });
+        window.addEventListener("scroll", function () { decide(); }, { passive: true });
         if (window.matchMedia("(hover: none)").matches) h1.addEventListener("click", function () { if (ready) go(want === ZH ? EN : ZH); });
         var rsT = 0;
         window.addEventListener("resize", function () { clearTimeout(rsT); rsT = setTimeout(function () { if (ready && nn.nodeValue === EN) lockWidth(); }, 200); });
