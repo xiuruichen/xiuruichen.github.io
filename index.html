@@ -192,7 +192,7 @@
     #rail { position: fixed; right: 20px; top: 50%; translate: 0 -50%; z-index: 14; display: flex; flex-direction: column; align-items: flex-end; gap: 20px; padding: 12px 0; }
     #rail::before, #rail::after { content: ""; position: absolute; right: 3px; top: 16px; bottom: 16px; width: 1px; }
     #rail::before { background: var(--border); }
-    #rail::after { background: var(--fg); opacity: 0.5; transform-origin: top; transform: scaleY(var(--p, 0)); }
+    #rail::after { background: var(--fg); opacity: 0.5; transform-origin: top; transform: scaleY(var(--p, 0)); transition: transform 420ms var(--ease); }
     #rail button { position: relative; display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 3px 0; cursor: pointer; color: var(--faint); font: 0.58rem var(--mono); letter-spacing: 0.14em; text-transform: uppercase; transition: color 250ms; }
     #rail .lb { opacity: 0; transform: translateX(6px); white-space: nowrap; pointer-events: none; transition: opacity 260ms ease, transform 520ms var(--spring); }
     #rail:hover .lb, #rail button:focus-visible .lb { opacity: 0.75; transform: none; }
@@ -201,6 +201,25 @@
     #rail button:hover { color: var(--fg); } #rail button:hover .dot { transform: scale(1.3); }
     #rail button.on { color: var(--fg); } #rail button.on .dot { background: var(--fg); transform: scale(1.35); box-shadow: 0 0 10px rgba(var(--fg-rgb), 0.5); }
     @media (max-width: 1100px) { #rail { display: none; } }
+
+    /* ============ Custom scrollbar: draggable thumb, section ticks, hover label, fades when idle ============ */
+    #sb { position: fixed; top: 0; right: 0; bottom: 0; width: 22px; z-index: 13; opacity: 0; transition: opacity 400ms ease; touch-action: none; }
+    #sb.live { opacity: 0.4; } #sb.live.act, #sb:hover, #sb.drag { opacity: 1; }
+    #sb.none { display: none; }
+    #sb .sb-line { position: absolute; top: 10px; bottom: 10px; right: 8px; width: 2px; border-radius: 2px; background: rgba(var(--fg-rgb), 0.07); opacity: 0; transition: opacity 250ms; }
+    #sb:hover .sb-line, #sb.drag .sb-line { opacity: 1; }
+    #sb .sb-thumb { position: absolute; top: 0; right: 7px; width: 4px; border-radius: 4px; background: rgba(var(--fg-rgb), 0.5); will-change: transform; cursor: grab; transition: width 220ms var(--ease), right 220ms var(--ease), background 200ms, box-shadow 300ms; }
+    #sb .sb-thumb::before { content: ""; position: absolute; inset: 0 -9px; }
+    #sb:hover .sb-thumb { width: 7px; right: 5.5px; background: rgba(var(--fg-rgb), 0.62); }
+    #sb .sb-thumb:hover { background: rgba(var(--fg-rgb), 0.85); }
+    #sb.drag .sb-thumb { width: 8px; right: 5px; background: var(--fg); cursor: grabbing; box-shadow: 0 0 14px rgba(var(--fg-rgb), 0.35); }
+    #sb .sb-tick { position: absolute; right: 4px; width: 3px; height: 3px; margin-top: -1px; border-radius: 50%; background: rgba(var(--fg-rgb), 0.35); pointer-events: none; opacity: 0; transition: opacity 250ms, transform 300ms var(--spring); }
+    #sb:hover .sb-tick, #sb.drag .sb-tick { opacity: 1; } #sb .sb-tick.on { background: var(--fg); transform: scale(1.5); }
+    #sb .sb-tip { position: absolute; right: 24px; top: 0; padding: 4px 9px; border-radius: 7px; font: 0.6rem var(--mono); letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; color: var(--fg); background: var(--panel); border: 1px solid var(--panel-border); box-shadow: 0 10px 26px -12px var(--shadow); pointer-events: none; opacity: 0; transform: translate(6px, -50%); transition: opacity 180ms ease, transform 380ms var(--ease); }
+    #sb .sb-tip.show { opacity: 1; transform: translate(0, -50%); }
+    #sb .sb-tip b { font-weight: 400; color: var(--faint); margin-left: 8px; }
+    @media (pointer: coarse) { #sb { pointer-events: none; width: 10px; } #sb .sb-tick, #sb .sb-tip, #sb .sb-line { display: none; } #sb .sb-thumb { right: 2px; width: 3px; } }
+    @media (prefers-reduced-motion: reduce) { #sb, #sb * { transition-duration: 1ms !important; } }
     /* ============ Game day strip + sound button ============ */
     .gameday { display: flex; align-items: center; gap: 0.55rem; margin-top: 0.5rem; font: 0.7rem var(--mono); letter-spacing: 0.04em; color: #fb4f14; text-decoration: none; }
     .gameday[hidden] { display: none; }
@@ -2202,13 +2221,119 @@
         function upd() {
           pend = false;
           var y = window.scrollY, vh = window.innerHeight, max = document.documentElement.scrollHeight - vh, act = 0;
-          nav.style.setProperty("--p", (max > 0 ? Math.min(1, Math.max(0, y / max)) : 0).toFixed(4));
           secs.forEach(function (s, i) { if (s.el.getBoundingClientRect().top < vh * 0.45) act = i; });
           if (max > 0 && y >= max - 4) act = secs.length - 1;
+          var pr = 0;                                             // fill follows the dots, not raw page height
+          if (secs.length > 1) {
+            if (act >= secs.length - 1) pr = 1;
+            else { var t0 = act === 0 ? 0 : secs[act].el.getBoundingClientRect().top + y, t1 = secs[act + 1].el.getBoundingClientRect().top + y; pr = (act + Math.min(1, Math.max(0, (y - t0) / Math.max(1, t1 - t0)))) / (secs.length - 1); }
+          }
+          nav.style.setProperty("--p", pr.toFixed(4));
           btns.forEach(function (b, i) { b.classList.toggle("on", i === act); if (i === act) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); });
         }
         function sched() { if (!pend) { pend = true; requestAnimationFrame(upd); } }
         window.addEventListener("scroll", sched, { passive: true }); window.addEventListener("resize", sched); upd();
+      })();
+
+      // ======================================================
+      // Scrollbar: the native one is hidden, so this is the real thing. Eased thumb, drag, track click, section ticks
+      // ======================================================
+      (function () {
+        var root = document.documentElement, secs = SECTIONS.filter(function (x) { return x.el; });
+        var names = { top: "top", research: "research", now: "now", experience: "experience", care: "things I care about" };
+        var sb = document.createElement("div"); sb.id = "sb"; sb.setAttribute("aria-hidden", "true");
+        sb.innerHTML = '<div class="sb-line"></div><div class="sb-thumb"></div><div class="sb-tip"></div>';
+        document.body.appendChild(sb);
+        var thumb = sb.querySelector(".sb-thumb"), tip = sb.querySelector(".sb-tip");
+        var ticks = secs.map(function (s) { var t = document.createElement("i"); t.className = "sb-tick"; sb.insertBefore(t, tip); return t; });
+        var PAD = 10, vh = 0, max = 0, th = 0, usable = 1, shown = 0, target = 0, running = false, lastT = 0, idle = 0;
+        var drag = null, tops = [];
+
+        function measure() {
+          vh = window.innerHeight; max = Math.max(0, root.scrollHeight - vh);
+          sb.classList.toggle("none", max < 8); sb.classList.add("live");
+          var track = vh - PAD * 2;
+          th = Math.max(44, Math.min(track, track * vh / (max + vh))); usable = Math.max(1, track - th);
+          thumb.style.height = th.toFixed(1) + "px";
+          var y = window.scrollY;
+          tops = secs.map(function (s) { return Math.max(0, Math.min(max, s.el.getBoundingClientRect().top + y - (s.label === "top" ? 0 : 28))); });
+          if (tops.length) tops[0] = 0;
+          ticks.forEach(function (t, i) { t.style.top = (PAD + th / 2 + (max > 0 ? tops[i] / max : 0) * usable).toFixed(1) + "px"; });
+          if (!drag) target = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
+        }
+        function paint() { thumb.style.transform = "translate3d(0," + (PAD + shown * usable).toFixed(2) + "px,0)"; }
+        function frame(now) {
+          var dt = Math.min(0.05, (now - lastT) / 1000 || 0.016); lastT = now;
+          if (drag || reduceMotion) shown = target; else shown += (target - shown) * (1 - Math.exp(-dt * 20));
+          var settled = Math.abs(target - shown) * usable < 0.05;
+          if (settled) shown = target;
+          paint();
+          var act = 0, y = shown * max; for (var i = 0; i < tops.length; i++) if (y >= tops[i] - 2) act = i;
+          if (max > 0 && y >= max - 4) act = tops.length - 1;
+          ticks.forEach(function (t, i) { t.classList.toggle("on", i === act); });
+          if (settled) { running = false; return; }
+          requestAnimationFrame(frame);
+        }
+        function kick() { if (!running) { running = true; lastT = performance.now(); requestAnimationFrame(frame); } }
+        function wake() {
+          sb.classList.add("act"); clearTimeout(idle);
+          idle = setTimeout(function () { if (!drag && !sb.matches(":hover")) sb.classList.remove("act"); }, 1300);
+        }
+        function onScroll() { if (!drag) target = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0; wake(); kick(); }
+
+        function tipAt(cy) {                                  // label for the spot under the cursor; returns the tick index it snaps to, or -1
+          if (!tops.length || max <= 0) return -1;
+          var f = Math.min(1, Math.max(0, (cy - PAD - th / 2) / usable)), pos = f * max, idx = 0, snap = -1;
+          for (var i = 0; i < tops.length; i++) { if (pos >= tops[i] - 2) idx = i; if (Math.abs(PAD + th / 2 + (tops[i] / max) * usable - cy) < 9) snap = i; }
+          if (snap >= 0) idx = snap;
+          tip.innerHTML = names[secs[idx].label] + "<b>" + Math.round(f * 100) + "%</b>";
+          tip.style.top = Math.min(vh - 18, Math.max(18, cy)) + "px"; tip.classList.add("show");
+          return snap;
+        }
+        function noTip() { tip.classList.remove("show"); }
+
+        sb.addEventListener("pointermove", function (e) {
+          if (drag) {
+            var dy = e.clientY - drag.y0;
+            if (!drag.moved && Math.abs(dy) > 3) {
+              drag.moved = true; sb.classList.add("drag"); noTip();
+              if (!drag.onThumb) { drag.s0 = drag.f * max; drag.y0 = e.clientY; dy = 0; }
+            }
+            if (!drag.moved) return;
+            var top = Math.min(max, Math.max(0, drag.s0 + dy * (max / usable)));
+            window.scrollTo({ top: top, behavior: "instant" }); target = max > 0 ? top / max : 0; kick();
+            return;
+          }
+          if (e.target === thumb) { noTip(); sb.style.cursor = ""; }
+          else sb.style.cursor = tipAt(e.clientY) >= 0 ? "pointer" : "";
+        });
+        sb.addEventListener("pointerleave", function () { if (!drag) { noTip(); wake(); } });
+        sb.addEventListener("pointerdown", function (e) {
+          if (e.button !== 0) return; e.preventDefault();
+          var f = (e.clientY - PAD - th / 2) / usable;
+          drag = { y0: e.clientY, s0: window.scrollY, onThumb: e.target === thumb, moved: false, f: Math.min(1, Math.max(0, f)), id: e.pointerId };
+          try { sb.setPointerCapture(e.pointerId); } catch (_) {}
+          if (drag.onThumb) { sb.classList.add("drag"); noTip(); }
+        });
+        function end(e) {
+          if (!drag) return; var d = drag; drag = null; sb.classList.remove("drag");
+          try { sb.releasePointerCapture(d.id); } catch (_) {}
+          if (!d.moved && !d.onThumb) {                       // plain track click: glide there, or to the section if a tick was hit
+            var snap = tipAt(e.clientY), dest = snap >= 0 ? tops[snap] : d.f * max;
+            window.__sfx && window.__sfx.tick && window.__sfx.tick();
+            window.scrollTo({ top: dest, behavior: reduceMotion ? "auto" : "smooth" });
+          }
+          if (!sb.matches(":hover")) noTip();
+          wake();
+        }
+        sb.addEventListener("pointerup", end); sb.addEventListener("pointercancel", end);
+        sb.addEventListener("wheel", function (e) { e.preventDefault(); window.scrollBy({ top: e.deltaY, behavior: "instant" }); }, { passive: false });
+
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("resize", function () { measure(); kick(); });
+        window.addEventListener("load", function () { measure(); shown = target; paint(); kick(); });
+        if (window.ResizeObserver) { var h = 0; new ResizeObserver(function () { var n = root.scrollHeight; if (n !== h) { h = n; measure(); kick(); } }).observe(document.body); }
+        measure(); shown = target; paint(); kick();
       })();
 
       // ======================================================
