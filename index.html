@@ -1016,6 +1016,44 @@
         return sp.a * Math.max(0, 1 - Math.hypot(x - sp.x, y - sp.y) / 130);
       }
 
+      // Who Dey chant: an orange shockwave leaves the card and washes across the grid and the shape
+      var pulses = [], PULSE_DUR = 2, PULSE_SPEED = 1000, PULSE_BAND = 170, ORANGE = "251,79,20";
+      document.addEventListener("bengals-pulse", function (e) {
+        if (reduceMotion || !e.detail) return;
+        pulses.push({ x: e.detail.x, y: e.detail.y, t: 0 }); if (pulses.length > 4) pulses.shift();
+      });
+      function pulseAt(x, y) {                       // 0..1: how much of a wavefront is passing over this point
+        var m = 0;
+        for (var i = 0; i < pulses.length; i++) {
+          var p = pulses[i], q = (Math.hypot(x - p.x, y - p.y) - p.t * PULSE_SPEED) / PULSE_BAND;
+          m = Math.max(m, Math.exp(-q * q) * Math.pow(1 - p.t / PULSE_DUR, 1.4));
+        }
+        return m;
+      }
+      function drawPulses() {
+        var light = FG.charAt(0) === "4", oa = light ? 0.8 : 0.9, i, x, y, a;
+        for (i = 0; i < pulses.length; i++) {          // soft ring of colour riding the front
+          var p = pulses[i], r = p.t * PULSE_SPEED, f = Math.pow(1 - p.t / PULSE_DUR, 1.4);
+          var g = gctx.createRadialGradient(p.x, p.y, Math.max(0, r - PULSE_BAND * 1.4), p.x, p.y, r + PULSE_BAND * 1.4);
+          g.addColorStop(0, "rgba(" + ORANGE + ",0)"); g.addColorStop(0.5, "rgba(" + ORANGE + "," + (0.07 * f).toFixed(3) + ")"); g.addColorStop(1, "rgba(" + ORANGE + ",0)");
+          gctx.fillStyle = g; gctx.fillRect(0, 0, W, H);
+        }
+        gctx.lineWidth = 1.2;
+        for (x = 0; x <= W; x += spacing) {            // grid lines, lit segment by segment
+          var px = Math.round(x) + 0.5;
+          for (y = 0; y < H; y += spacing) { a = pulseAt(px, y + spacing / 2); if (a < 0.02) continue; gctx.strokeStyle = "rgba(" + ORANGE + "," + (a * oa).toFixed(3) + ")"; gctx.beginPath(); gctx.moveTo(px, y); gctx.lineTo(px, Math.min(H, y + spacing)); gctx.stroke(); }
+        }
+        for (y = 0; y <= H; y += spacing) {
+          var py = Math.round(y) + 0.5;
+          for (x = 0; x < W; x += spacing) { a = pulseAt(x + spacing / 2, py); if (a < 0.02) continue; gctx.strokeStyle = "rgba(" + ORANGE + "," + (a * oa).toFixed(3) + ")"; gctx.beginPath(); gctx.moveTo(x, py); gctx.lineTo(Math.min(W, x + spacing), py); gctx.stroke(); }
+        }
+        for (x = 0; x <= W; x += spacing) for (y = 0; y <= H; y += spacing) {   // glowing intersections
+          a = pulseAt(x, y); if (a < 0.08) continue;
+          gctx.fillStyle = "rgba(" + ORANGE + "," + Math.min(1, a * 1.1).toFixed(3) + ")";
+          gctx.beginPath(); gctx.arc(Math.round(x) + 0.5, Math.round(y) + 0.5, 1.2 + a * 2.6, 0, 6.2832); gctx.fill();
+        }
+      }
+
       function drawGrid() {
         gctx.clearRect(0, 0, W, H);
         var ga = FG.charAt(0) === "4" ? 0.05 : 0.08;   // dark ink on cream needs a lighter touch
@@ -1033,6 +1071,7 @@
         for (var x = 0; x <= W; x += spacing) { var px = Math.round(x) + 0.5; gctx.moveTo(px, 0); gctx.lineTo(px, H); }
         for (var y = 0; y <= H; y += spacing) { var py = Math.round(y) + 0.5; gctx.moveTo(0, py); gctx.lineTo(W, py); }
         gctx.stroke();
+        if (pulses.length) drawPulses();
       }
 
       // ---------- The three shapes + morphing ----------
@@ -1151,7 +1190,8 @@
           var a = proj(curSegs[i][0]), b = proj(curSegs[i][1]);
           var depth = (a.z + b.z) / 2;                                   // -1 (far) .. 1 (near)
           var bo = Math.max(boostAt(a.x, a.y), boostAt(b.x, b.y));
-          sctx.strokeStyle = "rgba(" + FG + "," + (0.06 + (1 - depth) * 0.06 + bo * 0.3).toFixed(3) + ")";
+          var pu = pulses.length ? pulseAt((a.x + b.x) / 2, (a.y + b.y) / 2) : 0;
+          sctx.strokeStyle = pu > 0.03 ? "rgba(" + ORANGE + "," + Math.min(1, 0.1 + pu * 0.85).toFixed(3) + ")" : "rgba(" + FG + "," + (0.06 + (1 - depth) * 0.06 + bo * 0.3).toFixed(3) + ")";
           sctx.beginPath(); sctx.moveTo(a.x, a.y); sctx.lineTo(b.x, b.y); sctx.stroke();
         }
         if (dotFade > 0.02) {
@@ -1180,6 +1220,7 @@
         if (sp.ta) { sp.x += (mouse.x - sp.x) * ease(12, dt); sp.y += (mouse.y - sp.y) * ease(12, dt); }
         if (sp.a > 0.005 || spWas) gridDirty = true;
         spWas = sp.a > 0.005;
+        if (pulses.length) { pulses.forEach(function (p) { p.t += dt; }); pulses = pulses.filter(function (p) { return p.t < PULSE_DUR; }); gridDirty = true; }
         stepMorph(dt);
         realMix += ((curName === "real" ? 1 : 0) - realMix) * ease(2.5, dt);
         drawShape();
@@ -2350,6 +2391,19 @@
           function () { return { t: "Who Dey think gonna beat dem Bengals?", s: "say it louder", sm: true }; },
           answer
         ];
+        // the chant wraps to a different number of lines at each step; hold the card at its tallest state so the page below never jumps
+        function lockH() {
+          if (!card.offsetHeight) return;
+          var t0 = chant.textContent, s0 = sub.textContent, sm0 = chant.classList.contains("sm"), max = 0;
+          card.style.minHeight = "";
+          STEPS.forEach(function (f) { var s = f(); chant.textContent = s.t; chant.classList.toggle("sm", !!s.sm); sub.textContent = s.s; max = Math.max(max, card.offsetHeight); });
+          chant.textContent = t0; sub.textContent = s0; chant.classList.toggle("sm", sm0);
+          card.style.minHeight = max + "px";
+        }
+        var lockT; function relock() { clearTimeout(lockT); lockT = setTimeout(lockH, 120); }
+        window.addEventListener("resize", relock);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(lockH);
+        lockH();
         card.addEventListener("click", function (e) {
           step = (step + 1) % STEPS.length; n++;
           try { localStorage.setItem("dey", String(n)); } catch (err) {}
@@ -2362,6 +2416,7 @@
           d.style.cssText = "width:" + size + "px;height:" + size + "px;left:" + (cx - size / 2) + "px;top:" + (cy - size / 2) + "px";
           card.appendChild(d); setTimeout(function () { d.remove(); }, 900);
           card.classList.remove("pulse"); void card.offsetWidth; card.classList.add("pulse");
+          document.dispatchEvent(new CustomEvent("bengals-pulse", { detail: { x: e.detail ? e.clientX : r.left + r.width / 2, y: e.detail ? e.clientY : r.top + r.height / 2 } }));
         });
 
         // ---------- polling: fast during a game, slow otherwise, paused when the tab is hidden ----------
@@ -2371,7 +2426,7 @@
           clearTimeout(pollT);
           if (document.hidden) { pollT = setTimeout(refresh, 30000); return; }
           Promise.all([getJSON("/teams/cin/schedule"), getJSON("/scoreboard").catch(function () { return null; })])
-            .then(function (res) { model = build(res[0], res[1]); render(); })
+            .then(function (res) { model = build(res[0], res[1]); render(); relock(); })
             .catch(function () { /* offline or blocked: the banner just stays a chant */ })
             .then(function () {
               var g = model && model.next, ms = 600000;
