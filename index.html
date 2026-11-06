@@ -152,7 +152,10 @@
       transition: opacity 180ms, transform 280ms var(--ease); }
     .link:hover .arrow, .link:focus-visible .arrow { opacity: 1; transform: translate(0, 0); }
 
-    .intro { color: rgba(var(--fg-rgb), 0.8); }
+    .intro { color: rgba(var(--fg-rgb), 0.8); max-width: 62ch; line-height: 1.75; text-wrap: pretty; }
+    .ilink { color: var(--fg); text-decoration: underline dotted; text-decoration-color: var(--faint); text-decoration-thickness: 1px; text-underline-offset: 5px;
+      background: linear-gradient(90deg, rgba(var(--fg-rgb), 0.9), rgba(var(--fg-rgb), 0.9)) no-repeat 0 calc(100% + 1px) / 0% 1px; transition: background-size 520ms var(--ease), text-decoration-color 250ms; }
+    .ilink:hover, .ilink:focus-visible { background-size: 100% 1px; text-decoration-color: transparent; }
 
     /* ---- icon glow: a separate soft layer that only fades and scales (compositor-only), never an animated filter.
           Fast and gentle on the way in, slower to relax on the way out. ---- */
@@ -394,9 +397,19 @@
     .local { font-size: 0.7rem; letter-spacing: 0.04em; color: var(--faint); min-height: 1.1em; font-variant-numeric: tabular-nums; }
 
     /* ============ Terminal mode ============ */
-    #pal-list li.pal-log { cursor: default; justify-content: flex-start; white-space: pre-wrap; word-break: break-word; font-size: 0.75rem; color: var(--muted); padding: 2px 16px; }
+    #pal-list li.pal-log { cursor: default; display: block; justify-content: flex-start; white-space: pre-wrap; word-break: break-word; font-size: 0.75rem; color: var(--muted); padding: 2px 16px; }
     #pal-list li.pal-log.cmd { color: var(--fg); padding-top: 8px; }
     #pal-list li.pal-log.err { color: #f87171; }
+    #pal-list li.pal-log .dim { color: var(--faint); } #pal-list li.pal-log .hi { color: var(--fg); } #pal-list li.pal-log .ok { color: #4ade80; } #pal-list li.pal-log .bad { color: #f87171; } #pal-list li.pal-log .acc { color: #4493f8; }
+    :root[data-theme="light"] #pal-list li.pal-log .ok { color: #15803d; } :root[data-theme="light"] #pal-list li.pal-log .bad { color: #b91c1c; } :root[data-theme="light"] #pal-list li.pal-log .acc { color: #1d4ed8; }
+    #pal-list li.pal-log a { color: var(--fg); text-decoration: underline dotted; text-underline-offset: 3px; }
+    #pal-sug { display: none; flex-wrap: wrap; gap: 6px; padding: 8px 16px 6px; border-bottom: 1px solid var(--border); }
+    #pal-sug.show { display: flex; }
+    #pal-sug button { font: 0.68rem var(--mono); color: var(--muted); background: none; border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; cursor: pointer; transition: color 180ms, border-color 180ms, background 180ms; }
+    #pal-sug button:hover, #pal-sug button.first { color: var(--fg); border-color: rgba(var(--fg-rgb), 0.4); }
+    #pal-sug button.first { background: rgba(var(--fg-rgb), 0.05); }
+    #pal-sug kbd { align-self: center; margin-left: auto; font: 0.58rem var(--mono); color: var(--faint); border: 1px solid var(--border); padding: 0 5px; }
+    ::highlight(term-hit) { background-color: rgba(250, 204, 21, 0.45); color: inherit; }
 
     /* ============ Things I Care About ============ */
     .misc { margin-top: 1.25rem; display: flex; flex-direction: column; }
@@ -735,7 +748,7 @@
 
 
     <section aria-label="Introduction" id="sec-intro" class="reveal">
-      <p class="intro">[about me coming soon]</p>
+      <p class="intro">I'm Ray, a junior at Cincinnati Country Day School interested in <a class="ilink" href="#sec-research">tacit knowledge, applications of biological intelligence to artificial intelligence, and the markets</a>. Away from that: I enjoy football (<a class="ilink" href="#sec-garden">Who Dey</a>), photography (<a class="ilink" href="#photos">Fujifilm X-T20</a>), and music, among others.</p>
     </section>
 
     <section aria-labelledby="research-interests-heading" id="sec-research" class="reveal">
@@ -846,8 +859,9 @@
     <div class="pal-box">
       <input id="pal-input" type="text" placeholder="type a command, or > for terminal" autocomplete="off" spellcheck="false"
         role="combobox" aria-expanded="true" aria-controls="pal-list" />
+      <div id="pal-sug" aria-hidden="true"></div>
       <ul id="pal-list" role="listbox"></ul>
-      <div class="pal-foot"><span>↑↓ navigate</span><span>↵ run</span><span>esc close</span></div>
+      <div class="pal-foot"><span>↑↓ navigate</span><span>↵ run</span><span>tab complete in &gt;</span><span>esc close</span></div>
     </div>
   </div>
 
@@ -890,6 +904,19 @@
   <canvas id="pg-wipe" aria-hidden="true"></canvas>
 
   <script>
+    // Esc must never leave a focus ring behind. Browsers draw one on the focused element as soon as a key is pressed, even if it was only clicked.
+    // So: remember whether the person navigates by pointer or keyboard, and after Esc drop any focus that came from a click.
+    (function () {
+      var mode = "pointer", NAV = /^(Tab|Enter| |Arrow(Up|Down|Left|Right)|Home|End|PageUp|PageDown)$/;
+      window.addEventListener("pointerdown", function () { mode = "pointer"; }, true);
+      window.addEventListener("keydown", function (e) {
+        if (NAV.test(e.key) && !e.ctrlKey && !e.metaKey) mode = "key";
+        if (e.key === "Escape" && mode === "pointer") [0, 60, 400].forEach(function (ms) { setTimeout(function () {
+          var a = document.activeElement; if (a && a !== document.body && !/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && !a.isContentEditable && mode === "pointer") a.blur();
+        }, ms); });
+      }, true);
+      window.__inputMode = function () { return mode; };
+    })();
     console.log(
       "%cLooking under the hood? Let's talk :) [chenxiurui.2028@gmail.com]",
       "font-family: 'Courier New', monospace; font-size: 13px; color: #737373; padding: 8px 0;"
@@ -1239,7 +1266,7 @@
       function openOverlay() {
         if (overlayOpen || wiping) return; wiping = true;
         var r = secretLink.getBoundingClientRect();
-        lastFocus = document.activeElement;
+        lastFocus = window.__inputMode() === "key" ? document.activeElement : null;
         var ready = loadPlayground().then(function (api) { api.mount(pgRoot); return api; }, function () {
           pgRoot.innerHTML = '<p class="pg-loading">couldn\'t load the playground. check your connection, then close and reopen it.</p><p class="pg-loading" style="padding-top:0"><button type="button" data-pg-close style="font:inherit;color:inherit;background:none;border:1.5px solid currentColor;padding:8px 16px;cursor:pointer">back to the site</button></p>';
           return null;
@@ -2211,6 +2238,7 @@
             (g ? ", live now " + g.me + " to " + g.them + " against " + g.opp : "") + ". Press to chant.");
         }
         window.__bengals = function (m) { model = m; render(); };   // test hook
+        window.__bengalsText = function () { return { rec: recEl.textContent, rows: Array.prototype.map.call(statsEl.children, function (c) { var k = c.cloneNode(true); Array.prototype.forEach.call(k.querySelectorAll("em"), function (e) { e.insertBefore(document.createTextNode(" · "), e.firstChild); }); Array.prototype.forEach.call(k.children, function (e) { e.appendChild(document.createTextNode(" ")); }); return k.textContent.replace(/\s+/g, " ").trim(); }) }; };   // read by the terminal
 
         // the answer to the chant reads the scoreboard
         function answer() {
@@ -2471,6 +2499,7 @@
         lb.addEventListener("touchend", function (e) { if (tx === null) return; var dx = e.changedTouches[0].clientX - tx; tx = null; if (Math.abs(dx) > 50) showLb(idx + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1); });
 
         renderPhotos(PHOTOS);
+        window.__photos = { count: function () { return list.length; }, open: function (i) { openLb(Math.max(0, Math.min(list.length - 1, i)), null); } };   // used by the terminal
       })();
 
       // ======================================================
@@ -2509,15 +2538,39 @@
         ];
 
         // ---------- terminal ----------
-        var term = { on: false, log: [], hist: [], hi: -1 };
-        function out(text, cls) { term.log.push({ t: text, c: cls || "" }); if (term.on) renderTerm(); }
+        var HK = "ray-term-hist", term = { on: false, log: [], hist: [], hi: -1, mk: [], ran: 0 };
+        try { term.hist = (JSON.parse(localStorage.getItem(HK)) || []).slice(0, 50); term.ran = +localStorage.getItem("ray-term-n") || 0; } catch (e) {}
+        function pushHist(line) {
+          if (term.hist[0] !== line) term.hist.unshift(line); term.hist = term.hist.slice(0, 50); term.hi = -1; term.ran++;
+          try { localStorage.setItem(HK, JSON.stringify(term.hist)); localStorage.setItem("ray-term-n", String(term.ran)); } catch (e) {}
+        }
+        // a row is a string, or a list of parts: "text" | { t: "text", c: "dim|hi|ok|bad|acc", href: "https://..." }
+        function out(parts, cls) { term.log.push({ p: [].concat(parts), c: cls || "" }); if (term.on) renderTerm(); }
+        var CALLS = "ray-calls-v1";
+        function loadCalls() { try { return JSON.parse(localStorage.getItem(CALLS)) || []; } catch (e) { return []; } }
+        function bar(p, n) { n = n || 12; var k = Math.round(p * n); return new Array(k + 1).join("\u2588") + new Array(n - k + 1).join("\u2591"); }
+        function qtext(el) { return (el && el.textContent || "").replace(/\s+/g, " ").trim(); }
+        function whenReady(test, fn, max) { var t0 = Date.now(); (function poll() { if (test()) fn(); else if (Date.now() - t0 < (max || 6000)) setTimeout(poll, 100); })(); }
+        function leave(fn) { close(false); setTimeout(fn, 60); }                       // close the palette first, then act on the page
         var SEC = { top: "header", research: "sec-research", now: "sec-now", experience: "sec-experience", care: "sec-garden", misc: "sec-garden" };
+        var ARGS = {
+          goto: Object.keys(SEC), cat: ["now", "interests", "experience", "email"], open: Object.keys(LINKS), theme: ["light", "dark", "toggle"], curl: ["manifold"],
+          play: ["call", "napkin", "scale", "oddball"], forecast: [], photo: []
+        };
+        var GROUPS = [
+          ["look around", ["ls", "cat", "goto", "pwd", "search", "photos", "photo", "song"]],
+          ["live data", ["now", "markets", "forecast", "play"]],
+          ["system", ["theme", "morph", "open", "history", "stats", "clear", "date", "whoami", "echo"]]
+        ];
         var TERM = {
-          help: { d: "list commands", run: function () { Object.keys(TERM).forEach(function (k) { if (TERM[k].d) out("  " + (k + "        ").slice(0, 9) + TERM[k].d); }); } },
-          ls: { d: "list sections", run: function () { out("research  now  experience  care  playground"); } },
+          help: { d: "list commands", run: function () {
+              out("tab completes, \u2191\u2193 recalls history.", "dim");
+              GROUPS.forEach(function (g) { out([{ t: g[0], c: "dim" }]); g[1].forEach(function (k) { out(["  ", { t: (k + "           ").slice(0, 10), c: "hi" }, TERM[k].d]); }); });
+            } },
+          ls: { d: "list sections", run: function () { out(["research  now  experience  care  ", { t: "playground", c: "acc" }]); } },
           cat: { d: "cat now | interests | experience | email", run: function (a) {
               var w = a[0];
-              if (w === "now") NOW.items.forEach(function (i) { out(i.label.toLowerCase() + ": " + i.text + (i.note ? " (" + i.note + ")" : "")); });
+              if (w === "now") NOW.items.forEach(function (i) { out([{ t: (i.label.toLowerCase() + "         ").slice(0, 12), c: "dim" }, i.text + (i.note ? " (" + i.note + ")" : "")]); });
               else if (w === "interests") out(Array.prototype.map.call(document.querySelectorAll(".badge"), function (b) { return b.textContent; }).join(", "));
               else if (w === "experience") document.querySelectorAll("#sec-experience article").forEach(function (a2) { out(a2.querySelector("h3").textContent + " @ " + a2.querySelector(".exp-sub").textContent); });
               else if (w === "email") out(EMAIL);
@@ -2542,14 +2595,95 @@
             } },
           curl: { d: "curl manifold: fetch a live prediction question", run: function (a) {
               if (a[0] !== "manifold") { out("usage: curl manifold", "err"); return; }
-              out("GET api.manifold.markets …");
-              fetch("https://api.manifold.markets/v0/search-markets?term=&sort=24-hour-vol&filter=open&contractType=BINARY&limit=1")
-                .then(function (r) { return r.json(); })
-                .then(function (l) { var m = l[0]; out(m ? m.question + "  [crowd " + Math.round(m.probability * 100) + "%]" : "no markets returned"); })
-                .catch(function () { out("request failed.", "err"); });
+              TERM.markets.run([], 1);
             } },
           echo: { d: "echo text", run: function (a) { out(a.join(" ")); } },
           clear: { d: "clear the log", run: function () { term.log = []; renderTerm(); } },
+          history: { d: "your recent commands", run: function () { if (!term.hist.length) { out("nothing yet.", "dim"); return; } term.hist.slice(0, 10).reverse().forEach(function (h, i) { out([{ t: String(i + 1).padStart(2) + "  ", c: "dim" }, h]); }); } },
+
+          now: { d: "github, bengals and what i'm into, live", run: function () {
+              var gh = qtext($("gh-head")), cells = document.querySelectorAll("#gh-map i"), sp = "";
+              Array.prototype.forEach.call(cells, function (c) { var m = /\bl([1-4])\b/.exec(c.className); sp += m ? "\u2581\u2583\u2585\u2587"[+m[1] - 1] : "\u00b7"; });
+              out([{ t: "github    ", c: "dim" }, gh && !/reaching/.test(gh) ? gh : "still reaching github\u2026"]);
+              if (sp) out([{ t: "          ", c: "dim" }, { t: sp, c: "ok" }, { t: "  last " + cells.length + " days", c: "dim" }]);
+              var bg = window.__bengalsText && window.__bengalsText();
+              if (bg && bg.rec) { out([{ t: "bengals   ", c: "dim" }, { t: bg.rec, c: "hi" }]); bg.rows.forEach(function (r) { out([{ t: "          ", c: "dim" }, r]); }); } else out([{ t: "bengals   ", c: "dim" }, "who dey. (scores loading)"]);
+              NOW.items.forEach(function (i) { out([{ t: (i.label.toLowerCase().split(" ")[0] + "          ").slice(0, 10), c: "dim" }, i.text + (i.note ? " \u00b7 " + i.note : "")]); });
+            } },
+          markets: { d: "top live manifold questions with the crowd's odds", run: function (a, n) {
+              n = n || 5; out([{ t: "GET api.manifold.markets \u2026", c: "dim" }]);
+              fetch("https://api.manifold.markets/v0/search-markets?term=&sort=24-hour-vol&filter=open&contractType=BINARY&limit=" + (n + 6))
+                .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+                .then(function (l) {
+                  var seen = {}; loadCalls().forEach(function (c) { seen[c.id] = 1; });
+                  term.mk = l.filter(function (m) { return m.closeTime > Date.now() && m.probability > 0.02 && m.probability < 0.98; }).slice(0, n);
+                  if (!term.mk.length) { out("no markets returned.", "err"); return; }
+                  term.mk.forEach(function (m, i) { out([{ t: (i + 1) + "  ", c: "acc" }, m.question]); out([{ t: "   " + bar(m.probability) + " ", c: "hi" }, { t: Math.round(m.probability * 100) + "% crowd" + (seen[m.id] ? " \u00b7 you called it" : ""), c: "dim" }]); });
+                  out([{ t: "forecast <n> <0-100>  to log your own call.", c: "dim" }]);
+                }).catch(function () { out("request failed.", "err"); });
+            } },
+          forecast: { d: "forecast <n> <0-100>: log your own call", run: function (a) {
+              var calls = loadCalls();
+              if (!a.length) {
+                var done = calls.filter(function (c) { return c.res === "YES" || c.res === "NO"; });
+                out([{ t: "calls logged ", c: "dim" }, String(calls.length), { t: "   scored ", c: "dim" }, String(done.length)]);
+                if (done.length) { var bs = 0; done.forEach(function (c) { var o = c.res === "YES" ? 1 : 0; bs += (c.mine - o) * (c.mine - o); }); out([{ t: "mean brier  ", c: "dim" }, (bs / done.length).toFixed(3), { t: "  (0 is perfect, 0.25 is a coin flip)", c: "dim" }]); }
+                out([{ t: "usage: markets, then forecast <n> <0-100>", c: "dim" }]); return;
+              }
+              var m = term.mk[(+a[0]) - 1], p = parseFloat(a[1]);
+              if (!m) { out("run 'markets' first, then forecast <n> <0-100>.", "err"); return; }
+              if (!(p >= 1 && p <= 99)) { out("give a probability between 1 and 99.", "err"); return; }
+              if (calls.some(function (c) { return c.id === m.id; })) { out("you already called that one.", "err"); return; }
+              var url = typeof m.url === "string" && m.url.indexOf("https://manifold.markets/") === 0 ? m.url : "https://manifold.markets";
+              calls.unshift({ id: m.id, q: m.question, url: url, mine: p / 100, crowd: m.probability, close: m.closeTime, t: Date.now(), res: null });
+              try { localStorage.setItem(CALLS, JSON.stringify(calls)); } catch (e) { out("couldn't save (storage blocked).", "err"); return; }
+              var d = Math.round(p - m.probability * 100);
+              out([{ t: "logged. ", c: "ok" }, "you " + Math.round(p) + "% vs crowd " + Math.round(m.probability * 100) + "% \u00b7 " + (d === 0 ? "dead on the crowd." : Math.abs(d) + " points " + (d > 0 ? "above" : "below") + " it.")]);
+              out([{ t: "scored when it resolves, in the playground (Call It).", c: "dim" }]);
+            } },
+          play: { d: "play call | napkin | scale | oddball", run: function (a) {
+              var ids = ARGS.play, id = (a[0] || "").toLowerCase();
+              if (!id) { out(["games: ", { t: ids.join("  "), c: "acc" }]); out([{ t: "usage: play <game>", c: "dim" }]); return; }
+              if (ids.indexOf(id) < 0) { out("no such game. try: " + ids.join(", "), "err"); return; }
+              out("opening the playground\u2026");
+              leave(function () {
+                secretLink.click();
+                whenReady(function () { return secretOverlay.classList.contains("open") && window.Playground && window.Playground.open; }, function () { setTimeout(function () { window.Playground.open(id); }, 220); });
+              });
+            } },
+          photos: { d: "how many photos, and how to open one", run: function () { var n = window.__photos ? window.__photos.count() : 0; out(n + " photos. usage: photo <1-" + n + ">"); } },
+          photo: { d: "photo <n>: open it in the viewfinder", run: function (a) {
+              var n = window.__photos ? window.__photos.count() : 0, i = parseInt(a[0], 10);
+              if (!(i >= 1 && i <= n)) { out("usage: photo <1-" + n + ">", "err"); return; }
+              out("developing #" + i + "\u2026"); leave(function () { window.__photos.open(i - 1); });
+            } },
+          song: { d: "play the song i'm listening to", run: function () {
+              var z = document.querySelector(".ac-zone"); if (!z) { out("nothing playing.", "err"); return; }
+              out("cueing it up\u2026");
+              leave(function () { z.scrollIntoView({ block: "center" }); setTimeout(function () { z.focus({ preventScroll: true }); }, 350); });
+            } },
+          search: { d: "search <word>: find it on the page and jump there", run: function (a) {
+              var q = a.join(" ").trim().toLowerCase(); if (q.length < 2) { out("usage: search <word>", "err"); return; }
+              var w = document.createTreeWalker($("main-page"), NodeFilter.SHOW_TEXT, { acceptNode: function (n) { var p = n.parentNode; return p && !/SCRIPT|STYLE|NOSCRIPT|CANVAS/.test(p.nodeName) && n.nodeValue.toLowerCase().indexOf(q) >= 0 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } });
+              var hits = [], n; while ((n = w.nextNode()) && hits.length < 40) hits.push(n);
+              if (!hits.length) { out("no match for \"" + q + "\".", "err"); return; }
+              var names = {}; hits.forEach(function (h) { var sec = h.parentNode.closest && h.parentNode.closest("section,header"); names[sec ? (sec.id || "top").replace("sec-", "") : "top"] = 1; });
+              out([{ t: hits.length + " match" + (hits.length === 1 ? "" : "es"), c: "ok" }, { t: " in " + Object.keys(names).join(", ") + ". jumping to the first.", c: "dim" }]);
+              leave(function () {
+                var first = hits[0], el = first.parentNode; el.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
+                if (window.CSS && CSS.highlights && window.Highlight) {
+                  var rs = hits.map(function (h) { var r = document.createRange(), i = h.nodeValue.toLowerCase().indexOf(q); r.setStart(h, i); r.setEnd(h, i + q.length); return r; });
+                  CSS.highlights.set("term-hit", new Highlight(...rs));
+                  var clear = function () { CSS.highlights.delete("term-hit"); window.removeEventListener("pointerdown", clear); clearTimeout(tm); }, tm = setTimeout(clear, 6000);
+                  window.addEventListener("pointerdown", clear);
+                }
+              });
+            } },
+          stats: { d: "your session at a glance", run: function () {
+              var c = loadCalls(), secs = Math.round(performance.now() / 1000), sc = Math.round(100 * window.scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight));
+              out([{ t: "commands run ", c: "dim" }, String(term.ran), { t: "   calls logged ", c: "dim" }, String(c.length)]);
+              out([{ t: "time here    ", c: "dim" }, Math.floor(secs / 60) + "m " + (secs % 60) + "s", { t: "   scrolled ", c: "dim" }, Math.max(0, Math.min(100, sc)) + "%"]);
+            } },
           sudo: { d: "", run: function () { out("nice try."); } }
         };
         function runTerm(line) {
@@ -2559,9 +2693,41 @@
         }
         function renderTerm() {
           listEl.innerHTML = "";
-          if (!term.log.length) { var h = document.createElement("li"); h.className = "pal-log"; h.textContent = "type a command after >  (try: help)"; listEl.appendChild(h); }
-          term.log.forEach(function (l) { var li = document.createElement("li"); li.className = "pal-log " + l.c; li.textContent = l.t; listEl.appendChild(li); });
+          if (!term.log.length) { var h = document.createElement("li"); h.className = "pal-log"; h.textContent = "type a command after >  (try: help, now, markets)"; listEl.appendChild(h); }
+          term.log.forEach(function (l) {
+            var li = document.createElement("li"); li.className = "pal-log " + l.c;
+            l.p.forEach(function (p) {
+              if (typeof p === "string") { li.appendChild(document.createTextNode(p)); return; }
+              var e = document.createElement(p.href ? "a" : "span"); if (p.c) e.className = p.c; if (p.href) { e.href = p.href; e.target = "_blank"; e.rel = "noopener noreferrer"; } e.textContent = p.t; li.appendChild(e);
+            });
+            listEl.appendChild(li);
+          });
           listEl.scrollTop = listEl.scrollHeight;
+        }
+
+        // ---------- completion ----------
+        var sugEl = $("pal-sug"), sugList = [], sugBase = "";
+        function completions() {
+          var raw = input.value.replace(/^>\s?/, ""), lead = raw.replace(/^\s+/, ""), parts = lead.split(/\s+/), trailing = /\s$/.test(lead);
+          if (parts.length === 1 && !trailing) { var w = parts[0].toLowerCase(); return { base: "", cands: Object.keys(TERM).filter(function (k) { return TERM[k].d && k.indexOf(w) === 0 && k !== w; }) }; }
+          var cmd = parts[0].toLowerCase(), pool = ARGS[cmd]; if (!pool) return { base: "", cands: [] };
+          if (cmd === "photo") pool = Array.apply(null, Array(window.__photos ? window.__photos.count() : 0)).map(function (_, i) { return String(i + 1); });
+          var cur = trailing ? "" : parts[parts.length - 1].toLowerCase();
+          return { base: parts.slice(0, trailing ? parts.length : parts.length - 1).join(" ") + " ", cands: pool.filter(function (k) { return k.indexOf(cur) === 0 && k !== cur; }), cmd: cmd };
+        }
+        function refreshSug() {
+          sugEl.innerHTML = ""; sugList = []; sugBase = "";
+          if (!term.on) { sugEl.classList.remove("show"); return; }
+          var r = completions(); sugBase = r.base; sugList = r.cands.slice(0, 8);
+          if (!sugList.length) { sugEl.classList.remove("show"); return; }
+          sugList.forEach(function (c, i) { var b = document.createElement("button"); b.type = "button"; b.tabIndex = -1; b.textContent = c; if (i === 0) b.className = "first"; b.onmousedown = function (e) { e.preventDefault(); applySug(c); }; sugEl.appendChild(b); });
+          var k = document.createElement("kbd"); k.textContent = "tab"; sugEl.appendChild(k); sugEl.classList.add("show");
+        }
+        function applySug(c) { input.value = "> " + sugBase + c + " "; refreshSug(); }
+        function tabComplete() {
+          if (!sugList.length) return;
+          var pre = sugList[0]; sugList.forEach(function (c) { while (c.indexOf(pre) !== 0) pre = pre.slice(0, -1); });
+          if (sugList.length === 1) applySug(sugList[0]); else { input.value = "> " + sugBase + pre; refreshSug(); }
         }
 
         // ---------- palette list ----------
@@ -2597,10 +2763,10 @@
             if (i === active) li.scrollIntoView({ block: "nearest" });
           });
         }
-        function onInput() { term.on = input.value.charAt(0) === ">"; active = 0; render(); }
+        function onInput() { term.on = input.value.charAt(0) === ">"; active = 0; render(); refreshSug(); }
         function open() {
           if (secretOverlay.classList.contains("open") || $("lightbox").classList.contains("open")) return;
-          lastFocus = document.activeElement; input.value = ""; term.on = false; active = 0; render();
+          lastFocus = window.__inputMode() === "key" ? document.activeElement : null; input.value = ""; term.on = false; active = 0; render(); refreshSug();
           main.setAttribute("inert", ""); pal.removeAttribute("inert"); pal.classList.add("open");
           input.focus();
         }
@@ -2613,14 +2779,14 @@
         input.addEventListener("input", onInput);
         input.addEventListener("keydown", function (e) {
           if (e.key === "Escape") { e.preventDefault(); close(); return; }
-          if (e.key === "Tab") { e.preventDefault(); return; }
+          if (e.key === "Tab") { e.preventDefault(); if (term.on) tabComplete(); return; }
           if (term.on) {
             if (e.key === "Enter") {
               e.preventDefault(); var line = input.value.slice(1).trim();
-              if (line) { term.hist.unshift(line); term.hi = -1; runTerm(line); }
-              input.value = ">"; renderTerm();
-            } else if (e.key === "ArrowUp") { e.preventDefault(); if (term.hist.length) { term.hi = Math.min(term.hi + 1, term.hist.length - 1); input.value = "> " + term.hist[term.hi]; } }
-            else if (e.key === "ArrowDown") { e.preventDefault(); term.hi = Math.max(term.hi - 1, -1); input.value = term.hi < 0 ? ">" : "> " + term.hist[term.hi]; }
+              if (line) { pushHist(line); runTerm(line); }
+              input.value = ">"; renderTerm(); refreshSug();
+            } else if (e.key === "ArrowUp") { e.preventDefault(); if (term.hist.length) { term.hi = Math.min(term.hi + 1, term.hist.length - 1); input.value = "> " + term.hist[term.hi]; refreshSug(); } }
+            else if (e.key === "ArrowDown") { e.preventDefault(); term.hi = Math.max(term.hi - 1, -1); input.value = term.hi < 0 ? ">" : "> " + term.hist[term.hi]; refreshSug(); }
             return;
           }
           if (e.key === "ArrowDown") { e.preventDefault(); if (shownCmds.length) { active = (active + 1) % shownCmds.length; mark(); } }
@@ -2628,7 +2794,7 @@
           else if (e.key === "Enter") {
             e.preventDefault();
             if (shownCmds[active]) runCmd(shownCmds[active]);
-            else if (input.value.trim()) { var raw = input.value.trim(); term.on = true; term.hist.unshift(raw); runTerm(raw); input.value = ">"; renderTerm(); }
+            else if (input.value.trim()) { var raw = input.value.trim(); term.on = true; pushHist(raw); runTerm(raw); input.value = ">"; renderTerm(); refreshSug(); }
           }
         });
         pal.addEventListener("mousedown", function (e) { if (e.target === pal) close(); });

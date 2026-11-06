@@ -714,6 +714,8 @@
   window.Playground = {
     mount: mount,
     show: function () { if (R) go("hub"); },
+    open: function (id) { if (R && GAMES.some(function (g) { return g.id === id; })) go(id); },
+    ids: function () { return GAMES.map(function (g) { return g.id; }); },
     handleEsc: function () { if (cur !== "hub") { go("hub"); return true; } return false; }
   };
 })();
