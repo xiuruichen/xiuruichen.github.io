@@ -51,6 +51,7 @@
       --shadow: rgba(0, 0, 0, 0.6);
       --grain: 0.05;
       --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --spring: cubic-bezier(0.34, 1.45, 0.5, 1);
       --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
       --serif: 'Playfair Display', 'Noto Serif SC', 'Cambria Math', Georgia, serif;
       color-scheme: dark;
@@ -180,6 +181,38 @@
     .ico-stack .ico-ov { opacity: 0; transition: opacity 750ms cubic-bezier(0.25, 0.1, 0.25, 1); }
     .ig:hover .ico-ov, .ig:focus-visible .ico-ov { opacity: 1; transition-duration: 560ms; }
 
+    @supports (transition-timing-function: linear(0, 1)) { :root { --spring: linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 12.9%, 0.938 16.7%, 1.017 19.4%, 1.077 22%, 1.121 24.6%, 1.134 27.1%, 1.116 29.6%, 1.073 33.7%, 1.015 38.6%, 0.989 44.3%, 0.985 50.5%, 0.998 63.4%, 1.002 75%, 1); } }
+    main section { scroll-margin-top: 28px; }
+    /* children of a revealed section arrive one after another, on a spring */
+    @media (prefers-reduced-motion: no-preference) {
+      .js .reveal.in :is(.badges .badge, .project, .now-row) { animation: kidIn 900ms var(--spring) backwards; animation-delay: calc(var(--i, 0) * 70ms + 160ms); }
+      @keyframes kidIn { from { opacity: 0; translate: 0 14px; filter: blur(3px); } }
+    }
+    /* ============ Section rail ============ */
+    #rail { position: fixed; right: 20px; top: 50%; translate: 0 -50%; z-index: 14; display: flex; flex-direction: column; align-items: flex-end; gap: 20px; padding: 12px 0; }
+    #rail::before, #rail::after { content: ""; position: absolute; right: 3px; top: 16px; bottom: 16px; width: 1px; }
+    #rail::before { background: var(--border); }
+    #rail::after { background: var(--fg); opacity: 0.5; transform-origin: top; transform: scaleY(var(--p, 0)); }
+    #rail button { position: relative; display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 3px 0; cursor: pointer; color: var(--faint); font: 0.58rem var(--mono); letter-spacing: 0.14em; text-transform: uppercase; transition: color 250ms; }
+    #rail .lb { opacity: 0; transform: translateX(6px); white-space: nowrap; pointer-events: none; transition: opacity 260ms ease, transform 520ms var(--spring); }
+    #rail:hover .lb, #rail button:focus-visible .lb { opacity: 0.75; transform: none; }
+    #rail button.on .lb { opacity: 0.55; transform: none; }
+    #rail .dot { position: relative; z-index: 1; width: 7px; height: 7px; border-radius: 50%; border: 1px solid currentColor; background: var(--bg); transition: transform 520ms var(--spring), background 250ms, box-shadow 350ms; }
+    #rail button:hover { color: var(--fg); } #rail button:hover .dot { transform: scale(1.3); }
+    #rail button.on { color: var(--fg); } #rail button.on .dot { background: var(--fg); transform: scale(1.35); box-shadow: 0 0 10px rgba(var(--fg-rgb), 0.5); }
+    @media (max-width: 1100px) { #rail { display: none; } }
+    /* ============ Game day strip + sound button ============ */
+    .gameday { display: flex; align-items: center; gap: 0.55rem; margin-top: 0.5rem; font: 0.7rem var(--mono); letter-spacing: 0.04em; color: #fb4f14; text-decoration: none; }
+    .gameday[hidden] { display: none; }
+    .gameday i { width: 6px; height: 6px; border-radius: 50%; background: #fb4f14; box-shadow: 0 0 10px #fb4f14; animation: gdLive 1.6s ease-in-out infinite; }
+    @keyframes gdLive { 50% { opacity: 0.35; transform: scale(0.7); } }
+    .gameday b { display: inline-block; font-weight: 600; color: var(--fg); }
+    .gameday.bump b { animation: gdBump 900ms var(--spring); }
+    @keyframes gdBump { 30% { transform: scale(1.5); color: #fb4f14; } }
+    #sfx-btn { display: grid; place-items: center; width: 26px; height: 24px; padding: 0; background: none; border: 1px solid var(--border); color: var(--faint); cursor: pointer; transition: color 200ms, border-color 200ms; }
+    #sfx-btn:hover { color: var(--fg); border-color: rgba(var(--fg-rgb), 0.35); }
+    #sfx-btn svg { width: 13px; height: 13px; }
+    #sfx-btn:not(.on) .w { display: none; } #sfx-btn.on .x { display: none; }
     /* ============ Research shelf: favorite papers, on hover ============ */
     .badge.has-shelf { position: relative; cursor: pointer; }
     .badge.has-shelf::after { content: ""; position: absolute; top: -2px; right: -2px; width: 5px; height: 5px; border-radius: 50%; background: rgb(var(--sa-rgb)); box-shadow: 0 0 8px rgb(var(--sa-rgb)); opacity: 0.8; transition: transform 400ms var(--ease), opacity 300ms; }
@@ -228,7 +261,7 @@
     .badge {
       display: inline-flex; align-items: center; border: 1px solid var(--border);
       padding: 2px 10px; font-size: 0.75rem; color: var(--muted); cursor: default;
-      transition: color 300ms ease, border-color 300ms ease, box-shadow 300ms ease, transform 300ms var(--ease);
+      transition: color 300ms ease, border-color 300ms ease, box-shadow 300ms ease, transform 500ms var(--spring);
     }
     .badge:hover {
       color: var(--fg); border-color: rgba(var(--fg-rgb), 0.4); transform: translateY(-1px);
@@ -780,6 +813,7 @@
         <h1 class="reveal" style="--d:0ms">Xiurui (Ray) Chen</h1>
         <p class="tagline reveal" style="--d:100ms">Cincinnati Country Day School '28</p>
         <p class="local reveal" id="local" style="--d:150ms" aria-label="Local time in Cincinnati"></p>
+        <a class="gameday" id="gameday" href="#sec-garden" hidden><i aria-hidden="true"></i><span class="gd-t"></span></a>
       </div>
       <nav aria-label="External links" class="reveal" style="--d:200ms">
         <ul>
@@ -906,6 +940,8 @@
 
   <canvas id="progress" aria-hidden="true"></canvas>
   <div id="chrome">
+    <button id="sfx-btn" type="button" aria-pressed="false" aria-label="Turn interface sounds on" title="Sounds"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path class="w" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/><path class="x" d="m16 9 5 6M21 9l-5 6"/></svg></button>
+
     <button id="theme-btn" aria-label="Toggle light and dark theme" title="Toggle theme"><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
     <button id="pal-hint" aria-label="Open command palette" aria-haspopup="dialog">Ctrl K</button>
   </div>
@@ -1059,6 +1095,71 @@
         return sp.a * Math.max(0, 1 - Math.hypot(x - sp.x, y - sp.y) / 130);
       }
 
+      // Sky: live Cincinnati weather and time of day, drawn into the grid
+      var sky = { mode: "clear", over: null, rise: 0, set: 0 }, SP = [], splashes = [], flash = 0, nextBolt = 7, skyT = 0, stars = null;
+      function modeOf(c) { return c == null || c <= 1 ? "clear" : c <= 3 ? "cloud" : c <= 48 ? "fog" : c <= 67 ? "rain" : c <= 77 ? "snow" : c <= 82 ? "rain" : c <= 86 ? "snow" : "storm"; }
+      function skyMode() { return sky.over || sky.mode; }
+      function isNight() { var n = Date.now(); return !!(sky.rise && sky.set && (n < sky.rise || n > sky.set)); }
+      document.addEventListener("sky", function (e) { var d = e.detail || {}; sky.mode = modeOf(d.code); sky.rise = d.rise || 0; sky.set = d.set || 0; SP = []; gridDirty = true; });
+      window.__setSky = function (m) { sky.over = m && m !== "off" ? (m === "sun" ? "clear" : m) : null; SP = []; gridDirty = true; return skyMode(); };
+      window.__skyInfo = function () { return { mode: skyMode(), live: sky.mode, night: isNight(), override: sky.over }; };
+      function spawn(m, scatter) {
+        if (m === "snow") return { x: Math.random() * W, y: scatter ? Math.random() * H : -4, v: 22 + Math.random() * 34, r: 0.9 + Math.random() * 1.4, ph: Math.random() * 6.28 };
+        var y = scatter ? Math.random() * H * 0.9 : -20;
+        return { x: Math.random() * W, y: y, v: 620 + Math.random() * 420, len: 9 + Math.random() * 10, land: (Math.floor((y + 40 + Math.random() * H * 0.5) / spacing) + 1) * spacing };   // each drop lands on a grid line
+      }
+      function stepSky(dt) {                          // returns true while something is moving
+        var m = skyMode(), n = m === "rain" ? 85 : m === "storm" ? 130 : m === "snow" ? 70 : 0, i;
+        var night = m === "clear" && isNight() && FG.charAt(0) !== "4";
+        if (reduceMotion) return false;
+        skyT += dt;
+        while (SP.length < n) SP.push(spawn(m, true));
+        if (SP.length > n) SP.length = n;
+        for (i = 0; i < SP.length; i++) {
+          var p = SP[i]; p.y += p.v * dt;
+          if (m === "snow") { p.x += Math.sin(skyT * 0.8 + p.ph) * 14 * dt; if (p.y > H + 4) SP[i] = spawn(m, false); }
+          else { p.x += p.v * 0.12 * dt; if (p.y >= p.land || p.y > H) { if (p.land <= H) splashes.push({ x: p.x, y: p.land, t: 0 }); SP[i] = spawn(m, false); } }
+        }
+        splashes.forEach(function (q) { q.t += dt; }); splashes = splashes.filter(function (q) { return q.t < 0.4; });
+        if (m === "storm") { nextBolt -= dt; if (nextBolt < 0) { flash = 1; nextBolt = 6 + Math.random() * 9; } }
+        flash = Math.max(0, flash - dt * 2.2);
+        return n > 0 || splashes.length > 0 || flash > 0 || m === "fog" || m === "cloud" || night || !!window.__gameday;
+      }
+      function drawSky() {
+        var m = skyMode(), light = FG.charAt(0) === "4", now = Date.now(), a = 0, rgb = "251,150,80", cx = W * 0.5, i, g;
+        if (sky.rise && sky.set) {                    // dawn and dusk glow in from the sun's side; night is a cool wash
+          var mr = (now - sky.rise) / 60000, ms = (now - sky.set) / 60000;
+          if (Math.abs(mr) < 60) { a = 0.075 * (1 - Math.abs(mr) / 60); cx = W * 0.12; }
+          else if (Math.abs(ms) < 60) { a = 0.075 * (1 - Math.abs(ms) / 60); rgb = "251,110,90"; cx = W * 0.88; }
+          else if (now < sky.rise || now > sky.set) { a = 0.05; rgb = "90,120,255"; }
+        }
+        if (a > 0) { g = gctx.createRadialGradient(cx, -H * 0.1, 0, cx, -H * 0.1, Math.max(W, H) * 0.95); g.addColorStop(0, "rgba(" + rgb + "," + (a * (light ? 0.8 : 1)).toFixed(3) + ")"); g.addColorStop(1, "rgba(" + rgb + ",0)"); gctx.fillStyle = g; gctx.fillRect(0, 0, W, H); }
+        if (window.__gameday) {                       // game day: the grid breathes Bengals orange from the corner
+          var br = 0.05 + 0.025 * Math.sin(skyT * 1.3); g = gctx.createRadialGradient(0, H, 0, 0, H, Math.max(W, H) * 0.8); g.addColorStop(0, "rgba(" + ORANGE + "," + br.toFixed(3) + ")"); g.addColorStop(1, "rgba(" + ORANGE + ",0)"); gctx.fillStyle = g; gctx.fillRect(0, 0, W, H);
+        }
+        if (m === "clear" && isNight() && !light) {   // clear night: a few stars
+          if (!stars) { stars = []; for (i = 0; i < 26; i++) stars.push({ x: Math.random(), y: Math.random() * 0.8, p: Math.random() * 6.28 }); }
+          stars.forEach(function (s) { gctx.fillStyle = "rgba(230,236,255," + (0.16 + 0.12 * Math.sin(skyT * 1.3 + s.p)).toFixed(3) + ")"; gctx.beginPath(); gctx.arc(s.x * W, s.y * H, 1, 0, 6.2832); gctx.fill(); });
+        }
+        if (m === "fog" || m === "cloud") {           // slow drifting banks of mist
+          var amt = m === "fog" ? 0.06 : 0.028, n = m === "fog" ? 4 : 2;
+          for (i = 0; i < n; i++) {
+            var x = ((skyT * (6 + i * 3) + i * 380) % (W + 600)) - 300, y = H * (0.18 + 0.24 * i) + Math.sin(skyT * 0.12 + i) * 30;
+            gctx.save(); gctx.translate(x, y); gctx.scale(2.6, 1);
+            g = gctx.createRadialGradient(0, 0, 0, 0, 0, 200); g.addColorStop(0, "rgba(" + FG + "," + (amt * (light ? 1.2 : 1)).toFixed(3) + ")"); g.addColorStop(1, "rgba(" + FG + ",0)"); gctx.fillStyle = g; gctx.fillRect(-300, -220, 600, 440); gctx.restore();
+          }
+        }
+        if (m === "rain" || m === "storm") {
+          gctx.lineWidth = 1; gctx.strokeStyle = "rgba(" + FG + "," + (light ? 0.34 : 0.22) + ")"; gctx.beginPath();
+          SP.forEach(function (p) { gctx.moveTo(p.x, p.y); gctx.lineTo(p.x - p.len * 0.12, p.y - p.len); }); gctx.stroke();
+          splashes.forEach(function (q) { var k = q.t / 0.4; gctx.strokeStyle = "rgba(" + FG + "," + ((1 - k) * 0.4).toFixed(3) + ")"; gctx.beginPath(); gctx.ellipse(q.x, q.y, 2 + 9 * k, 1 + 3 * k, 0, 0, 6.2832); gctx.stroke(); });
+        } else if (m === "snow") {
+          gctx.fillStyle = "rgba(" + FG + "," + (light ? 0.5 : 0.6) + ")";
+          SP.forEach(function (p) { gctx.beginPath(); gctx.arc(p.x, p.y, p.r, 0, 6.2832); gctx.fill(); });
+        }
+        if (flash > 0) { gctx.fillStyle = "rgba(225,232,255," + (0.11 * flash).toFixed(3) + ")"; gctx.fillRect(0, 0, W, H); }
+      }
+
       // Who Dey chant: an orange shockwave leaves the card and washes across the grid and the shape
       var pulses = [], PULSE_DUR = 2, PULSE_SPEED = 1000, PULSE_BAND = 170, ORANGE = "251,79,20";
       document.addEventListener("bengals-pulse", function (e) {
@@ -1114,6 +1215,7 @@
         for (var x = 0; x <= W; x += spacing) { var px = Math.round(x) + 0.5; gctx.moveTo(px, 0); gctx.lineTo(px, H); }
         for (var y = 0; y <= H; y += spacing) { var py = Math.round(y) + 0.5; gctx.moveTo(0, py); gctx.lineTo(W, py); }
         gctx.stroke();
+        drawSky();
         if (pulses.length) drawPulses();
       }
 
@@ -1263,6 +1365,7 @@
         if (sp.ta) { sp.x += (mouse.x - sp.x) * ease(12, dt); sp.y += (mouse.y - sp.y) * ease(12, dt); }
         if (sp.a > 0.005 || spWas) gridDirty = true;
         spWas = sp.a > 0.005;
+        if (stepSky(dt)) gridDirty = true;
         if (pulses.length) { pulses.forEach(function (p) { p.t += dt; }); pulses = pulses.filter(function (p) { return p.t < PULSE_DUR; }); gridDirty = true; }
         stepMorph(dt);
         realMix += ((curName === "real" ? 1 : 0) - realMix) * ease(2.5, dt);
@@ -1724,6 +1827,7 @@
       var themeBtn = $("theme-btn");
       function currentTheme() { return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark"; }
       function setTheme(t, x, y) {
+        window.__sfx && window.__sfx.swish();
         function apply() {
           if (t === "light") document.documentElement.setAttribute("data-theme", "light"); else document.documentElement.removeAttribute("data-theme");
           try { localStorage.setItem("theme", t); } catch (e) {}
@@ -1968,6 +2072,7 @@
         }
         function flip(c, to, done) {            // old top half falls, then the new bottom half lands
           if (c.cur === to) { done(); return; }
+          window.__sfx && window.__sfx.clack();
           var old = c.cur;
           c.t.firstChild.textContent = to; c.b.firstChild.textContent = old; c.ft.firstChild.textContent = old; c.fb.firstChild.textContent = to;
           c.ft.style.visibility = "visible"; c.fb.style.visibility = "visible";
@@ -1999,6 +2104,111 @@
           var last = 0;
           box.addEventListener("pointerenter", function () { if (started && Date.now() - last > 2600) { last = Date.now(); play(); } });   // hover to shuffle it again
         });
+      })();
+
+      // ======================================================
+      // Interface sounds: synthesised with WebAudio, off until you ask
+      // ======================================================
+      (function () {
+        var btn = $("sfx-btn"), on = false, ac = null, master = null, last = {}, nbuf = null;
+        try { on = localStorage.getItem("sfx") === "1"; } catch (e) {}
+        function ctx() {
+          if (ac) return ac; var C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
+          ac = new C(); master = ac.createGain(); master.gain.value = 0.55; master.connect(ac.destination);
+          var len = ac.sampleRate * 0.4, b = ac.createBuffer(1, len, ac.sampleRate), d = b.getChannelData(0); for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1; nbuf = b; return ac;
+        }
+        function gate(k, gap) { var n = performance.now(); if (last[k] && n - last[k] < gap) return false; last[k] = n; return true; }
+        function live() { if (!on) return null; var a = ctx(); if (a && a.state === "suspended") a.resume(); return a; }
+        function tone(f0, f1, dur, type, vol, delay) {
+          var a = live(); if (!a) return; var t = a.currentTime + (delay || 0), o = a.createOscillator(), g = a.createGain();
+          o.type = type || "sine"; o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+          g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+          o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.03);
+        }
+        function hiss(dur, vol, f0, f1, delay) {
+          var a = live(); if (!a || !nbuf) return; var t = a.currentTime + (delay || 0), s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+          s.buffer = nbuf; f.type = "bandpass"; f.Q.value = 0.9; f.frequency.setValueAtTime(f0, t); if (f1) f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+          g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+          s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + dur + 0.03);
+        }
+        var API = {
+          tick: function () { if (gate("tick", 40)) tone(1900, 1300, 0.04, "square", 0.035); },
+          clack: function () { if (gate("clack", 28)) { hiss(0.035, 0.22, 3200); tone(240, 120, 0.05, "triangle", 0.1); } },
+          chant: function (step) { var f = [330, 392, 494, 659][(step || 0) % 4]; tone(120, 70, 0.28, "sine", 0.4); tone(f, f * 1.5, 0.3, "triangle", 0.11, 0.04); hiss(0.18, 0.05, 900, 3000, 0.02); },
+          swish: function () { hiss(0.34, 0.14, 500, 3600); },
+          open: function () { if (gate("open", 120)) { tone(520, 800, 0.12, "sine", 0.09); tone(1040, 1400, 0.07, "sine", 0.03, 0.03); } },
+          close: function () { if (gate("close", 120)) tone(780, 480, 0.1, "sine", 0.07); },
+          copy: function () { tone(880, 1320, 0.09, "sine", 0.1); tone(1320, 1760, 0.12, "sine", 0.08, 0.07); },
+          set: function (v) { on = !!v; try { localStorage.setItem("sfx", on ? "1" : "0"); } catch (e) {} paint(); if (on) { ctx(); API.copy(); } },
+          get on() { return on; }
+        };
+        function paint() { if (!btn) return; btn.classList.toggle("on", on); btn.setAttribute("aria-pressed", on ? "true" : "false"); btn.setAttribute("aria-label", on ? "Turn interface sounds off" : "Turn interface sounds on"); btn.title = on ? "Sounds on" : "Sounds off"; }
+        if (btn) btn.addEventListener("click", function (e) { API.set(!on); if (e.detail) btn.blur(); });   // the icon shows the state; no lingering highlight after a mouse click
+        paint(); window.__sfx = API;
+      })();
+
+      // ======================================================
+      // Magnetic details: icons and badges lean toward the cursor, then spring back
+      // ======================================================
+      (function () {
+        if (reduceMotion || !window.matchMedia || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+        var sel = ".icon-link, #theme-btn, #sfx-btn, #pal-hint, #interests .badge", items = [].map.call(document.querySelectorAll(sel), function (e) { return { e: e, x: 0, y: 0, vx: 0, vy: 0, s: 1, vs: 0 }; });
+        var mx = -999, my = -999, pressed = null, running = false;
+        function kick() { if (!running) { running = true; requestAnimationFrame(step); } }
+        document.addEventListener("pointermove", function (ev) { if (ev.pointerType === "mouse") { mx = ev.clientX; my = ev.clientY; kick(); } }, { passive: true });
+        document.addEventListener("pointerdown", function (ev) { pressed = ev.target.closest ? ev.target.closest(sel) : null; if (pressed) kick(); });
+        window.addEventListener("pointerup", function () { pressed = null; kick(); });
+        document.documentElement.addEventListener("mouseleave", function () { mx = my = -999; kick(); });
+        function step() {
+          var busy = false;
+          items.forEach(function (it) {
+            var r = it.e.getBoundingClientRect(); if (!r.width) return;
+            var cx = r.left + r.width / 2 - it.x, cy = r.top + r.height / 2 - it.y, dx = mx - cx, dy = my - cy, d = Math.hypot(dx, dy), R = 64 + Math.max(r.width, r.height) / 2;
+            var k = d < R ? 1 - d / R : 0, tx = Math.max(-7, Math.min(7, dx * 0.3 * k)), ty = Math.max(-7, Math.min(7, dy * 0.3 * k)), ts = pressed === it.e ? 0.92 : 1;
+            it.vx += (tx - it.x) * 0.16; it.vy += (ty - it.y) * 0.16; it.vs += (ts - it.s) * 0.2;       // a spring: pull, then damp
+            it.vx *= 0.76; it.vy *= 0.76; it.vs *= 0.74; it.x += it.vx; it.y += it.vy; it.s += it.vs;
+            var settled = Math.abs(it.x - tx) < 0.02 && Math.abs(it.y - ty) < 0.02 && Math.abs(it.vx) < 0.02 && Math.abs(it.vy) < 0.02 && Math.abs(it.s - ts) < 0.002 && Math.abs(it.vs) < 0.002;
+            if (settled) { it.x = tx; it.y = ty; it.s = ts; it.vx = it.vy = it.vs = 0; } else busy = true;
+            it.e.style.translate = (it.x || it.y) ? it.x.toFixed(2) + "px " + it.y.toFixed(2) + "px" : ""; it.e.style.scale = it.s !== 1 ? it.s.toFixed(3) : "";
+          });
+          if (busy || d2()) requestAnimationFrame(step); else running = false;
+        }
+        function d2() { return mx > -900; }
+      })();
+
+      // ======================================================
+      // Stagger index for children of a revealed section
+      // ======================================================
+      (function () {
+        function go() { document.querySelectorAll(".reveal").forEach(function (sec) { sec.querySelectorAll(".badges .badge, .project, .now-row").forEach(function (e, i) { e.style.setProperty("--i", i); }); }); }
+        go(); window.addEventListener("load", function () { setTimeout(go, 800); });
+      })();
+
+      // ======================================================
+      // Section rail: scroll progress, section ticks, click to hop
+      // ======================================================
+      (function () {
+        var secs = SECTIONS.filter(function (x) { return x.el; }), names = { top: "top", research: "research", now: "now", experience: "experience", care: "things I care about" };
+        var nav = document.createElement("nav"); nav.id = "rail"; nav.setAttribute("aria-label", "Sections");
+        var smooth = reduceMotion ? "auto" : "smooth";
+        var btns = secs.map(function (s) {
+          var b = document.createElement("button"), l = document.createElement("span"), d = document.createElement("i");
+          b.type = "button"; b.setAttribute("aria-label", "Jump to " + names[s.label]); l.className = "lb"; l.textContent = names[s.label]; d.className = "dot"; b.appendChild(l); b.appendChild(d);
+          b.addEventListener("click", function () { window.__sfx && window.__sfx.tick(); if (s.label === "top") window.scrollTo({ top: 0, behavior: smooth }); else s.el.scrollIntoView({ behavior: smooth, block: "start" }); });
+          nav.appendChild(b); return b;
+        });
+        document.body.appendChild(nav);
+        var pend = false;
+        function upd() {
+          pend = false;
+          var y = window.scrollY, vh = window.innerHeight, max = document.documentElement.scrollHeight - vh, act = 0;
+          nav.style.setProperty("--p", (max > 0 ? Math.min(1, Math.max(0, y / max)) : 0).toFixed(4));
+          secs.forEach(function (s, i) { if (s.el.getBoundingClientRect().top < vh * 0.45) act = i; });
+          if (max > 0 && y >= max - 4) act = secs.length - 1;
+          btns.forEach(function (b, i) { b.classList.toggle("on", i === act); if (i === act) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); });
+        }
+        function sched() { if (!pend) { pend = true; requestAnimationFrame(upd); } }
+        window.addEventListener("scroll", sched, { passive: true }); window.addEventListener("resize", sched); upd();
       })();
 
       // ======================================================
@@ -2220,12 +2430,21 @@
         var fmt = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/New_York" });
         function wmo(c) { return c === 0 ? "clear" : c <= 2 ? "partly cloudy" : c === 3 ? "overcast" : c <= 48 ? "fog" : c <= 57 ? "drizzle" : c <= 67 ? "rain" : c <= 77 ? "snow" : c <= 82 ? "showers" : c <= 86 ? "snow showers" : "thunderstorms"; }
         function tick() { el.textContent = "Cincinnati · " + fmt.format(new Date()) + (wx ? " · " + wx : ""); }
-        function setWx(j) { wx = Math.round(j.current.temperature_2m) + "°F, " + wmo(j.current.weather_code); tick(); }
+        function etMs(str) {                                   // "2026-11-06T07:20" in America/New_York -> epoch ms
+          var u = Date.parse(str + "Z"), g = u + 5 * 3600000, o = {};
+          new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hourCycle: "h23", year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric" }).formatToParts(g).forEach(function (p) { o[p.type] = +p.value; });
+          return u - (Date.UTC(o.year, o.month - 1, o.day, o.hour, o.minute) - g);
+        }
+        function setWx(j) {
+          wx = Math.round(j.current.temperature_2m) + "°F, " + wmo(j.current.weather_code); tick(); window.__wxText = wx;
+          var d = j.daily || {};
+          try { document.dispatchEvent(new CustomEvent("sky", { detail: { code: j.current.weather_code, rise: d.sunrise && d.sunrise[0] ? etMs(d.sunrise[0]) : 0, set: d.sunset && d.sunset[0] ? etMs(d.sunset[0]) : 0 } })); } catch (e) {}
+        }
         tick(); setInterval(tick, 20000);
-        try { var c = JSON.parse(sessionStorage.getItem("wx")); if (c && Date.now() - c.t < 900000) { setWx(c.d); return; } } catch (e) {}
-        fetch("https://api.open-meteo.com/v1/forecast?latitude=39.10&longitude=-84.51&current=temperature_2m,weather_code&temperature_unit=fahrenheit")
+        try { var c = JSON.parse(sessionStorage.getItem("wx2")); if (c && Date.now() - c.t < 900000) { setWx(c.d); return; } } catch (e) {}
+        fetch("https://api.open-meteo.com/v1/forecast?latitude=39.10&longitude=-84.51&current=temperature_2m,weather_code&daily=sunrise,sunset&forecast_days=1&timezone=America%2FNew_York&temperature_unit=fahrenheit")
           .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-          .then(function (j) { try { sessionStorage.setItem("wx", JSON.stringify({ t: Date.now(), d: j })); } catch (e) {} setWx(j); })
+          .then(function (j) { try { sessionStorage.setItem("wx2", JSON.stringify({ t: Date.now(), d: j })); } catch (e) {} setWx(j); })
           .catch(function () {});
       })();
 
@@ -2598,6 +2817,20 @@
         function resOf(g) { return g.me > g.them ? "W" : g.me < g.them ? "L" : "T"; }
         function oppStr(g) { return (g.home ? "vs " : "@ ") + g.opp; }
 
+        // game day: a live strip under my name, a warm breath in the grid, the score in the tab title, a pulse when Cincinnati scores
+        var gdEl = $("gameday"), gdPrev = null, baseTitle = document.title;
+        function gd(g) {
+          if (!gdEl) return;
+          if (!g) { gdEl.hidden = true; document.title = baseTitle; window.__gameday = false; gdPrev = null; return; }
+          var t = gdEl.querySelector(".gd-t"); t.textContent = "";
+          t.appendChild(document.createTextNode("live \u00b7 CIN ")); t.appendChild(el("b", "", g.me)); t.appendChild(document.createTextNode(" \u2013 ")); t.appendChild(el("b", "", g.them)); t.appendChild(document.createTextNode(" " + g.opp + (g.detail ? " \u00b7 " + g.detail : "")));
+          gdEl.hidden = false; window.__gameday = true; document.title = "CIN " + g.me + "\u2013" + g.them + " " + g.opp + " \u00b7 " + baseTitle;
+          if (gdPrev && g.me > gdPrev.me) {
+            gdEl.classList.remove("bump"); void gdEl.offsetWidth; gdEl.classList.add("bump");
+            var r = gdEl.getBoundingClientRect(); document.dispatchEvent(new CustomEvent("bengals-pulse", { detail: { x: r.left + 30, y: r.top + 8 } })); window.__sfx && window.__sfx.chant(3);
+          }
+          gdPrev = { me: g.me, them: g.them };
+        }
         function render() {
           statsEl.innerHTML = "";
           if (!model) { statsEl.hidden = true; recEl.textContent = ""; return; }
@@ -2620,6 +2853,7 @@
             statsEl.appendChild(row("next", [oppStr(nx), el("em", "", whenStr(nx.date) + " · " + untilStr(nx.date))]));
           }
           statsEl.hidden = !statsEl.children.length;
+          gd(g);
           card.setAttribute("aria-label", "Who dey. Bengals" + (model.record ? " " + model.record.replace("-", " and ") : "") +
             (model.last ? ", last game " + (resOf(model.last) === "W" ? "won " : resOf(model.last) === "L" ? "lost " : "tied ") + model.last.me + " to " + model.last.them : "") +
             (g ? ", live now " + g.me + " to " + g.them + " against " + g.opp : "") + ". Press to chant.");
@@ -2671,6 +2905,7 @@
           card.appendChild(d); setTimeout(function () { d.remove(); }, 900);
           card.classList.remove("pulse"); void card.offsetWidth; card.classList.add("pulse");
           document.dispatchEvent(new CustomEvent("bengals-pulse", { detail: { x: e.detail ? e.clientX : r.left + r.width / 2, y: e.detail ? e.clientY : r.top + r.height / 2 } }));
+          window.__sfx && window.__sfx.chant(step);
         });
 
         // ---------- polling: fast during a game, slow otherwise, paused when the tab is hidden ----------
@@ -2979,6 +3214,9 @@
             } },
           whoami: { d: "who is this", run: function () { out("ray chen. cincinnati country day '28. decision theory, tacit knowledge, prediction markets."); } },
           pwd: { d: "where am i", run: function () { out("/home/ray/" + (window.scrollY < 80 ? "top" : (SECTIONS[Math.max(0, SECTIONS.findIndex(function (s) { var r = s.el.getBoundingClientRect(); return r.top <= innerHeight * 0.45 && r.bottom > innerHeight * 0.45; }))] || { label: "top" }).label)); } },
+          weather: { d: "the live sky over the grid", run: function () { var i = window.__skyInfo ? window.__skyInfo() : null; out([{ t: "cincinnati  ", c: "dim" }, { t: window.__wxText || "(loading)", c: "hi" }]); if (i) out([{ t: "grid        ", c: "dim" }, i.mode + (i.override ? " (preview)" : "") + (i.night ? " \u00b7 night" : " \u00b7 day")]); } },
+          sky: { d: "sky rain | snow | storm | fog | clear | off", run: function (a) { var ok = ["rain", "snow", "storm", "fog", "clear", "sun", "cloud", "off"]; if (ok.indexOf(a[0]) < 0) { out("usage: sky " + ok.join(" | "), "err"); return; } out("sky: " + window.__setSky(a[0]) + (a[0] === "off" ? " (live weather)" : "")); } },
+          sound: { d: "sound on | off", run: function (a) { if (a[0] !== "on" && a[0] !== "off") { out("sound: " + (window.__sfx && window.__sfx.on ? "on" : "off") + "  (usage: sound on | off)"); return; } window.__sfx.set(a[0] === "on"); out("sound: " + a[0]); } },
           date: { d: "current date and time", run: function () { out(new Date().toString()); } },
           theme: { d: "theme light | dark | toggle", run: function (a) {
               if (a[0] === "light" || a[0] === "dark") setTheme(a[0], window.innerWidth - 40, 24); else if (a[0] === "toggle" || !a[0]) toggleTheme(window.innerWidth - 40, 24); else { out("usage: theme light | dark | toggle", "err"); return; }
@@ -3168,7 +3406,7 @@
         function open() {
           if (secretOverlay.classList.contains("open") || $("lightbox").classList.contains("open")) return;
           lastFocus = window.__inputMode() === "key" ? document.activeElement : null; input.value = ""; term.on = false; active = 0; render(); refreshSug();
-          main.setAttribute("inert", ""); pal.removeAttribute("inert"); pal.classList.add("open");
+          main.setAttribute("inert", ""); pal.removeAttribute("inert"); pal.classList.add("open"); window.__sfx && window.__sfx.open();
           input.focus();
         }
         function close(restore) {
