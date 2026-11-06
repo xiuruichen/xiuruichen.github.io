@@ -246,6 +246,24 @@
     footer { padding-top: 1.5rem; border-top: 1px solid var(--border); }
     footer p { font-size: 0.75rem; color: var(--muted); }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    /* ============ Last updated: split-flap clock ============ */
+    footer p.upd { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.7rem; }
+    .upd .status-dot { margin-right: 0; }
+    .flipclock { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 2px; font: 500 0.95rem var(--mono); color: var(--fg); cursor: default; min-height: 1.5em; }
+    .fc-sep { padding: 0 0.28em; color: var(--faint); font-size: 0.8em; }
+    .fc-gap { width: 0.5em; }
+    .fc-tz { margin-left: 0.4em; font-size: 0.62em; letter-spacing: 0.14em; color: var(--faint); }
+    .fl { position: relative; display: inline-block; width: 0.98em; height: 1.55em; perspective: 260px; flex: none; }
+    .fl i { position: absolute; left: 0; right: 0; height: 50%; overflow: hidden; background: var(--panel); border: 1px solid var(--panel-border); font-style: normal; backface-visibility: hidden; }
+    .fl .t, .fl .ft { top: 0; border-radius: 4px 4px 0 0; border-bottom: 0; transform-origin: 50% 100%; }
+    .fl .b, .fl .fb { bottom: 0; border-radius: 0 0 4px 4px; border-top: 0; transform-origin: 50% 0; }
+    .fl i b { position: absolute; left: 0; right: 0; height: 200%; display: block; text-align: center; font-weight: 500; line-height: 1.55em; }
+    .fl .b b, .fl .fb b { top: -100%; }
+    .fl .ft { z-index: 2; } .fl .fb { z-index: 2; transform: rotateX(90deg); visibility: hidden; }
+    .fl .ft { visibility: hidden; }
+    .fl::after { content: ""; position: absolute; z-index: 4; left: 0; right: 0; top: calc(50% - 0.5px); height: 1px; background: var(--bg); opacity: 0.85; }
+    .fl::before { content: ""; position: absolute; z-index: 0; inset: 0; border-radius: 4px; box-shadow: 0 6px 14px -8px var(--shadow, rgba(0, 0, 0, 0.6)); pointer-events: none; }
+    @media (max-width: 560px) { .flipclock { font-size: 0.82rem; } }
     .status-dot {
       display: inline-block; width: 5px; height: 5px; background: #22c55e; border-radius: 50%;
       margin-right: 6px; vertical-align: middle; animation: blink 1.6s ease-in-out infinite;
@@ -841,7 +859,7 @@
 
 
     <footer class="reveal">
-      <p><span class="status-dot"></span>Last updated February 2026.</p>
+      <p class="upd"><span class="status-dot"></span><span class="upd-l">Last updated</span><span class="flipclock" id="flipclock" role="img" aria-label="Last updated recently"></span></p>
     </footer>
 
   </main>
@@ -1825,6 +1843,80 @@
           var h2 = head.querySelector("h2"); if (!h2) return;
           h2.setAttribute("aria-label", h2.textContent);
           head.addEventListener("mouseenter", function () { scramble(textNodeOf(h2), 450); });
+        });
+      })();
+
+      // ======================================================
+      // Last updated: the date of the latest commit, as split-flap cards
+      // ======================================================
+      (function () {
+        var box = $("flipclock"); if (!box) return;
+        var REPO = "https://api.github.com/repos/xiuruichen/xiuruichen.github.io/commits?per_page=1";
+        function when() {                                                 // the latest commit; else the time the page itself was last published
+          try { var c = JSON.parse(sessionStorage.getItem("last-commit")); if (c && Date.now() - c.t < 600000) return Promise.resolve(new Date(c.d)); } catch (e) {}
+          return fetch(REPO, { headers: { Accept: "application/vnd.github+json" } }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+            .then(function (l) { var d = l[0].commit.committer.date; try { sessionStorage.setItem("last-commit", JSON.stringify({ t: Date.now(), d: d })); } catch (e) {} return new Date(d); })
+            .catch(function () { var d = new Date(document.lastModified); return isNaN(d) ? null : d; });
+        }
+        function parts(d) {
+          var o = {}; new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true }).formatToParts(d).forEach(function (p) { o[p.type] = p.value; });
+          return o;
+        }
+        var cards = [];
+        function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+        function face(ch) { var b = document.createElement("b"); b.textContent = ch; return b; }
+        function card(ch) {
+          var f = el("span", "fl"), t = el("i", "t"), bt = el("i", "b"), ft = el("i", "ft"), fb = el("i", "fb");
+          f.setAttribute("aria-hidden", "true");
+          t.appendChild(face(" ")); bt.appendChild(face(" ")); ft.appendChild(face(" ")); fb.appendChild(face(" "));
+          f.appendChild(t); f.appendChild(bt); f.appendChild(ft); f.appendChild(fb);
+          var c = { el: f, t: t, b: bt, ft: ft, fb: fb, cur: " ", target: ch, set: set, kind: /[0-9]/.test(ch) ? "0123456789" : "ABCDEFGHIJKLMNOPQRSTUVWXYZ" };
+          function set(v) { c.cur = v; [t, bt, ft, fb].forEach(function (i) { i.firstChild.textContent = v; }); }
+          set(reduceMotion ? ch : (c.kind === "0123456789" ? "0" : "A"));
+          cards.push(c); return f;
+        }
+        function build(d) {
+          var p = parts(d), mo = p.month.toUpperCase(), ap = (p.dayPeriod || "").toUpperCase();
+          box.textContent = ""; cards = [];
+          function run(str) { str.split("").forEach(function (ch) { box.appendChild(card(ch)); }); }
+          run(mo); box.appendChild(el("span", "fc-gap")); run(p.day); box.appendChild(el("span", "fc-sep", ",")); run(p.year);
+          box.appendChild(el("span", "fc-sep", "\u00b7")); run(p.hour); box.appendChild(el("span", "fc-sep", ":")); run(p.minute); box.appendChild(el("span", "fc-gap")); run(ap);
+          box.appendChild(el("span", "fc-tz", "ET"));
+          box.setAttribute("aria-label", "Last updated " + p.month + " " + p.day + ", " + p.year + " at " + p.hour + ":" + p.minute + " " + ap + " Eastern Time");
+          var n = $("now-updated"); if (n) n.textContent = "updated " + p.month + " " + p.day;
+        }
+        function flip(c, to, done) {            // old top half falls, then the new bottom half lands
+          if (c.cur === to) { done(); return; }
+          var old = c.cur;
+          c.t.firstChild.textContent = to; c.b.firstChild.textContent = old; c.ft.firstChild.textContent = old; c.fb.firstChild.textContent = to;
+          c.ft.style.visibility = "visible"; c.fb.style.visibility = "visible";
+          var a = c.ft.animate([{ transform: "rotateX(0deg)" }, { transform: "rotateX(-90deg)" }], { duration: 120, easing: "cubic-bezier(.5,0,.9,.6)", fill: "forwards" });
+          a.onfinish = function () {
+            c.ft.style.visibility = "hidden";
+            var z = c.fb.animate([{ transform: "rotateX(90deg)" }, { transform: "rotateX(0deg)" }], { duration: 170, easing: "cubic-bezier(.2,.9,.3,1.25)", fill: "forwards" });
+            z.onfinish = function () { c.set(to); c.fb.style.visibility = "hidden"; c.ft.getAnimations().concat(c.fb.getAnimations()).forEach(function (x) { x.cancel(); }); done(); };
+          };
+        }
+        var token = 0;
+        function play() {
+          if (reduceMotion || !cards.length || !cards[0].el.animate) { cards.forEach(function (c) { c.set(c.target); }); return; }
+          var my = ++token;
+          cards.forEach(function (c, i) {
+            var steps = 3 + (i % 4), seq = [];
+            for (var k = 0; k < steps; k++) seq.push(c.kind.charAt(Math.floor(Math.random() * c.kind.length)));
+            seq.push(c.target);
+            var j = 0;
+            (function next() { if (my !== token) return; if (j >= seq.length) return; var v = seq[j++]; flip(c, v, function () { setTimeout(next, 30); }); })();
+          });
+        }
+        when().then(function (d) {
+          if (!d) { box.parentNode.textContent = ""; box.parentNode.appendChild(el("span", "", "Last updated recently.")); return; }
+          build(d);
+          var started = false;
+          function go() { if (started) return; started = true; setTimeout(play, 150); }
+          if ("IntersectionObserver" in window) { var io = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { io.disconnect(); go(); } }, { threshold: 0.6 }); io.observe(box); } else go();
+          var last = 0;
+          box.addEventListener("pointerenter", function () { if (started && Date.now() - last > 2600) { last = Date.now(); play(); } });   // hover to shuffle it again
         });
       })();
 
