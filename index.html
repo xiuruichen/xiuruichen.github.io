@@ -34,9 +34,33 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&text=%E9%99%88%E4%BF%AE%E9%94%90&display=swap" rel="stylesheet" />
   <script>document.documentElement.className += ' js';
     try { if (localStorage.getItem('theme') === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) {}
-    try {                                                     // saved display settings + the once-per-session boot gate, applied before first paint
-      var u = JSON.parse(localStorage.getItem('ui') || '{}'), h = document.documentElement;
-      if (u.acc) h.style.setProperty('--acc-rgb', u.acc);
+    window.__cleanLook = function (o) {                       // only known keys with known values ever get through
+      var r = {}; if (!o || typeof o !== 'object') return r;
+      if (typeof o.acc === 'string' && (o.acc === '' || /^(\d{1,3}),(\d{1,3}),(\d{1,3})$/.test(o.acc) && o.acc.split(',').every(function (n) { return +n <= 255; }))) r.acc = o.acc;
+      if (o.wash === 0 || o.wash === 0.5 || o.wash === 1) r.wash = o.wash;
+      if (['serif', 'mono', 'sans'].indexOf(o.type) > -1) r.type = o.type;
+      if (o.size === 0.92 || o.size === 1 || o.size === 1.12) r.size = o.size;
+      if (['off', 'film', 'heavy'].indexOf(o.grain) > -1) r.grain = o.grain;
+      if (['off', 'fine', 'classic', 'wide'].indexOf(o.grid) > -1) r.grid = o.grid; else if (o.grid === 1) r.grid = 'classic'; else if (o.grid === 0) r.grid = 'off';
+      if (o.shape === 0 || o.shape === 1) r.shape = o.shape;
+      if (o.motion === 'full' || o.motion === 'calm') r.motion = o.motion;
+      if (o.theme === 'light' || o.theme === 'dark') r.theme = o.theme;
+      return r;
+    };
+    try {
+      var h = document.documentElement, u = {};
+      var lm = /[?&]look=([^&#]+)/.exec(location.search);
+      if (lm) {                                               // a shared look link: validate, keep it, tidy the address bar
+        try { u = window.__cleanLook(JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(lm[1])))))); } catch (e) { u = {}; }
+        if (Object.keys(u).length) { window.__lookFromLink = true; if (u.theme) localStorage.setItem('theme', u.theme); var keep = {}; for (var kk in u) if (kk !== 'theme') keep[kk] = u[kk]; localStorage.setItem('ui', JSON.stringify(keep)); if (u.theme === 'light') h.setAttribute('data-theme', 'light'); else if (u.theme === 'dark') h.removeAttribute('data-theme'); }
+        try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
+      }
+      u = window.__cleanLook(JSON.parse(localStorage.getItem('ui') || '{}'));
+      if (u.acc) { h.style.setProperty('--acc-rgb', u.acc); h.style.setProperty('--ink-rgb', u.acc); h.style.setProperty('--acc-k', '100%'); }
+      if (u.wash != null) h.style.setProperty('--wash', u.wash);
+      if (u.size != null) h.style.setProperty('--tscale', u.size);
+      if (u.grain === 'off') h.style.setProperty('--grain', '0'); else if (u.grain === 'heavy') h.style.setProperty('--grain', '0.12');
+      if (u.type && u.type !== 'serif') h.setAttribute('data-type', u.type);
       if (u.motion === 'calm') h.setAttribute('data-motion', 'calm');
       if (!sessionStorage.getItem('boot') && !location.hash && u.motion !== 'calm' && !matchMedia('(prefers-reduced-motion: reduce)').matches && matchMedia('(min-width: 600px)').matches) h.classList.add('booting');
     } catch (e) {}
@@ -556,18 +580,31 @@
     .gh-none { padding: 8px 0; font-size: 0.72rem; color: var(--faint); font-style: italic; }
 
     /* ============ Accent, display panel, cursor ring, boot, secrets ============ */
-    :root { --acc-rgb: var(--fg-rgb); }                                    /* the accent dial re-tints these; default is the ink colour */
+    :root { --acc-rgb: var(--fg-rgb); --ink-rgb: var(--fg-rgb); --acc-k: 0%; --wash: 0; --tscale: 1; }                                    /* the accent dial re-tints these; default is the ink colour */
     ::selection { background: rgb(var(--acc-rgb)); color: var(--bg); }
     :focus-visible { outline-color: rgb(var(--acc-rgb)); }
     #rail button.on .dot { background: rgb(var(--acc-rgb)); box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.55); }
     .gh-map i.l4, .gh-legend i.l4 { background: rgb(var(--acc-rgb)); } .gh-map i.l4 { box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.35); }
     .gh-map i.today::after { border-color: rgba(var(--acc-rgb), 0.6); }
+    /* the accent reaches everything that has an ink colour; with the accent on auto (--acc-k 0%) none of this changes a pixel */
+    html { font-size: calc(100% * var(--tscale, 1)); caret-color: rgb(var(--acc-rgb)); accent-color: rgb(var(--acc-rgb)); }
+    .ilink { background-image: linear-gradient(90deg, rgb(var(--acc-rgb)), rgb(var(--acc-rgb))); }
+    .section-idx { color: color-mix(in srgb, rgb(var(--acc-rgb)) var(--acc-k), var(--muted)); border-color: color-mix(in srgb, rgb(var(--acc-rgb)) calc(var(--acc-k) * 0.5), var(--line)); }
+    .badge { border-color: color-mix(in srgb, rgb(var(--acc-rgb)) calc(var(--acc-k) * 0.3), var(--border)); }
+    #theme-btn:hover, #sfx-btn:hover, #ui-btn:hover, #pal-hint:hover, #ui-btn[aria-expanded="true"] { color: color-mix(in srgb, rgb(var(--acc-rgb)) var(--acc-k), var(--fg)); border-color: color-mix(in srgb, rgb(var(--acc-rgb)) var(--acc-k), rgba(var(--fg-rgb), 0.35)); }
+    .gh-map i.l1 { background: color-mix(in srgb, rgb(var(--acc-rgb)) calc(var(--acc-k) * 0.28), var(--cell1)); } .gh-map i.l2 { background: color-mix(in srgb, rgb(var(--acc-rgb)) calc(var(--acc-k) * 0.5), var(--cell2)); } .gh-map i.l3 { background: color-mix(in srgb, rgb(var(--acc-rgb)) calc(var(--acc-k) * 0.78), var(--cell3)); }
+    .gh-legend i.l1 { background: color-mix(in srgb, rgb(var(--acc-rgb)) calc(var(--acc-k) * 0.28), var(--cell1)); } .gh-legend i.l2 { background: color-mix(in srgb, rgb(var(--acc-rgb)) calc(var(--acc-k) * 0.5), var(--cell2)); } .gh-legend i.l3 { background: color-mix(in srgb, rgb(var(--acc-rgb)) calc(var(--acc-k) * 0.78), var(--cell3)); }
+    h1 { text-shadow: 0 0 46px rgba(var(--acc-rgb), calc(var(--wash) * 0.3)); }
+    #wash { position: fixed; inset: 0; pointer-events: none; opacity: var(--wash, 0); transition: opacity 700ms ease;
+      background: radial-gradient(ellipse 85% 60% at 88% -8%, rgba(var(--acc-rgb), 0.2), transparent 70%), radial-gradient(ellipse 75% 55% at 4% 108%, rgba(var(--acc-rgb), 0.13), transparent 72%); }
+    html[data-type="mono"] { --serif: var(--mono); } html[data-type="mono"] :is(h1, h2, h3) { letter-spacing: -0.03em; font-weight: 600; }
+    html[data-type="sans"] { --serif: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; } html[data-type="sans"] :is(h1, h2) { letter-spacing: -0.035em; }
 
     #ui-btn { display: grid; place-items: center; width: 26px; height: 24px; padding: 0; background: none; border: 1px solid var(--border); color: var(--faint); cursor: pointer; transition: color 200ms, border-color 200ms; }
     #ui-btn:hover, #ui-btn[aria-expanded="true"] { color: var(--fg); border-color: rgba(var(--fg-rgb), 0.35); }
     #ui-btn svg { width: 13px; height: 13px; transition: transform 600ms var(--spring); }
     #ui-btn[aria-expanded="true"] svg { transform: rotate(90deg); }
-    #ui-panel { position: fixed; top: 48px; right: 16px; z-index: 16; width: 252px; padding: 14px 14px 12px; background: var(--panel); border: 1px solid var(--panel-border);
+    #ui-panel { position: fixed; top: 48px; right: 16px; z-index: 16; width: 288px; max-height: calc(100vh - 64px); overflow-y: auto; overscroll-behavior: contain; padding: 14px 14px 12px; background: var(--panel); border: 1px solid var(--panel-border);
       box-shadow: 0 24px 60px -28px var(--shadow); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
       font-size: 0.68rem; color: var(--muted); opacity: 0; visibility: hidden; transform: translateY(-8px) scale(0.96); transform-origin: 100% 0; pointer-events: none;
       transition: opacity 220ms ease, transform 520ms var(--spring), visibility 0s linear 520ms; }
@@ -575,9 +612,15 @@
     #ui-panel h3 { margin: 0 0 10px; font: inherit; font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); font-weight: 400; display: flex; justify-content: space-between; align-items: baseline; }
     #ui-panel h3 button { background: none; border: 0; font: inherit; letter-spacing: 0.06em; text-transform: none; color: var(--faint); cursor: pointer; padding: 0; }
     #ui-panel h3 button:hover { color: var(--fg); }
-    .ui-row { display: grid; grid-template-columns: 3.6rem 1fr; gap: 8px; align-items: center; padding: 7px 0; border-top: 1px solid var(--border); }
+    .ui-row { display: grid; grid-template-columns: 3.3rem 1fr; gap: 8px; align-items: center; padding: 7px 0; border-top: 1px solid var(--border); }
     .ui-row > span { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
-    .ui-sw { display: flex; flex-wrap: wrap; gap: 5px; }
+    .ui-sw { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+    .ui-pick { position: relative; width: 17px; height: 17px; border: 1px solid var(--border); background: conic-gradient(#f87171, #fbbf24, #4ade80, #60a5fa, #a78bfa, #f472b6, #f87171); cursor: pointer; transition: transform 420ms var(--spring), box-shadow 300ms; }
+    .ui-pick:hover { transform: translateY(-2px) scale(1.08); } .ui-pick input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    .ui-pick.on { border-color: var(--fg); box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px rgba(var(--c, var(--fg-rgb)), 0.8), 0 0 14px rgba(var(--c, var(--fg-rgb)), 0.5); transform: scale(1.1); }
+    .ui-foot { display: flex; gap: 8px; margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .ui-foot button { flex: 1; background: none; border: 1px solid var(--border); color: var(--muted); font: inherit; font-size: 0.64rem; letter-spacing: 0.04em; padding: 6px 8px; cursor: pointer; transition: color 200ms, border-color 200ms, background 200ms, transform 380ms var(--spring); }
+    .ui-foot button:hover { color: var(--fg); border-color: rgb(var(--acc-rgb)); transform: translateY(-1px); } .ui-foot button:active { transform: scale(0.97); }
     .ui-sw button { position: relative; width: 17px; height: 17px; padding: 0; border: 1px solid var(--border); background: rgb(var(--c, var(--fg-rgb))); cursor: pointer; transition: transform 420ms var(--spring), border-color 200ms, box-shadow 300ms; }
     .ui-sw button:hover { transform: translateY(-2px) scale(1.08); }
     .ui-sw button[aria-pressed="true"] { border-color: var(--fg); box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px rgba(var(--c, var(--fg-rgb)), 0.8), 0 0 14px rgba(var(--c, var(--fg-rgb)), 0.5); transform: scale(1.1); }
@@ -979,6 +1022,7 @@
 <body>
 
   <div id="grain" aria-hidden="true"></div>
+  <div id="wash" aria-hidden="true"></div>
   <canvas id="grid-canvas" class="bg" aria-hidden="true"></canvas>
   <canvas id="shape-canvas" class="bg" aria-hidden="true"></canvas>
   <canvas id="fx-canvas" class="bg" style="z-index:12" aria-hidden="true"></canvas>
@@ -1250,6 +1294,7 @@
       var gctx = gridCanvas.getContext("2d");
 
       var BASE_SPACING = 60;
+      window.__setGrid = function (px) { BASE_SPACING = px; spacingTarget = px; gridDirty = true; };     // the display panel's grid density; spacing eases there
       var spacing = BASE_SPACING, spacingTarget = BASE_SPACING, gridDirty = true;
 
       function resize() {
@@ -1268,10 +1313,10 @@
       window.addEventListener("resize", resize);
 
       // ink color for the canvases; re-read when the theme flips
-      var FG = "229,229,229", ACC = FG;
+      var FG = "229,229,229", ACC = FG, INK = FG;
       function readTheme() {
         var cs = getComputedStyle(document.documentElement), v = cs.getPropertyValue("--fg-rgb"), a = cs.getPropertyValue("--acc-rgb");
-        FG = (v && v.replace(/\s/g, "")) || "229,229,229"; ACC = (a && a.replace(/\s/g, "")) || FG; gridDirty = true;
+        FG = (v && v.replace(/\s/g, "")) || "229,229,229"; ACC = (a && a.replace(/\s/g, "")) || FG; INK = ((cs.getPropertyValue("--ink-rgb") || "").replace(/\s/g, "")) || FG; gridDirty = true;
       }
       readTheme();
       document.addEventListener("themechange", readTheme);
@@ -1420,10 +1465,10 @@
       function drawGrid() {
         gctx.clearRect(0, 0, W, H);
         var ga = (FG.charAt(0) === "4" ? 0.05 : 0.08) + (song.on > 0.01 ? song.on * 0.035 * Math.pow(0.5 + 0.5 * Math.sin(song.t * 5.65), 3) : 0);   // dark ink on cream needs a lighter touch
-        var st = "rgba(" + FG + "," + ga + ")";
+        var st = "rgba(" + INK + "," + ga + ")";
         if (sp.a > 0.01) {
           var gr = gctx.createRadialGradient(sp.x, sp.y, 0, sp.x, sp.y, 160);
-          gr.addColorStop(0, "rgba(" + FG + "," + (ga + 0.3 * sp.a).toFixed(3) + ")");
+          gr.addColorStop(0, "rgba(" + INK + "," + (ga + 0.3 * sp.a).toFixed(3) + ")");
           gr.addColorStop(1, st);
           st = gr;
         }
@@ -1557,14 +1602,14 @@
           var depth = (a.z + b.z) / 2;                                   // -1 (far) .. 1 (near)
           var bo = Math.max(boostAt(a.x, a.y), boostAt(b.x, b.y));
           var pu = pulses.length ? pulseAt((a.x + b.x) / 2, (a.y + b.y) / 2) : 0;
-          sctx.strokeStyle = pu > 0.03 ? "rgba(" + ORANGE + "," + Math.min(1, 0.1 + pu * 0.85).toFixed(3) + ")" : "rgba(" + FG + "," + (0.06 + (1 - depth) * 0.06 + bo * 0.3).toFixed(3) + ")";
+          sctx.strokeStyle = pu > 0.03 ? "rgba(" + ORANGE + "," + Math.min(1, 0.1 + pu * 0.85).toFixed(3) + ")" : "rgba(" + INK + "," + (0.06 + (1 - depth) * 0.06 + bo * 0.3).toFixed(3) + ")";
           sctx.beginPath(); sctx.moveTo(a.x, a.y); sctx.lineTo(b.x, b.y); sctx.stroke();
         }
         if (dotFade > 0.02) {
           var vs = SOLIDS[curName].v;
           for (var j = 0; j < vs.length; j++) {
             var p = proj(vs[j]), bv = boostAt(p.x, p.y);
-            sctx.fillStyle = "rgba(" + FG + "," + (((0.12 + (1 - p.z) * 0.08) + bv * 0.6) * dotFade).toFixed(3) + ")";
+            sctx.fillStyle = "rgba(" + INK + "," + (((0.12 + (1 - p.z) * 0.08) + bv * 0.6) * dotFade).toFixed(3) + ")";
             sctx.beginPath(); sctx.arc(p.x, p.y, 1.4 + bv * 2.2, 0, 6.2832); sctx.fill();
           }
         }
@@ -2116,6 +2161,7 @@
       // ======================================================
       var themeBtn = $("theme-btn");
       function currentTheme() { return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark"; }
+      window.__theme = { get: function () { return currentTheme(); }, set: function (t, x, y) { setTheme(t, x, y); } };
       function setTheme(t, x, y) {
         window.__sfx && window.__sfx.swish();
         function apply() {
@@ -2175,7 +2221,7 @@
           g.setTransform(dpr, 0, 0, dpr, 0, 0); readTarget(); if (reduceMotion) shown = target; draw();
         }
         function readInk() {
-          var v = getComputedStyle(document.documentElement).getPropertyValue("--fg-rgb");
+          var v = getComputedStyle(document.documentElement).getPropertyValue("--ink-rgb");
           ink = (v && v.replace(/\s/g, "")) || "229,229,229"; light = document.documentElement.getAttribute("data-theme") === "light"; draw();
         }
         function readTarget() { var max = document.documentElement.scrollHeight - window.innerHeight; target = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0; }
@@ -2448,53 +2494,107 @@
         function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
         function typing(t) { return !!(t && t.closest && t.closest("input, textarea, select, [contenteditable]")); }
 
-        // ---------- settings ----------
-        var st = { acc: "", motion: "full", grid: 1 };
-        try { var s0 = JSON.parse(localStorage.getItem("ui") || "{}"); if (s0.acc) st.acc = s0.acc; if (s0.motion === "calm") st.motion = "calm"; if (s0.grid === 0) st.grid = 0; } catch (e) {}
+        // ---------- settings: a look you can change, save, shuffle and share ----------
+        var DEF = { acc: "", wash: 0, type: "serif", size: 1, grain: "film", grid: "classic", shape: 1, motion: "full" };
+        var GRID_PX = { fine: 36, classic: 60, wide: 96 };
+        var st = {}; for (var dk in DEF) st[dk] = DEF[dk];
+        var clean = window.__cleanLook || function () { return {}; };
+        try { var s0 = clean(JSON.parse(localStorage.getItem("ui") || "{}")); for (var sk in s0) if (sk !== "theme") st[sk] = s0[sk]; } catch (e) {}
         function save() { try { localStorage.setItem("ui", JSON.stringify(st)); } catch (e) {} }
-        var gridCv = $("grid-canvas"); gridCv.style.transition = "opacity 600ms ease";
+        var gridCv = $("grid-canvas"), shapeCv = $("shape-canvas"); gridCv.style.transition = "opacity 600ms ease"; if (shapeCv) shapeCv.style.transition = "opacity 600ms ease";
         function apply(refresh) {
-          if (st.acc) root.style.setProperty("--acc-rgb", st.acc); else root.style.removeProperty("--acc-rgb");
+          var r = root.style;
+          if (st.acc) { r.setProperty("--acc-rgb", st.acc); r.setProperty("--ink-rgb", st.acc); r.setProperty("--acc-k", "100%"); }
+          else { r.removeProperty("--acc-rgb"); r.removeProperty("--ink-rgb"); r.removeProperty("--acc-k"); }
+          r.setProperty("--wash", st.wash); r.setProperty("--tscale", st.size);
+          if (st.grain === "film") r.removeProperty("--grain"); else r.setProperty("--grain", st.grain === "off" ? "0" : "0.12");
+          if (st.type === "serif") root.removeAttribute("data-type"); else root.setAttribute("data-type", st.type);
           if (st.motion === "calm") root.setAttribute("data-motion", "calm"); else root.removeAttribute("data-motion");
-          gridCv.style.opacity = st.grid ? "" : "0";
+          gridCv.style.opacity = st.grid === "off" ? "0" : ""; if (st.grid !== "off" && window.__setGrid) window.__setGrid(GRID_PX[st.grid] || 60);
+          if (shapeCv) shapeCv.style.opacity = st.shape ? "" : "0";
           if (refresh) document.dispatchEvent(new Event("themechange"));
         }
         apply(true);
         var ACCS = [["auto", ""], ["orange", "251,79,20"], ["blue", "96,165,250"], ["green", "74,222,128"], ["pink", "244,114,182"], ["violet", "167,139,250"], ["gold", "250,204,21"]];
+        var VIBES = [
+          ["default", { acc: "", wash: 0, type: "serif", size: 1, grain: "film", grid: "classic", shape: 1 }, null],
+          ["terminal", { acc: "74,222,128", wash: 0.5, type: "mono", size: 1, grain: "heavy", grid: "fine", shape: 1 }, "dark"],
+          ["paper", { acc: "217,119,6", wash: 0.5, type: "serif", size: 1.12, grain: "heavy", grid: "wide", shape: 1 }, "light"],
+          ["neon", { acc: "167,139,250", wash: 1, type: "sans", size: 1, grain: "off", grid: "fine", shape: 1 }, "dark"],
+          ["ember", { acc: "251,79,20", wash: 1, type: "serif", size: 1, grain: "film", grid: "classic", shape: 1 }, "dark"]
+        ];
 
-        var panel = $("ui-panel"), btn = $("ui-btn"), groups = {}, isOpen = false;
-        var head = el("h3", "", "display"), rs = el("button", "", "reset"); rs.type = "button"; head.appendChild(rs); panel.appendChild(head);
-        function row(label, key, opts, pick, kind) {
+        var panel = $("ui-panel"), btn = $("ui-btn"), groups = {}, isOpen = false, pick = null;
+        var head = el("h3", "", "make it yours"), rs = el("button", "", "reset"); rs.type = "button"; head.appendChild(rs); panel.appendChild(head);
+        function row(label, key, opts, onPick, kind) {
           var r = el("div", "ui-row"), box = el("div", kind || "ui-seg"); r.appendChild(el("span", "", label)); groups[key] = [];
           opts.forEach(function (o) {
             var b = el("button"); b.type = "button"; b.setAttribute("aria-label", label + ": " + o[0]);
             if (kind) { b.style.setProperty("--c", o[1] || "var(--fg-rgb)"); b.title = o[0]; } else b.textContent = o[0];
-            b.addEventListener("click", function () { pick(o); sync(); sfx("tick"); }); box.appendChild(b); groups[key].push({ b: b, o: o });
+            b.addEventListener("click", function (e) { onPick(o, b, e); sync(); sfx("tick"); }); box.appendChild(b); groups[key].push({ b: b, o: o });
           });
-          r.appendChild(box); panel.appendChild(r);
+          r.appendChild(box); panel.appendChild(r); return box;
         }
-        row("accent", "acc", ACCS, function (o) { st.acc = o[1]; apply(true); save(); }, "ui-sw");
-        row("motion", "motion", [["full"], ["calm"]], function (o) { st.motion = o[0]; apply(); save(); });
+        function setLook(o, theme, ev) {
+          for (var k in DEF) st[k] = o[k] != null ? o[k] : (k === "motion" ? st.motion : DEF[k]);
+          apply(true); save();
+          if (theme && window.__theme && window.__theme.get() !== theme) { var r = ev && ev.target && ev.target.getBoundingClientRect ? ev.target.getBoundingClientRect() : null; window.__theme.set(theme, r ? r.left + r.width / 2 : innerWidth - 40, r ? r.top + r.height / 2 : 24); }
+        }
+        var vb = row("vibe", "vibe", VIBES, function (o, b, e) { setLook(o[1], o[2], e); });
+        groups.vibe.forEach(function (g) { g.b.removeAttribute("aria-pressed"); });
+        // accent: swatches plus a colour picker of your own
+        var swBox = row("accent", "acc", ACCS, function (o) { st.acc = o[1]; apply(true); save(); }, "ui-sw");
+        var pickWrap = el("label", "ui-pick"); pickWrap.title = "custom colour"; pick = el("input"); pick.type = "color"; pick.value = "#60a5fa"; pick.setAttribute("aria-label", "accent: custom colour");
+        pick.addEventListener("input", function () { var h = pick.value, m = /#(..)(..)(..)/.exec(h); st.acc = parseInt(m[1], 16) + "," + parseInt(m[2], 16) + "," + parseInt(m[3], 16); apply(true); sync(); });
+        pick.addEventListener("change", save); pickWrap.appendChild(pick); swBox.appendChild(pickWrap);
+        row("glow", "wash", [["off", 0], ["soft", 0.5], ["rich", 1]], function (o) { st.wash = o[1]; apply(); save(); });
+        row("type", "type", [["serif", "serif"], ["mono", "mono"], ["sans", "sans"]], function (o) { st.type = o[1]; apply(); save(); });
+        row("size", "size", [["small", 0.92], ["normal", 1], ["large", 1.12]], function (o) { st.size = o[1]; apply(); save(); });
+        row("grain", "grain", [["off", "off"], ["film", "film"], ["heavy", "heavy"]], function (o) { st.grain = o[1]; apply(); save(); });
+        row("grid", "grid", [["off", "off"], ["fine", "fine"], ["classic", "classic"], ["wide", "wide"]], function (o) { st.grid = o[1]; apply(); save(); });
+        row("shape", "shape", [["on", 1], ["off", 0]], function (o) { st.shape = o[1]; apply(); save(); });
+        row("motion", "motion", [["full", "full"], ["calm", "calm"]], function (o) { st.motion = o[1]; apply(); save(); });
         row("sound", "sound", [["off"], ["on"]], function (o) { sfx("set", o[0] === "on"); });
         row("sky", "sky", [["auto"], ["clear"], ["rain"], ["snow"], ["storm"], ["fog"]], function (o) { window.__setSky && window.__setSky(o[0] === "auto" ? "off" : o[0]); });
-        row("grid", "grid", [["on"], ["off"]], function (o) { st.grid = o[0] === "on" ? 1 : 0; apply(); save(); });
+        var foot = el("div", "ui-foot"), shuf = el("button", "", "shuffle"), shr = el("button", "", "share look"); shuf.type = shr.type = "button"; foot.appendChild(shuf); foot.appendChild(shr); panel.appendChild(foot);
+
         function sync() {
           var ov = window.__skyInfo ? window.__skyInfo().override : null;
           function mark(k, fn) { groups[k].forEach(function (g) { g.b.setAttribute("aria-pressed", fn(g.o) ? "true" : "false"); }); }
-          mark("acc", function (o) { return o[1] === st.acc; }); mark("motion", function (o) { return o[0] === st.motion; });
+          mark("acc", function (o) { return o[1] === st.acc; }); mark("wash", function (o) { return o[1] === st.wash; }); mark("type", function (o) { return o[1] === st.type; });
+          mark("size", function (o) { return o[1] === st.size; }); mark("grain", function (o) { return o[1] === st.grain; }); mark("grid", function (o) { return o[1] === st.grid; });
+          mark("shape", function (o) { return o[1] === st.shape; }); mark("motion", function (o) { return o[1] === st.motion; });
           mark("sound", function (o) { return (o[0] === "on") === !!(window.__sfx && window.__sfx.on); });
-          mark("sky", function (o) { return o[0] === (ov === "clear" ? "clear" : ov || "auto"); }); mark("grid", function (o) { return (o[0] === "on") === !!st.grid; });
+          mark("sky", function (o) { return o[0] === (ov === "clear" ? "clear" : ov || "auto"); });
+          var custom = st.acc && !ACCS.some(function (a) { return a[1] === st.acc; }); pickWrap.classList.toggle("on", !!custom);
+          if (custom) { var p = st.acc.split(","); pick.value = "#" + p.map(function (n) { return ("0" + (+n).toString(16)).slice(-2); }).join(""); pickWrap.style.setProperty("--c", st.acc); }
         }
-        rs.addEventListener("click", function () { st = { acc: "", motion: "full", grid: 1 }; apply(true); save(); sfx("set", false); window.__setSky && window.__setSky("off"); sync(); });
+        function rnd(a) { return a[Math.floor(Math.random() * a.length)]; }
+        function shuffle() {
+          var acc = Math.random() < 0.65 ? rnd(ACCS.slice(1))[1] : (function () { var h = Math.random() * 360, s = 0.7, l = 0.62, c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2, q = h < 60 ? [c, x, 0] : h < 120 ? [x, c, 0] : h < 180 ? [0, c, x] : h < 240 ? [0, x, c] : h < 300 ? [x, 0, c] : [c, 0, x]; return q.map(function (n) { return Math.round((n + m) * 255); }).join(","); })();
+          st.acc = acc; st.wash = rnd([0, 0.5, 1]); st.type = rnd(["serif", "mono", "sans"]); st.grain = rnd(["off", "film", "heavy"]); st.grid = rnd(["fine", "classic", "wide"]);
+          apply(true); save(); sync();
+        }
+        function lookLink() { var o = {}; for (var k in st) o[k] = st[k]; o.theme = window.__theme ? window.__theme.get() : "dark"; return location.origin + location.pathname + "?look=" + btoa(unescape(encodeURIComponent(JSON.stringify(o)))); }
+        function copyLook() {
+          var url = lookLink();
+          function done(ok) { shr.textContent = ok ? "link copied" : "copy failed"; if (window.__toast && ok) window.__toast("look link copied"); sfx(ok ? "copy" : "close"); setTimeout(function () { shr.textContent = "share look"; }, 1600); }
+          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(function () { done(true); }, function () { done(false); });
+          else { var ta = el("textarea"); ta.value = url; ta.style.cssText = "position:fixed;opacity:0"; document.body.appendChild(ta); ta.select(); var ok = false; try { ok = document.execCommand("copy"); } catch (e) {} ta.remove(); done(ok); }
+        }
+        shuf.addEventListener("click", function () { shuffle(); sfx("swish"); });
+        shr.addEventListener("click", copyLook);
+        rs.addEventListener("click", function () { for (var k in DEF) st[k] = DEF[k]; apply(true); save(); sfx("set", false); window.__setSky && window.__setSky("off"); sync(); });
         function setOpen(v, back) {
           isOpen = v; panel.classList.toggle("open", v); btn.setAttribute("aria-expanded", v ? "true" : "false");
           if (v) { panel.removeAttribute("inert"); sync(); sfx("open"); } else { panel.setAttribute("inert", ""); sfx("close"); if (back) btn.focus(); }
         }
-        btn.addEventListener("click", function (e) { setOpen(!isOpen); if (e.detail) btn.blur(); else if (isOpen) panel.querySelector(".ui-sw button").focus(); });
+        btn.addEventListener("click", function (e) { setOpen(!isOpen); if (e.detail) btn.blur(); else if (isOpen) panel.querySelector(".ui-seg button").focus(); });
         document.addEventListener("keydown", function (e) { if (e.key === "Escape" && isOpen) setOpen(false, true); });
         document.addEventListener("pointerdown", function (e) { if (isOpen && !panel.contains(e.target) && !btn.contains(e.target)) setOpen(false); });
         panel.addEventListener("focusout", function (e) { if (isOpen && e.relatedTarget && !panel.contains(e.relatedTarget) && e.relatedTarget !== btn) setOpen(false); });
-        
+        if (window.__lookFromLink) setTimeout(function () { if (window.__toast) window.__toast("look applied from a link · reset in settings"); }, 1400);
+
         // ---------- boot sequence (once per session, skippable) ----------
         var boot = $("boot"), bpre = $("boot-pre");
         function runBoot() {
@@ -2533,9 +2633,14 @@
         }
         window.__secret = found;
         window.__ui = {
-          setAccent: function (n) { var a = ACCS.filter(function (x) { return x[0] === n; })[0]; if (!a) return false; st.acc = a[1]; apply(true); save(); sync(); return true; },
+          setAccent: function (n) {
+            var a = ACCS.filter(function (x) { return x[0] === n; })[0], hx = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(n || "");
+            if (a) st.acc = a[1]; else if (hx) st.acc = parseInt(hx[1], 16) + "," + parseInt(hx[2], 16) + "," + parseInt(hx[3], 16); else return false;
+            apply(true); save(); sync(); return true;
+          },
           setMotion: function (m) { if (m !== "full" && m !== "calm") return false; st.motion = m; apply(); save(); sync(); return true; },
-          matrix: function () { st.acc = "74,222,128"; apply(true); save(); if (window.__setSky) window.__setSky("rain"); found("matrix"); }
+          shuffle: function () { shuffle(); return true; },
+          matrix: function () { st.acc = "74,222,128"; st.type = "mono"; st.wash = 0.5; st.grid = "fine"; apply(true); save(); sync(); if (window.__setSky) window.__setSky("rain"); found("matrix"); }
         };
 
         var KON = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"], ki = 0, letters = "", holdT = 0, holdI = 0;
@@ -3958,7 +4063,7 @@
         var GROUPS = [
           ["look around", ["ls", "cat", "goto", "pwd", "search", "photos", "photo", "song"]],
           ["live data", ["now", "markets", "forecast", "play"]],
-          ["system", ["theme", "accent", "motion", "sound", "sky", "weather", "morph", "open", "history", "stats", "clear", "date", "whoami", "echo"]]
+          ["system", ["theme", "accent", "shuffle", "motion", "sound", "sky", "weather", "morph", "open", "history", "stats", "clear", "date", "whoami", "echo"]]
         ];
         var TERM = {
           help: { d: "list commands", run: function () {
@@ -3979,7 +4084,8 @@
           weather: { d: "the live sky over the grid", run: function () { var i = window.__skyInfo ? window.__skyInfo() : null; out([{ t: "cincinnati  ", c: "dim" }, { t: window.__wxText || "(loading)", c: "hi" }]); if (i) out([{ t: "grid        ", c: "dim" }, i.mode + (i.override ? " (preview)" : "") + (i.night ? " \u00b7 night" : " \u00b7 day")]); } },
           sky: { d: "sky rain | snow | storm | fog | clear | off", run: function (a) { var ok = ["rain", "snow", "storm", "fog", "clear", "sun", "cloud", "off"]; if (ok.indexOf(a[0]) < 0) { out("usage: sky " + ok.join(" | "), "err"); return; } out("sky: " + window.__setSky(a[0]) + (a[0] === "off" ? " (live weather)" : "")); } },
           sound: { d: "sound on | off", run: function (a) { if (a[0] !== "on" && a[0] !== "off") { out("sound: " + (window.__sfx && window.__sfx.on ? "on" : "off") + "  (usage: sound on | off)"); return; } window.__sfx.set(a[0] === "on"); out("sound: " + a[0]); } },
-          accent: { d: "accent auto | orange | blue | green | pink | violet | gold", run: function (a) { var ok = window.__ui && window.__ui.setAccent(a[0] || ""); if (ok) out("accent: " + a[0]); else out("usage: accent auto | orange | blue | green | pink | violet | gold", "err"); } },
+          shuffle: { d: "shuffle the look (accent, type, grid, glow)", run: function () { window.__ui && window.__ui.shuffle(); out("shuffled. try again, or open the display panel to keep one."); } },
+          accent: { d: "accent auto | orange | blue | green | pink | violet | gold | #rrggbb", run: function (a) { var ok = window.__ui && window.__ui.setAccent(a[0] || ""); if (ok) out("accent: " + a[0]); else out("usage: accent auto | orange | blue | green | pink | violet | gold | #rrggbb", "err"); } },
           motion: { d: "motion full | calm", run: function (a) { var ok = window.__ui && window.__ui.setMotion(a[0]); if (ok) out("motion: " + a[0]); else out("usage: motion full | calm", "err"); } },
           matrix: { d: "", run: function () { out("wake up, ray.", "acc"); window.__ui && window.__ui.matrix(); } },
           sudo: { d: "", run: function () { out("nice try. nothing here needs root.", "err"); window.__secret && window.__secret("sudo"); } },
