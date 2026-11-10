@@ -2155,13 +2155,26 @@
 
         // ---- placement and the single hover zone ----
         var cur = null, openT = 0, closeT = 0;
-        function place(t) {
-          var r = t.getBoundingClientRect(), w = card.offsetWidth, h = card.offsetHeight, vw = window.innerWidth, vh = window.innerHeight, gap = 18;
-          var x = Math.max(12, Math.min(r.left + r.width / 2 - w / 2, vw - w - 12));
-          var above = r.top - gap - h > 12 || r.top > vh - r.bottom;
-          var y = Math.max(12, Math.min(above ? r.top - h - gap : r.bottom + gap, vh - h - 12));
+        var ptr = { x: -9999, y: -9999 };
+        document.addEventListener("pointermove", function (e) { ptr.x = e.clientX; ptr.y = e.clientY; }, { passive: true });
+        function place(t) {                                           // above or below the words; beside them only when neither fits; never covering the pointer or the words themselves
+          var r = t.getBoundingClientRect(), w = card.offsetWidth, h = card.offsetHeight, vw = window.innerWidth, vh = window.innerHeight, gap = 18, M = 12, PAD = 28;
+          var cx = Math.max(M, Math.min(r.left + r.width / 2 - w / 2, vw - w - M)), cy = Math.max(M, Math.min(r.top + r.height / 2 - h / 2, vh - h - M));
+          var C = [
+            { m: "above", x: cx, y: r.top - h - gap }, { m: "below", x: cx, y: r.bottom + gap },
+            { m: "right", x: r.right + gap, y: cy }, { m: "left", x: r.left - gap - w, y: cy }
+          ], best = null, bestScore = -1e9;
+          C.forEach(function (c, i) {
+            var fits = c.x >= M - 0.5 && c.y >= M - 0.5 && c.x + w <= vw - M + 0.5 && c.y + h <= vh - M + 0.5;
+            var dx = Math.max(c.x - ptr.x, 0, ptr.x - (c.x + w)), dy = Math.max(c.y - ptr.y, 0, ptr.y - (c.y + h)), away = Math.hypot(dx, dy);   // 0 = the pointer is inside the card
+            var vert = c.m === "above" || c.m === "below", clear = away > (vert ? 6 : PAD);
+            var score = (vert ? 3000 : 0) * (fits && clear ? 1 : 0) + (fits ? 1000 : 0) + (clear ? 500 : away * 10) - i;                           // top or bottom first (when it fits and is clear), then the sides, then the least bad
+            if (score > bestScore) { bestScore = score; best = c; }
+          });
+          var x = Math.max(M, Math.min(best.x, vw - w - M)), y = Math.max(M, Math.min(best.y, vh - h - M));
           card.style.left = x + "px"; card.style.top = y + "px";
-          card.style.setProperty("--ty", above ? "14px" : "-14px"); card.style.setProperty("--ox", ((r.left + r.width / 2 - x) / w * 100) + "%"); card.style.setProperty("--oy", above ? "100%" : "0%");
+          var ox = best.m === "right" ? "0%" : best.m === "left" ? "100%" : ((r.left + r.width / 2 - x) / w * 100) + "%", oy = best.m === "above" ? "100%" : best.m === "below" ? "0%" : "50%";
+          card.style.setProperty("--ty", best.m === "above" ? "14px" : best.m === "below" ? "-14px" : "0px"); card.style.setProperty("--ox", ox); card.style.setProperty("--oy", oy);
         }
         function show(t) {
           load(); clearTimeout(closeT); clearTimeout(openT);
