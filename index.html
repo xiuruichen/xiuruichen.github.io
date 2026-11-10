@@ -359,10 +359,11 @@
     .badge.has-shelf::after { content: ""; position: absolute; top: -2px; right: -2px; width: 5px; height: 5px; border-radius: 50%; background: rgb(var(--sa-rgb)); box-shadow: 0 0 8px rgb(var(--sa-rgb)); opacity: 0.8; transition: transform 400ms var(--ease), opacity 300ms; }
     .badge.has-shelf:hover::after, .badge.has-shelf[aria-expanded="true"]::after { transform: scale(1.7); opacity: 1; }
     .badge.has-shelf[aria-expanded="true"] { color: var(--fg); border-color: rgba(var(--sa-rgb), 0.55); box-shadow: 0 0 10px rgba(var(--sa-rgb), 0.22), 0 0 26px rgba(var(--sa-rgb), 0.1); }
-    #shelf { position: fixed; left: 0; top: 0; z-index: 37; width: min(348px, calc(100vw - 24px)); opacity: 0; visibility: hidden; pointer-events: none; filter: blur(6px);
-      transform: translateY(var(--ty, -8px)) scale(0.95); transform-origin: var(--ox, 20%) var(--oy, 0%);
-      transition: opacity 200ms ease, transform 520ms var(--ease), filter 320ms ease, visibility 0s linear 520ms; }
-    #shelf.open { opacity: 1; visibility: visible; pointer-events: auto; transform: none; filter: none; transition: opacity 220ms ease, transform 560ms var(--ease), filter 340ms ease, left 520ms var(--ease), top 520ms var(--ease); }
+    #shelf { position: fixed; left: 0; top: 0; z-index: 37; width: min(348px, calc(100vw - 24px)); opacity: 0; visibility: hidden; pointer-events: none;
+      transform: scale(0.99); transform-origin: var(--ox, 20%) var(--oy, 0%);                  /* appears in place: a quiet fade with the faintest settle, no swoop */
+      transition: opacity 180ms ease, transform 260ms var(--ease), visibility 0s linear 180ms; }
+    #shelf.open { opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition: opacity 200ms ease, transform 300ms var(--ease), left 420ms var(--ease), top 420ms var(--ease); }
+    #shelf.open.snap { transition: opacity 200ms ease, transform 300ms var(--ease); }
     .sh-glow { position: absolute; inset: -34px -30px; border-radius: 44px; filter: blur(28px); opacity: 0; pointer-events: none; transition: opacity 700ms ease 100ms;
       background: radial-gradient(ellipse 70% 55% at 50% 0%, rgba(var(--sa-rgb), 0.6), transparent 72%), radial-gradient(ellipse 70% 55% at 50% 100%, rgba(var(--sa-rgb), 0.32), transparent 74%); }
     #shelf.open .sh-glow { opacity: 0.5; animation: shBreathe 6s ease-in-out 800ms infinite; }
@@ -380,10 +381,10 @@
     .sh-list { list-style: none; margin: 0.8rem 0 0; padding: 0; }
     .sh-list li { position: relative; display: grid; grid-template-columns: 1.5rem minmax(0, 1fr) auto; gap: 0 0.6rem; padding: 0.8rem 0.55rem; margin: 0 -0.55rem; border-top: 1px solid var(--border); border-radius: 12px;
       background: radial-gradient(180px circle at var(--mx, 50%) var(--my, 50%), rgba(var(--sa-rgb), 0.11), transparent 70%) no-repeat; background-size: 100% 100%;
-      opacity: 0; transform: translateY(8px); transition: opacity 500ms ease, transform 640ms var(--ease); }
+      opacity: 0; transition: opacity 320ms ease; }
     .sh-list li:first-child { border-top-color: transparent; }
     #shelf.open .sh-list li { opacity: 1; transform: none; }
-    #shelf.open .sh-list li:nth-child(1) { transition-delay: 120ms; } #shelf.open .sh-list li:nth-child(2) { transition-delay: 220ms; }
+    #shelf.open .sh-list li:nth-child(1) { transition-delay: 60ms; } #shelf.open .sh-list li:nth-child(2) { transition-delay: 110ms; }
     .sh-list li::before { content: ""; position: absolute; left: 0; top: 18%; bottom: 18%; width: 2px; border-radius: 2px; background: rgb(var(--sa-rgb)); box-shadow: 0 0 10px rgb(var(--sa-rgb)); transform: scaleY(0); transition: transform 350ms var(--ease); }
     .sh-list li:hover::before, .sh-list li:focus-within::before { transform: scaleY(1); }
     .sh-idx { padding-top: 0.3rem; font: 0.6rem var(--mono); color: var(--faint); }
@@ -3278,8 +3279,11 @@
           var name = b.textContent.trim(), d = SHELF[name]; if (!d) return;
           curBadge = b; cur = d; b.setAttribute("aria-expanded", "true");
           host.style.setProperty("--sa-rgb", d.rgb); host.setAttribute("aria-label", "Favorite papers: " + name);
-          fill(d, name); capEl.textContent = d.cap; place();
+          fill(d, name); capEl.textContent = d.cap;
+          var fresh = !host.classList.contains("open"); if (fresh) host.classList.add("snap");     // a card opening from nothing appears where it belongs; only badge-to-badge moves glide
+          place();
           host.classList.add("open"); sizeCanvas(); place(); window.__sfx && window.__sfx.open();
+          if (fresh) requestAnimationFrame(function () { requestAnimationFrame(function () { host.classList.remove("snap"); }); });
           scene = SCENES[d.key](CW, CH, d.rgb, fg()); ptr = null;
           cancelAnimationFrame(raf); lastT = 0; raf = requestAnimationFrame(loop);
         }
