@@ -1500,7 +1500,7 @@
       }
 
       // ---------- The three shapes + morphing ----------
-      // 1) the original icosahedron, 2) a hyperbolic paraboloid (z = x^2 - y^2), 3) a 3D double-struck R (the reals)
+      // 1) the original icosahedron, 2) a hyperbolic paraboloid (z = x^2 - y^2), 3) a trefoil knot
       var phi = (1 + Math.sqrt(5)) / 2;
       var SOLIDS = {}, M = 320;
       function mix3(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
@@ -1545,32 +1545,26 @@
         return { segs: fitSegs(segs), v: dots };
       }
 
-      function buildReals() {                          // blackboard-bold R, extruded
-        var T = 0.17, K = 1.2, loops = [], i;
-        function arc(cx, cy, r, a0, a1, n) { var o = []; for (var k = 0; k <= n; k++) { var a = (a0 + (a1 - a0) * k / n) * Math.PI / 180; o.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); } return o; }
-        // stem (double-struck: outline plus an inner slit)
-        loops.push({ pts: [[-0.5, 0.7], [-0.28, 0.7], [-0.28, -0.7], [-0.5, -0.7]], closed: true });
-        loops.push({ pts: [[-0.39, 0.58], [-0.39, -0.58]], closed: false });
-        // bowl: outer and inner
-        loops.push({ pts: [[-0.28, 0.7], [0.08, 0.7]].concat(arc(0.08, 0.35, 0.35, 90, -90, 8)).concat([[-0.28, 0.0]]), closed: false });
-        loops.push({ pts: [[-0.28, 0.5], [0.08, 0.5]].concat(arc(0.08, 0.35, 0.15, 90, -90, 6)).concat([[-0.28, 0.2]]), closed: false });
-        // leg
-        loops.push({ pts: [[0.0, 0.0], [0.26, -0.7], [0.5, -0.7], [0.26, 0.0]], closed: true });
-        var segs = [], dots = [];
-        loops.forEach(function (lp) {
-          var n = lp.pts.length, front = lp.pts.map(function (p) { return [p[0] * K, -p[1] * K, T]; }), back = lp.pts.map(function (p) { return [p[0] * K, -p[1] * K, -T]; });   // screen y points down
-          var last = lp.closed ? n : n - 1;
-          for (i = 0; i < last; i++) { var j = (i + 1) % n; segs.push([front[i], front[j]]); segs.push([back[i], back[j]]); }
-          for (i = 0; i < n; i++) segs.push([front[i], back[i]]);
-        });
-        return { segs: fitSegs(segs), v: dots };
+      function buildKnot() {                           // a trefoil knot as a ribbon: two edges and cross-rungs
+        var K = 84, W2 = 0.075, segs = [], L = [], Rr = [], i;
+        function C(t) { return [(Math.sin(t) + 2 * Math.sin(2 * t)) / 2.7, (Math.cos(t) - 2 * Math.cos(2 * t)) / 2.7, -Math.sin(3 * t) / 2.7 * 1.2]; }
+        function norm(v) { var l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; }
+        function cross(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
+        for (i = 0; i < K; i++) {
+          var t = i / K * 6.2832, e = 0.002, p0 = C(t), p1 = C(t + e), p2 = C(t - e);
+          var T = norm([p1[0] - p2[0], p1[1] - p2[1], p1[2] - p2[2]]), A = [p1[0] - 2 * p0[0] + p2[0], p1[1] - 2 * p0[1] + p2[1], p1[2] - 2 * p0[2] + p2[2]];
+          var N = norm(cross(cross(T, A), T));          // in the plane of the bend, across the ribbon
+          L.push([p0[0] + N[0] * W2, p0[1] + N[1] * W2, p0[2] + N[2] * W2]); Rr.push([p0[0] - N[0] * W2, p0[1] - N[1] * W2, p0[2] - N[2] * W2]);
+        }
+        for (i = 0; i < K; i++) { var j = (i + 1) % K; segs.push([L[i], L[j]]); segs.push([Rr[i], Rr[j]]); if (i % 2 === 0) segs.push([L[i], Rr[i]]); }
+        return { segs: fitSegs(segs), v: [] };
       }
 
       SOLIDS.icosa = buildIcosa();
       SOLIDS.hparab = buildSaddle();
-      SOLIDS.real = buildReals();
+      SOLIDS.knot = buildKnot();
 
-      var ORDER = ["icosa", "hparab", "real"];
+      var ORDER = ["icosa", "hparab", "knot"];
       var curName = "icosa", mFrom = null, mTo = SOLIDS.icosa.segs, mt = 1, dotFade = 1;
       var curSegs = SOLIDS.icosa.segs.map(function (s) { return [s[0].slice(), s[1].slice()]; });
       function morphTo(name) {
@@ -1591,15 +1585,13 @@
       document.addEventListener("morph-to", function (e) { morphTo(e.detail); });
 
       var auto = { x: 0.4, y: -0.5 };   // continuous slow spin
-      var realMix = 0;                  // 1 while the R is showing: turntable spin so the letter stays legible
       var off = { x: 0, y: 0 };         // smoothed mouse influence
 
       // frame-rate independent easing factor
       function ease(rate, dt) { return 1 - Math.exp(-rate * dt); }
 
       function drawShape() {
-        var TAU = 6.2832, dx = ((auto.x - 0.22 + Math.PI) % TAU + TAU) % TAU - Math.PI;   // shortest way back to a fixed tilt
-        var rx = 0.22 + dx * (1 - realMix) + off.x, ry = auto.y + off.y;
+        var rx = auto.x + off.x, ry = auto.y + off.y;
         var cx = W / 2, cy = H / 2, scale = Math.min(W, H) * 0.18, fov = 4;
         var cX = Math.cos(rx), sX = Math.sin(rx), cY = Math.cos(ry), sY = Math.sin(ry);
         function proj(v) {
@@ -1650,7 +1642,6 @@
         if (rings.length) { rings.forEach(function (q) { q.t += dt; }); rings = rings.filter(function (q) { return q.t < 1.6; }); gridDirty = true; }
         if (song.on > 0.002 || song.to) { song.on += (song.to - song.on) * ease(2.2, dt); song.t += dt; gridDirty = true; if (song.on < 0.002 && !song.to) song.on = 0; }
         stepMorph(dt);
-        realMix += ((curName === "real" ? 1 : 0) - realMix) * ease(2.5, dt);
         drawShape();
 
         // grid spacing eases toward target (dt-based); redraw only while it moves
@@ -2204,7 +2195,7 @@
       var SECTIONS = [
         { label: "top", el: document.querySelector("header"), shape: "icosa" },
         { label: "research", el: $("sec-research"), shape: "hparab" },
-        { label: "now", el: $("sec-now"), shape: "real" },
+        { label: "now", el: $("sec-now"), shape: "knot" },
         { label: "experience", el: $("sec-experience"), shape: "icosa" },
         { label: "care", el: $("sec-garden"), shape: "hparab" }
       ];
