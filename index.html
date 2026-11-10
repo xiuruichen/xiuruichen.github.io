@@ -1044,6 +1044,9 @@
     @keyframes acEq { 0%, 100% { height: 3px; } 50% { height: 12px; } }
     .ac-card.blocked .ac-play { color: var(--fg); } .ac-card.blocked .ac-eq i { animation: acNudge 1.6s ease-in-out infinite; background: var(--ac-bot, #a15236); } .ac-card.blocked .ac-eq i:nth-child(2) { animation-delay: -0.3s; } .ac-card.blocked .ac-eq i:nth-child(3) { animation-delay: -0.6s; }
     @keyframes acNudge { 0%, 100% { height: 3px; } 50% { height: 8px; } }
+    .ac-play { flex: 1; min-width: 0; text-align: left; }
+    .ac-tx { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .ac-tc { display: block; font-size: 0.54rem; letter-spacing: 0.08em; color: var(--faint); font-variant-numeric: tabular-nums; min-height: 0.7em; }
     .ac-snd { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; background: none; border: 1px solid var(--border); border-radius: 50%; color: var(--muted); cursor: pointer; transition: color 200ms, border-color 200ms, background 200ms, transform 300ms var(--ease); }
     .ac-snd svg { width: 14px; height: 14px; display: block; }
     .ac-snd:hover, .ac-snd:focus-visible { color: var(--fg); border-color: rgba(var(--fg-rgb), 0.4); background: rgba(var(--fg-rgb), 0.05); transform: scale(1.06); }
@@ -2053,7 +2056,7 @@
 
       // ======================================================
       // Album card: hover "Self Control" or "Frank Ocean" (one zone). The cover rises lit by colours taken from the cover itself,
-      // and a 30-second preview of the song (Apple's public iTunes preview) plays while it is open.
+      // and the song (a licensed copy, served from this site) plays from 1:49 while it is open.
       // ======================================================
       (function () {
         var zones = document.querySelectorAll(".ac-zone"); if (!zones.length) return;
@@ -2068,10 +2071,10 @@
           '<span class="ac-disc" aria-hidden="true"><i></i></span><span class="ac-art"><span class="ac-fb" aria-hidden="true">blond</span><img alt="Blonde by Frank Ocean, album cover" crossorigin="anonymous" /></span><i class="ac-shine" aria-hidden="true"></i></a>' +
           '<div class="ac-meta" aria-hidden="true"><span>blonde</span><span>frank ocean \u00b7 2016</span></div>' +
           '<p class="ac-quote" id="ac-quote">one of the best albums, if not the greatest, of all time</p>' +
-          '<div class="ac-foot"><button type="button" class="ac-play" aria-label="Play or pause a 30 second preview of Self Control"><span class="ac-eq" aria-hidden="true"><i></i><i></i><i></i></span><span class="ac-st">30s preview</span></button>' +
-          '<button type="button" class="ac-snd" aria-pressed="true" aria-label="Play the preview when I hover" title="play the preview on hover">' + ON + OFF + '</button></div></div>';
+          '<div class="ac-foot"><button type="button" class="ac-play" aria-label="Play or pause Self Control, from 1:49"><span class="ac-eq" aria-hidden="true"><i></i><i></i><i></i></span><span class="ac-tx"><span class="ac-st">from 1:49</span><span class="ac-tc" aria-hidden="true"></span></span></button>' +
+          '<button type="button" class="ac-snd" aria-pressed="true" aria-label="Play the song when I hover" title="play on hover">' + ON + OFF + '</button></div></div>';
         document.body.appendChild(card);
-        var inner = card.querySelector("#ac-inner"), img = card.querySelector("img"), fb = card.querySelector(".ac-fb"), st = card.querySelector(".ac-st"), snd = card.querySelector(".ac-snd"), playBtn = card.querySelector(".ac-play"), started = false;
+        var inner = card.querySelector("#ac-inner"), img = card.querySelector("img"), fb = card.querySelector(".ac-fb"), st = card.querySelector(".ac-st"), tc = card.querySelector(".ac-tc"), snd = card.querySelector(".ac-snd"), playBtn = card.querySelector(".ac-play"), started = false;
 
         // ---- colours from the cover: the vivid green of the hair for the top light, the warm brown of the skin for the bottom light ----
         function hsv(R, G, B) { var r = R / 255, g = G / 255, b = B / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn, h = 0; if (d) { if (mx === r) h = ((g - b) / d) % 6; else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4; } return [((Math.round(h * 60)) + 360) % 360, mx ? d / mx : 0, mx]; }
@@ -2098,41 +2101,79 @@
           } catch (e) { /* the defaults (lime / sienna) are already the cover's colours */ }
         }
 
-        // ---- the 30 second preview ----
-        var audio = new Audio(); audio.preload = "none"; audio.loop = true; audio.volume = 0; audio.setAttribute("aria-hidden", "true"); card.appendChild(audio);
-        var epoch = 0, fadeRaf = 0, lookupP = null, userPaused = false, soundOn = true, VOL = 0.55;
+        // ---- the song: a licensed copy hosted with the site, started at 1:49 and left to run to the end, then round again ----
+        var SRC = "audio/self-control.m4a", RHYTHM = "audio/self-control.beats.json", START = 109, VOL = 0.55;
+        var audio = new Audio(); audio.preload = "none"; audio.volume = 0; audio.setAttribute("aria-hidden", "true"); card.appendChild(audio);
+        var epoch = 0, fadeRaf = 0, tcT = 0, userPaused = false, soundOn = true, blockT = 0;
         try { soundOn = localStorage.getItem("ac-sound") !== "0"; } catch (e) {}
         snd.setAttribute("aria-pressed", soundOn ? "true" : "false");
-        var LABEL = { idle: "30s preview", loading: "loading\u2026", playing: "playing", blocked: "click to play", paused: "paused", err: "no preview", off: "sound off" };
+        var LABEL = { idle: "from 1:49", loading: "loading\u2026", playing: "playing", blocked: "click or press a key", paused: "paused", err: "unavailable", off: "sound off" };
+        function mmss(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2); }
         function setState(k) {
           inner.classList.remove("playing", "blocked"); if (k === "playing") inner.classList.add("playing"); if (k === "blocked") inner.classList.add("blocked");
-          st.textContent = LABEL[k] || LABEL.idle; inner.setAttribute("data-state", k);
+          st.textContent = LABEL[k] || LABEL.idle; inner.setAttribute("data-state", k); if (k !== "playing") { clearInterval(tcT); tc.textContent = ""; } if (k === "blocked") armKey();
           document.dispatchEvent(new CustomEvent("song", { detail: { playing: k === "playing" } }));   // the grid breathes with the song
         }
-        function lookup() {                                        // the preview address, looked up by the track's stable id so it never goes stale
-          if (lookupP) return lookupP;
-          try { var c = JSON.parse(sessionStorage.getItem("ac-prev")); if (c && c.u && Date.now() - c.t < 3600000) return (lookupP = Promise.resolve(c.u)); } catch (e) {}
-          lookupP = fetch("https://itunes.apple.com/lookup?id=" + TRACK + "&country=us").then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-            .then(function (j) { var u = j.results && j.results[0] && j.results[0].previewUrl; if (!u) throw new Error("none"); try { sessionStorage.setItem("ac-prev", JSON.stringify({ u: u, t: Date.now() })); } catch (e) {} return u; })
-            .catch(function () { lookupP = null; return null; });
-          return lookupP;
+        function startClock() {
+          clearInterval(tcT);
+          function tick() { var d = isFinite(audio.duration) ? audio.duration : 0; tc.textContent = mmss(audio.currentTime) + (d ? " / " + mmss(d) : ""); }
+          tick(); tcT = setInterval(tick, 500);
         }
         function fadeTo(v, ms, done) {
           cancelAnimationFrame(fadeRaf); var v0 = audio.volume, t0 = performance.now();
-          (function step(now) { var p = Math.min(1, (now - t0) / ms); audio.volume = Math.max(0, Math.min(1, v0 + (v - v0) * p)); if (p < 1) fadeRaf = requestAnimationFrame(step); else if (done) done(); })(t0);
+          (function step(now) { var q = Math.min(1, (now - t0) / ms); audio.volume = Math.max(0, Math.min(1, v0 + (v - v0) * q)); if (q < 1) fadeRaf = requestAnimationFrame(step); else if (done) done(); })(t0);
+        }
+        var rhythm = { beats: [], strums: [], loaded: false };
+        window.__songSync = { beats: rhythm.beats, strums: rhythm.strums, time: function () { return audio.currentTime; }, playing: function () { return !audio.paused && inner.classList.contains("playing"); }, ready: function () { return rhythm.loaded; } };
+        function loadRhythm() { if (rhythm.loaded || rhythm.asked) return; rhythm.asked = true; fetch(RHYTHM).then(function (r) { return r.json(); }).then(function (j) { window.__songSync.beats = j.beats || []; window.__songSync.strums = j.strums || []; rhythm.loaded = true; }).catch(function () {}); }
+        var blobP = null;
+        function fetchSong() {                                     // the file is fetched whole, once, then played from memory: seeking to 1:49 is instant and works on every server and browser
+          loadRhythm(); if (blobP) return blobP;
+          blobP = fetch(SRC).then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); }).then(function (b) { return URL.createObjectURL(b); }).catch(function (e) { blobP = null; throw e; });
+          return blobP;
+        }
+        function ready() {
+          return fetchSong().then(function (url) {
+            return new Promise(function (res, rej) {
+              function seek() { var done = function () { audio.removeEventListener("seeked", done); res(); }; if (Math.abs(audio.currentTime - START) < 1.5) return res(); audio.addEventListener("seeked", done); audio.currentTime = START; }
+              if (audio.getAttribute("src") === url && audio.readyState >= 1) return seek();
+              audio.addEventListener("loadedmetadata", function m() { audio.removeEventListener("loadedmetadata", m); seek(); });
+              audio.addEventListener("error", function () { rej(new Error("audio")); }, { once: true });
+              audio.src = url; audio.load();
+            });
+          });
         }
         function play() {
-          var e = ++epoch; setState("loading");
-          lookup().then(function (url) {
+          var e = ++epoch; setState("loading"); clearTimeout(blockT);
+          ready().then(function () {
             if (e !== epoch) return;
-            if (!url) throw new Error("none");
-            if (audio.getAttribute("src") !== url) audio.src = url;
-            audio.volume = 0; audio.currentTime = 0; return audio.play();
+            audio.volume = 0; return audio.play();
           }).then(function () {
             if (e !== epoch) { audio.pause(); return; }
-            fadeTo(VOL, 800); setState("playing");
+            fadeTo(VOL, 900); setState("playing"); startClock();
           }).catch(function (err) { if (e === epoch) setState(err && err.name === "NotAllowedError" ? "blocked" : "err"); });
         }
+        // Browsers only allow sound after a real gesture on the page (a click, tap or key press; moving or scrolling does not count) and there is no way around that.
+        // So: the first gesture anywhere quietly unlocks this player (Safari wants it per element), and if the card is open and waiting, the next key press starts it.
+        var SILENT = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=", primed = false;
+        function prime() {
+          if (primed) return; primed = true;
+          ["pointerdown", "keydown", "touchend"].forEach(function (t) { document.removeEventListener(t, prime, true); });
+          if (audio.getAttribute("src")) return;
+          audio.muted = true; audio.src = SILENT; var q = audio.play(); if (q && q.then) q.then(function () { audio.pause(); audio.muted = false; }, function () { audio.muted = false; }); else audio.muted = false;
+        }
+        ["pointerdown", "keydown", "touchend"].forEach(function (t) { document.addEventListener(t, prime, true); });
+        var armed = false;
+        function armKey() {
+          if (armed) return; armed = true;
+          var f = function (e) {
+            document.removeEventListener("keydown", f, true); armed = false;
+            if (e.key === "Escape" || e.ctrlKey || e.metaKey || e.altKey || e.key === "Shift" || e.key === "Control" || e.key === "Alt" || e.key === "Meta") return;
+            if (card.classList.contains("open") && inner.getAttribute("data-state") === "blocked") { e.preventDefault(); play(); }   // the key starts the song instead of scrolling the page away
+          };
+          document.addEventListener("keydown", f, true);
+        }
+        audio.addEventListener("ended", function () { if (inner.classList.contains("playing")) { audio.currentTime = START; audio.play(); } });   // runs to the end, then round again
         function stop() { var e = ++epoch; fadeTo(0, 340, function () { if (e === epoch) audio.pause(); }); userPaused = false; setState(soundOn ? "idle" : "off"); }
         playBtn.addEventListener("click", function () {
           if (inner.classList.contains("playing")) { var e = ++epoch; userPaused = true; fadeTo(0, 260, function () { if (e === epoch) audio.pause(); }); setState("paused"); }
@@ -2148,7 +2189,7 @@
         function load() {
           if (started) return; started = true;
           img.onload = function () { img.classList.add("ld"); fb.style.display = "none"; derive(); };
-          img.src = ART; lookup();
+          img.src = ART;
         }
         var idle = window.requestIdleCallback || function (f) { return setTimeout(f, 1800); };
         window.addEventListener("load", function () { idle(load); });
