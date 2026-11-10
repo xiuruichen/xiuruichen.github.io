@@ -617,6 +617,56 @@
     #imargin.on .mn-d { transform: scale(1); }
     @media (prefers-reduced-motion: reduce) { #imargin, #imargin .mn-r, #imargin .mn-d { transition-duration: 1ms; } }
     #franks { position: fixed; inset: 0; z-index: 34; pointer-events: none; display: none; }
+    /* ============ Catch-22: hover the book for a mission briefing, and a B-25 comes in over the page ============ */
+    :root { --cc-rgb: 84,160,240; }
+    :root[data-theme="light"] { --cc-rgb: 28,92,204; }
+    .now-text.cc-zone { width: fit-content; max-width: 100%; cursor: help; border-radius: 8px; outline-offset: 7px; }
+    .cc-word { text-decoration: underline dotted; text-decoration-color: var(--faint); text-decoration-thickness: 1px; text-underline-offset: 5px;
+      background: linear-gradient(90deg, rgb(var(--cc-rgb)), rgba(var(--cc-rgb), 0.55)) no-repeat 0 calc(100% + 1px) / 0% 2px; transition: color 250ms ease, background-size 520ms var(--ease), text-decoration-color 250ms; }
+    .cc-zone:hover .cc-word, .cc-zone:focus-visible .cc-word, .cc-zone.on .cc-word { color: var(--fg); background-size: 100% 2px; text-decoration-color: transparent; }
+    .cc-zone small .cc-word { transition-delay: 0ms, 130ms, 0ms; }
+    #catch-card { position: fixed; left: 0; top: 0; z-index: 36; width: 262px; -webkit-user-select: none; user-select: none; opacity: 0; visibility: hidden; pointer-events: none;
+      transform: scale(0.985); transform-origin: var(--ox, 50%) var(--oy, 100%); transition: opacity 180ms ease, transform 260ms var(--ease), visibility 0s linear 180ms; }
+    #catch-card.open { opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition: opacity 200ms ease, transform 300ms var(--ease); }
+    .cc-glow { position: absolute; inset: -40px -36px; border-radius: 46px; pointer-events: none; opacity: 0; filter: blur(30px); transition: opacity 800ms ease 100ms;
+      background: radial-gradient(ellipse 74% 56% at 50% 10%, rgba(var(--cc-rgb), 0.55), transparent 72%), radial-gradient(ellipse 70% 50% at 50% 100%, rgba(var(--cc-rgb), 0.24), transparent 74%); }
+    #catch-card.open .cc-glow { opacity: 0.7; animation: ccBreathe 6s ease-in-out 900ms infinite; }
+    @keyframes ccBreathe { 50% { opacity: 0.42; } }
+    .cc-card { position: relative; padding: 15px 16px 13px; border-radius: 20px; background: var(--panel); border: 1px solid var(--panel-border); transform: translate(var(--jx, 0px), var(--jy, 0px));
+      box-shadow: 0 -8px 30px -16px rgba(var(--cc-rgb), 0.7), 0 18px 44px -14px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 0 calc(var(--fl, 0) * 40px) rgba(255, 150, 60, calc(var(--fl, 0) * 0.5)), inset 0 -26px calc(var(--fl, 0) * 40px) -18px rgba(255, 150, 60, calc(var(--fl, 0) * 0.45)); overflow: hidden; }
+    .cc-card::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+      background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(var(--cc-rgb), 0.035) 3px 4px); }          /* faint typewriter-paper ruling */
+    .cc-top { display: flex; justify-content: space-between; font: 0.56rem var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: rgb(var(--cc-rgb)); }
+    .cc-top span:first-child::before { content: ""; display: inline-block; width: 14px; height: 1px; margin-right: 0.5rem; vertical-align: middle; background: currentColor; opacity: 0.7; }
+    .cc-title { margin: 0.5rem 0 0.1rem; font: italic 700 2rem/1.05 var(--serif); letter-spacing: -0.02em; color: var(--fg); }
+    .cc-by { font: 0.62rem var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    .cc-quote { margin: 0.85rem 0 0; padding: 0.7rem 0 0; border-top: 1px dashed var(--border); font: italic 0.95rem/1.45 var(--serif); color: var(--fg); text-wrap: balance; }
+    .cc-tel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 0.85rem 0 0; opacity: 0.5; transition: opacity 400ms ease; }
+    .cc-tel.on { opacity: 1; }
+    .cc-tel span { display: flex; flex-direction: column; gap: 3px; min-width: 0; padding-left: 7px; border-left: 1px solid rgba(var(--cc-rgb), 0.38); }
+    .cc-tel i { font: normal 0.5rem/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); white-space: nowrap; }
+    .cc-tel b { font: 500 0.76rem/1.1 var(--mono); font-variant-numeric: tabular-nums; color: var(--fg); white-space: nowrap; transition: color 200ms; }
+    .cc-tel span.warn b { color: rgb(255, 140, 84); }
+    .cc-keys { display: flex; align-items: center; gap: 0.4rem; margin: 0.75rem 0 0; font: 0.52rem/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); }
+    .cc-keys > span { white-space: nowrap; }
+    .cc-keys kbd { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 4px; border: 1px solid var(--border); border-radius: 5px; font: 0.64rem var(--mono); color: var(--muted); background: rgba(var(--fg-rgb), 0.03);
+      box-shadow: 0 1px 0 rgba(var(--fg-rgb), 0.1); transition: transform 90ms ease, color 120ms, border-color 120ms, background 120ms, box-shadow 120ms; }
+    .cc-keys kbd.down { transform: translateY(1px); color: rgb(var(--cc-rgb)); border-color: rgba(var(--cc-rgb), 0.75); background: rgba(var(--cc-rgb), 0.14); box-shadow: none; }
+    .cc-kh { margin-left: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cc-track { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 0.95rem 0 0.35rem; }
+    .cc-track i { position: relative; height: 3px; border-radius: 2px; background: rgba(var(--fg-rgb), 0.12); overflow: hidden; }
+    .cc-track i::after { content: ""; position: absolute; inset: 0; background: rgb(var(--cc-rgb)); transform: scaleX(0); transform-origin: left; transition: transform 700ms var(--ease); box-shadow: 0 0 8px rgb(var(--cc-rgb)); }
+    .cc-track i.on::after { transform: scaleX(1); }
+    .cc-track i.bad::after { background: rgb(255, 112, 72); box-shadow: 0 0 8px rgb(255, 112, 72); }
+    .cc-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; font: 0.56rem var(--mono); letter-spacing: 0.13em; text-transform: uppercase; }
+    .cc-st { color: var(--muted); min-height: 1em; } .cc-st b { color: rgb(var(--cc-rgb)); font-weight: 500; }
+    .cc-again { padding: 4px 10px; background: none; border: 1px solid var(--border); border-radius: 99px; cursor: pointer; font: inherit; letter-spacing: 0.1em; color: var(--muted); transition: color 200ms, border-color 200ms, opacity 300ms; }
+    .cc-again { display: inline-flex; align-items: center; gap: 0.5rem; }
+    .cc-again kbd { display: inline-grid; place-items: center; min-width: 16px; height: 16px; padding: 0 3px; border: 1px solid var(--border); border-radius: 4px; font: 0.58rem var(--mono); color: var(--muted); background: rgba(var(--fg-rgb), 0.03); transition: transform 90ms ease, color 120ms, border-color 120ms, background 120ms; }
+    .cc-again kbd.down { transform: translateY(1px); color: rgb(var(--cc-rgb)); border-color: rgba(var(--cc-rgb), 0.75); background: rgba(var(--cc-rgb), 0.14); }
+    .cc-again:hover, .cc-again:focus-visible { color: rgb(var(--cc-rgb)); border-color: rgba(var(--cc-rgb), 0.6); }
+    .cc-again[disabled] { opacity: 0.35; pointer-events: none; }
+    #raid { position: fixed; inset: 0; z-index: 33; pointer-events: none; display: none; }
     #ilight { position: fixed; left: 0; top: 0; width: 280px; height: 280px; margin: -140px 0 0 -140px; border-radius: 50%; pointer-events: none; z-index: 5; opacity: 0; mix-blend-mode: screen;
       background: radial-gradient(circle, rgba(var(--lc, 167,139,250), 0.34) 0%, rgba(var(--lc, 167,139,250), 0.12) 38%, transparent 68%); transition: opacity 480ms var(--ease); will-change: transform, opacity; }
     #ilight.on { opacity: 1; }
@@ -2565,17 +2615,21 @@
         }
         function gate(k, gap) { var n = performance.now(); if (last[k] && n - last[k] < gap) return false; last[k] = n; return true; }
         function live() { if (!on) return null; var a = ctx(); if (a && a.state === "suspended") a.resume(); return a; }
-        function tone(f0, f1, dur, type, vol, delay) {
+        function route(node, pan) {                                    // optional stereo position, so the raid can sweep across the speakers
+          var a = ac, pn = pan != null && a.createStereoPanner ? a.createStereoPanner() : null;
+          if (pn) { pn.pan.value = Math.max(-1, Math.min(1, pan)); node.connect(pn); pn.connect(master); } else node.connect(master);
+        }
+        function tone(f0, f1, dur, type, vol, delay, pan) {
           var a = live(); if (!a) return; var t = a.currentTime + (delay || 0), o = a.createOscillator(), g = a.createGain();
           o.type = type || "sine"; o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + dur);
           g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-          o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.03);
+          o.connect(g); route(g, pan); o.start(t); o.stop(t + dur + 0.03);
         }
-        function hiss(dur, vol, f0, f1, delay) {
+        function hiss(dur, vol, f0, f1, delay, pan) {
           var a = live(); if (!a || !nbuf) return; var t = a.currentTime + (delay || 0), s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
           s.buffer = nbuf; f.type = "bandpass"; f.Q.value = 0.9; f.frequency.setValueAtTime(f0, t); if (f1) f.frequency.exponentialRampToValueAtTime(f1, t + dur);
           g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-          s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + dur + 0.03);
+          s.connect(f); f.connect(g); route(g, pan); s.start(t); s.stop(t + dur + 0.03);
         }
         var API = {
           tick: function () { if (gate("tick", 40)) tone(1900, 1300, 0.04, "square", 0.035); },
@@ -2584,6 +2638,24 @@
           swish: function () { hiss(0.34, 0.14, 500, 3600); },
           open: function () { if (gate("open", 120)) { tone(520, 800, 0.12, "sine", 0.09); tone(1040, 1400, 0.07, "sine", 0.03, 0.03); } },
           close: function () { if (gate("close", 120)) tone(780, 480, 0.1, "sine", 0.07); },
+          flak: function (pan) { if (gate("flak", 70)) { hiss(0.12, 0.15, 2400, 500, 0, pan); tone(210, 80, 0.08, "square", 0.04, 0, pan); } },
+          boom: function (pan, big) { if (gate("boom", 50)) { var v = big ? 1.7 : 1; tone(96, 34, 0.7 * v, "sine", 0.5, 0, pan); hiss(0.5 * v, 0.19, 1100, 100, 0, pan); if (big) { tone(52, 24, 1.3, "sine", 0.55, 0.05, pan); hiss(1.1, 0.12, 500, 70, 0.08, pan); } } },
+          tracer: function (pan) { if (gate("tracer", 50)) tone(980, 520, 0.05, "square", 0.022, 0, pan); },
+          whistle: function (dur, pan) { tone(2200, 520, dur, "sine", 0.05, 0, pan); hiss(dur, 0.025, 3200, 800, 0, pan); },
+          clang: function (pan) { if (gate("clang", 60)) { tone(1750, 780, 0.14, "triangle", 0.09, 0, pan); tone(2650, 1300, 0.08, "square", 0.025, 0.01, pan); hiss(0.09, 0.13, 3600, 1500, 0, pan); } },
+          dive: function (dur, pan) { tone(900, 110, dur, "sawtooth", 0.04, 0, pan); hiss(dur, 0.05, 2400, 300, 0, pan); },
+          siren: function () { if (gate("siren", 5000)) { tone(430, 640, 0.65, "sine", 0.045); tone(640, 430, 0.65, "sine", 0.045, 0.65); } },
+          engine: function () {                                                // a twin-engine drone: two detuned saws with the prop beat on top, driven by .set(pan, volume, pitch)
+            var a = live(); if (!a) return null; var o1 = a.createOscillator(), o2 = a.createOscillator(), lp = a.createBiquadFilter(), tr = a.createGain(), g = a.createGain(), lfo = a.createOscillator(), lg = a.createGain();
+            o1.type = o2.type = "sawtooth"; o1.frequency.value = 58; o2.frequency.value = 87.6; lp.type = "lowpass"; lp.frequency.value = 360; lp.Q.value = 2.4;
+            tr.gain.value = 0.72; lfo.frequency.value = 13.5; lg.gain.value = 0.28; lfo.connect(lg); lg.connect(tr.gain); g.gain.value = 0.0001;
+            o1.connect(lp); o2.connect(lp); lp.connect(tr); tr.connect(g); var pn = a.createStereoPanner ? a.createStereoPanner() : null; if (pn) { g.connect(pn); pn.connect(master); } else g.connect(master);
+            o1.start(); o2.start(); lfo.start(); var dead = false;
+            return {
+              set: function (pan, vol, pitch) { if (dead) return; var t = a.currentTime; g.gain.setTargetAtTime(Math.max(0.0001, vol), t, 0.1); o1.frequency.setTargetAtTime(58 * pitch, t, 0.1); o2.frequency.setTargetAtTime(87.6 * pitch, t, 0.1); lp.frequency.setTargetAtTime(300 + 900 * vol, t, 0.15); if (pn) pn.pan.setTargetAtTime(Math.max(-1, Math.min(1, pan)), t, 0.1); },
+              stop: function () { if (dead) return; dead = true; g.gain.setTargetAtTime(0.0001, a.currentTime, 0.2); setTimeout(function () { try { o1.stop(); o2.stop(); lfo.stop(); } catch (e) {} }, 1200); }
+            };
+          },
           copy: function () { tone(880, 1320, 0.09, "sine", 0.1); tone(1320, 1760, 0.12, "sine", 0.08, 0.07); },
           set: function (v) { on = !!v; try { localStorage.setItem("sfx", on ? "1" : "0"); } catch (e) {} paint(); if (on) { ctx(); API.copy(); } },
           get on() { return on; }
@@ -4566,6 +4638,412 @@
       document.addEventListener("song", function (e) {
         var on = !!(e.detail && e.detail.playing); if (on === playing) return; playing = on; if (on) begin(); else end();
       });
+    })();
+  </script>
+
+  <script>
+    // Catch-22: a mission briefing card, and while it is open a B-25 comes in from a random side of the page, dodging flak thrown up by the page's own furniture
+    // (the coordinate readout, the Ctrl K key, the section rail) and walking a stick of bombs down both sides of the card without touching it.
+    (function () {
+      var root = document.documentElement, reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, coarse = matchMedia("(hover: none)").matches;
+      var rows = document.querySelectorAll(".now-row"), zone = null;
+      rows.forEach(function (r) { var t = r.querySelector(".now-text"); if (t && /^\s*Catch-22/.test(t.textContent)) zone = t; });
+      if (!zone) return;
+      zone.classList.add("cc-zone"); zone.tabIndex = 0; zone.setAttribute("aria-describedby", "cc-quote");
+      var main = zone.firstElementChild, small = zone.querySelector("small"); if (main) main.classList.add("cc-word"); if (small) small.classList.add("cc-word");
+      var miss = 0; try { miss = parseInt(localStorage.getItem("missions") || "0", 10) || 0; } catch (e) {}
+
+      var card = document.createElement("div"); card.id = "catch-card"; card.setAttribute("role", "group"); card.setAttribute("aria-label", "Catch-22 by Joseph Heller"); card.setAttribute("inert", "");
+      card.innerHTML = '<div class="cc-glow" aria-hidden="true"></div><div class="cc-card" id="cc-inner">' +
+        '<div class="cc-top" aria-hidden="true"><span>mission briefing</span><span id="cc-no"></span></div>' +
+        '<div class="cc-title">Catch-22</div><div class="cc-by">joseph heller \u00b7 1961</div>' +
+        '<p class="cc-quote" id="cc-quote">\u201cHe had decided to live forever or die in the attempt.\u201d</p>' +
+        '<div class="cc-tel" id="cc-tel" aria-hidden="true"><span><i>alt ft</i><b data-k="alt">\u2014</b></span><span><i>speed kt</i><b data-k="spd">\u2014</b></span><span><i>hits</i><b data-k="hit">\u2014</b></span><span><i>hull</i><b data-k="hull">\u2014</b></span></div>' +
+        '<div class="cc-keys" id="cc-keys" aria-label="Fly the plane yourself with the up and down arrow keys"><span>pilot</span><kbd id="cc-up">\u2191</kbd><kbd id="cc-dn">\u2193</kbd><span class="cc-kh">else autopilot</span></div><div class="cc-track" aria-hidden="true"><i></i><i></i><i></i><i></i></div>' +
+        '<div class="cc-foot"><span class="cc-st" id="cc-st" aria-live="off">standing by</span><button type="button" class="cc-again" id="cc-again" aria-label="Send the bomber again (R)"><kbd>R</kbd> fly again</button></div></div>';
+      document.body.appendChild(card);
+      var inner = card.querySelector("#cc-inner"), kR = card.querySelector("#cc-again kbd"), telEl = card.querySelector("#cc-tel"), telB = { alt: card.querySelector("[data-k=alt]"), spd: card.querySelector("[data-k=spd]"), hit: card.querySelector("[data-k=hit]"), hull: card.querySelector("[data-k=hull]") }, kUp = card.querySelector("#cc-up"), kDn = card.querySelector("#cc-dn"), stEl = card.querySelector("#cc-st"), noEl = card.querySelector("#cc-no"), againBtn = card.querySelector("#cc-again"), dots = card.querySelectorAll(".cc-track i");
+      function pad(n) { return ("00" + n).slice(-3); }
+      function setNo() { noEl.textContent = "no. " + pad(miss + 1); }
+      setNo();
+      function phase(n, txt) { for (var i = 0; i < dots.length; i++) dots[i].classList.toggle("on", i < n); stEl.innerHTML = txt; }
+      function idle() { phase(0, miss ? "missions flown <b>" + miss + "</b>" : "standing by"); }
+      idle();
+
+      // ---------- placement: above or below the words, beside only when neither fits, never under the pointer ----------
+      var ptr = { x: -9999, y: -9999 }; document.addEventListener("pointermove", function (e) { ptr.x = e.clientX; ptr.y = e.clientY; }, { passive: true });
+      function place() {
+        var r = zone.getBoundingClientRect(), w = card.offsetWidth, hh = card.offsetHeight, vw = innerWidth, vh = innerHeight, gap = 18, M = 12, PAD = 28;
+        var cx0 = Math.max(M, Math.min(r.left + r.width / 2 - w / 2, vw - w - M)), cy0 = Math.max(M, Math.min(r.top + r.height / 2 - hh / 2, vh - hh - M));
+        var C = [{ m: "above", x: cx0, y: r.top - hh - gap }, { m: "below", x: cx0, y: r.bottom + gap }, { m: "right", x: r.right + gap, y: cy0 }, { m: "left", x: r.left - gap - w, y: cy0 }], best = null, bs = -1e9;
+        C.forEach(function (c, i) {
+          var fits = c.x >= M - 0.5 && c.y >= M - 0.5 && c.x + w <= vw - M + 0.5 && c.y + hh <= vh - M + 0.5, dx = Math.max(c.x - ptr.x, 0, ptr.x - (c.x + w)), dy = Math.max(c.y - ptr.y, 0, ptr.y - (c.y + hh)), away = Math.hypot(dx, dy);
+          var vert = c.m === "above" || c.m === "below", clear = away > (vert ? 6 : PAD), sc = (vert && fits && clear ? 3000 : 0) + (fits ? 1000 : 0) + (clear ? 500 : away * 10) - i; if (sc > bs) { bs = sc; best = c; }
+        });
+        var x = Math.max(M, Math.min(best.x, vw - w - M)), y = Math.max(M, Math.min(best.y, vh - hh - M));
+        card.style.left = x + "px"; card.style.top = y + "px";
+        card.style.setProperty("--ox", (best.m === "right" ? 0 : best.m === "left" ? 100 : (r.left + r.width / 2 - x) / w * 100) + "%"); card.style.setProperty("--oy", (best.m === "above" ? 100 : best.m === "below" ? 0 : 50) + "%");
+      }
+
+      // ---------- the raid: a B-25 in profile crosses the page above the card; searchlights find it, the guns on the ground line throw flak, and it walks bombs down on both sides of the card.
+      //            Flak that finds it does real damage; a badly hit aircraft goes down. You can fly it yourself with the arrow keys. Everything that falls is a body in one small physics world:
+      //            gravity, drag, and a single ground line that nothing can pass through. ----------
+      var cv = document.createElement("canvas"); cv.id = "raid"; cv.setAttribute("aria-hidden", "true"); document.body.appendChild(cv);
+      var g = cv.getContext("2d"), W = 0, H = 0, dpr = 1, loopId = 0;
+      function size() { dpr = Math.min(window.devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + "px"; cv.style.height = H + "px"; g.setTransform(dpr, 0, 0, dpr, 0, 0); }
+      size(); window.addEventListener("resize", size);
+      function rnd(a, b) { return a + Math.random() * (b - a); }
+      function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+      function sfx(n, a, b) { if (R && R.kill) return; if (window.__sfx && window.__sfx[n]) return window.__sfx[n](a, b); }
+      function panOf(x) { return clamp((x - W / 2) / (W / 2), -1, 1) * 0.9; }
+      var G = 480;                                                           // gravity for everything, in px/s^2
+
+      var P = {};
+      (function () {
+        var f = new Path2D(); f.moveTo(82, 3); f.bezierCurveTo(78, -3, 70, -8, 60, -11); f.bezierCurveTo(52, -14, 44, -15, 34, -14); f.lineTo(8, -11); f.lineTo(-40, -8.5); f.lineTo(-78, -6); f.lineTo(-90, -4); f.lineTo(-90, -1);
+        f.lineTo(-50, 3); f.lineTo(-10, 6); f.lineTo(40, 7); f.bezierCurveTo(60, 8, 76, 8, 82, 3); f.closePath(); P.fus = f;
+        var t = new Path2D(); t.moveTo(-58, -8); t.bezierCurveTo(-68, -22, -80, -32, -88, -38); t.lineTo(-99, -38); t.bezierCurveTo(-97, -28, -95, -16, -93, -5); t.closePath(); P.fin = t;
+        var w = new Path2D(); w.moveTo(30, 5); w.lineTo(-10, 5); w.lineTo(-16, 9); w.lineTo(24, 10); w.closePath(); P.wing = w;
+        var n = new Path2D(); n.moveTo(54, 5); n.bezierCurveTo(56, 13, 50, 15, 40, 15); n.lineTo(-14, 14); n.bezierCurveTo(-22, 13, -24, 9, -20, 6); n.lineTo(20, 5); n.closePath(); P.nac = n;
+        var d = new Path2D(); d.ellipse(8, -12, 7, 3.4, 0, Math.PI, 0); P.dome = d;
+        var body = new Path2D(); body.addPath(P.fus); body.addPath(P.wing); body.addPath(P.dome); P.body = body;
+        var all = new Path2D(); all.addPath(P.fus); all.addPath(P.fin); all.addPath(P.wing); all.addPath(P.nac); all.addPath(P.dome); P.all = all;
+      })();
+      var PS = 0.8, COMP = { eng: { x: 32, y: 9, r: 22, hp: 1.2 }, fin: { x: -86, y: -24, r: 18, hp: 0.9 }, nose: { x: 62, y: -4, r: 16, hp: 0.7 }, hull: { x: -6, y: -2, r: 40 } };
+      var HULL0 = 80, LR = 18, RK = 0.7, FLAK_NEAR = [52, 122], FLAK_LIT = [26, 92];
+      // contact points of each rigid shape, in aircraft-local coordinates: the corners that can touch the ground
+      var PTS = {
+        plane: [[82, 3], [60, -11], [34, -14], [-40, -8], [-90, -4], [-99, -38], [-88, -38], [40, 15], [-14, 14], [54, 5]],
+        front: [[82, 3], [60, -11], [34, -14], [8, -11], [-22, -8], [-22, 3], [40, 15], [-14, 14], [54, 5]],
+        tail: [[-22, -8], [-22, 3], [-90, -4], [-90, -1], [-99, -38], [-88, -38], [-58, -8]],
+        fin: [[-58, -8], [-88, -38], [-99, -38], [-93, -5]], blade: [[0, -11], [0, 11]], glass: [[0, -3], [3.4, 2], [-2.6, 2.6]]
+      };
+      var COM = { plane: [-4, 0], front: [30, 0], tail: [-58, -8], fin: [-80, -23], blade: [0, 0], glass: [0, 0] };
+      // a point of a body in the world. Body: x,y = centre of mass, rot = screen angle, d = mirror (+1 nose right, -1 nose left)
+      function wpb(b, lx, ly) { var dx = (lx - b.cx) * PS * b.d, dy = (ly - b.cy) * PS, c = Math.cos(b.rot), s = Math.sin(b.rot); return { x: b.x + c * dx - s * dy, y: b.y + s * dx + c * dy }; }
+      function mkBody(kind, ox, oy, rot, d, vx, vy, w, o) {                  // ox,oy: world position of the aircraft origin the shape is cut from
+        var c = COM[kind], b = { k: kind, cx: c[0], cy: c[1], d: d, rot: rot, vx: vx, vy: vy, w: w, x: 0, y: 0, a: 1, t: 0, rest: false, drag: 0.12, e: 0.2, burn: 0, smokeT: 0, fireT: 0 };
+        var dx = c[0] * PS * d, dy = c[1] * PS, cs = Math.cos(rot), sn = Math.sin(rot); b.x = ox + cs * dx - sn * dy; b.y = oy + sn * dx + cs * dy; if (o) for (var k in o) b[k] = o[k]; return b;
+      }
+      function lowest(b) {
+        var pts = PTS[b.k], mx = -1e9, i, wps = [];
+        for (i = 0; i < pts.length; i++) { var q = wpb(b, pts[i][0], pts[i][1]); wps.push(q); if (q.y > mx) mx = q.y; }
+        var xa = 1e9, xb = -1e9; for (i = 0; i < wps.length; i++) if (wps[i].y > mx - 1.2) { if (wps[i].x < xa) xa = wps[i].x; if (wps[i].x > xb) xb = wps[i].x; }
+        return { y: mx, x0: xa, x1: xb };
+      }
+      function stepBody(b, dt, gy, onImpact) {                               // semi-implicit Euler in small substeps; the ground line is a hard floor
+        var n = Math.max(1, Math.ceil(dt / 0.006)), h = dt / n, i;
+        for (i = 0; i < n; i++) {
+          b.vy += G * h; var kd = Math.exp(-b.drag * h); b.vx *= kd; b.vy *= kd; b.w *= Math.exp(-0.18 * h); b.x += b.vx * h; b.y += b.vy * h; b.rot += b.w * h;
+          var lo = lowest(b), pen = lo.y - gy;
+          if (pen > 0) {
+            b.y -= pen; var vn = b.vy; if (vn > 0) { if (vn > 70 && onImpact) onImpact(b, (lo.x0 + lo.x1) / 2, vn); b.vy = vn > 55 ? -b.e * vn : 0; b.vx *= 0.82; b.w *= 0.6; }
+            var tq = b.x < lo.x0 ? b.x - lo.x0 : b.x > lo.x1 ? b.x - lo.x1 : 0; b.w += tq * 0.06 * h * 60; b.w *= Math.exp(-3.5 * h); b.vx *= Math.exp(-2.2 * h);       // it tips over its lowest corner until it lies flat, and slides to a stop
+            if (Math.abs(b.vy) < 6 && Math.abs(b.vx) < 3 && Math.abs(b.w) < 0.05) { b.vx = 0; b.vy = 0; b.w = 0; b.rest = true; }
+          }
+        }
+      }
+      // one aircraft, drawn in aircraft-local coordinates (the caller sets the transform); the same code draws the whole plane and the pieces it breaks into
+      function drawAC(t, o) {
+        var L = o.L; g.save(); if (o.clip) { g.beginPath(); g.rect(o.clip[0], -140, o.clip[1] - o.clip[0], 280); g.clip(); }
+        g.globalAlpha = o.fade; g.fillStyle = "rgba(" + fgRGB + ",0.9)"; g.fill(P.fus); g.fill(P.wing); g.fill(P.dome); if (L.fin) { g.beginPath(); g.moveTo(-58, -8); g.lineTo(-66, -17); g.lineTo(-71, -13); g.lineTo(-76, -17); g.lineTo(-80, -9); g.closePath(); g.fill(); } else g.fill(P.fin); g.fill(P.nac);
+        if (o.lit > 0.02) { g.save(); g.shadowColor = "rgba(255,236,190," + (0.9 * o.lit).toFixed(2) + ")"; g.shadowBlur = 18 * o.lit; g.strokeStyle = "rgba(255,244,214," + (0.85 * o.lit).toFixed(2) + ")"; g.lineWidth = 1.5; g.stroke(L.fin ? P.body : P.all); g.restore(); }
+        g.strokeStyle = bgCol; g.lineWidth = 1; g.globalAlpha = o.fade * 0.8; g.beginPath(); g.moveTo(-20, 6); g.lineTo(52, 5.6); g.stroke();
+        g.beginPath(); g.moveTo(22, -12); g.lineTo(22, -8); if (!L.nose) { g.moveTo(34, -14); g.lineTo(38, -9); } g.stroke();
+        g.fillStyle = bgCol; if (!L.nose) { g.globalAlpha = o.fade * 0.7; g.beginPath(); g.moveTo(66, -9); g.bezierCurveTo(60, -12, 50, -14, 38, -13); g.lineTo(40, -8); g.lineTo(70, -5); g.closePath(); g.fill(); }
+        else { g.globalAlpha = o.fade * 0.85; g.beginPath(); g.moveTo(66, -9); g.lineTo(58, -12); g.lineTo(54, -8); g.lineTo(48, -12); g.lineTo(42, -8); g.lineTo(46, -6); g.lineTo(70, -5); g.closePath(); g.fill(); }
+        g.globalAlpha = o.fade; g.strokeStyle = "rgba(" + CC + ",0.95)"; g.lineWidth = 1.4; g.beginPath(); g.moveTo(-34, -7); g.lineTo(-20, -7); g.stroke();
+        if (o.door > 0) { g.strokeStyle = bgCol; g.lineWidth = 1.4; g.beginPath(); g.moveTo(-4, 10); g.lineTo(-4 + 4 * o.door, 10 + 7 * o.door); g.moveTo(16, 10); g.lineTo(16 - 4 * o.door, 10 + 7 * o.door); g.stroke(); }
+        if (o.prop) { var a = t * 40; g.globalAlpha = o.fade * 0.2; g.fillStyle = "rgba(" + fgRGB + ",1)"; g.beginPath(); g.ellipse(56, 9, 2.2, 22, 0, 0, 6.2832); g.fill(); g.globalAlpha = o.fade * 0.55; g.strokeStyle = "rgba(" + fgRGB + ",1)"; g.lineWidth = 1.4; g.beginPath(); g.moveTo(56, 9 + Math.sin(a) * 22); g.lineTo(56, 9 - Math.sin(a) * 22); g.stroke(); }
+        else if (L.eng) { g.globalAlpha = o.fade * 0.7; g.fillStyle = bgCol; g.beginPath(); g.ellipse(54, 9, 2, 5, 0, 0, 6.2832); g.fill(); }
+        if (o.door > 0.2) { g.globalAlpha = o.fade * o.door * (0.5 + 0.5 * Math.sin(t * 18)); g.fillStyle = "rgba(255,120,60,1)"; g.beginPath(); g.arc(4, 11, 1.6, 0, 6.2832); g.fill(); }
+        if (o.hit > 0.02) { g.globalAlpha = 0.75 * o.hit; g.fillStyle = "#fff"; g.fill(L.fin ? P.body : P.all); }
+        g.restore();
+      }
+      function drawBody(b, t) {
+        g.save(); g.translate(b.x, b.y); g.rotate(b.rot); g.scale(b.d, 1); g.scale(PS, PS); g.translate(-b.cx, -b.cy);
+        if (b.k === "plane") drawAC(t, { L: R.lost, fade: b.a, prop: false, door: 0, lit: 0, hit: 0 });
+        else if (b.k === "front") drawAC(t, { L: R.lost, fade: b.a, prop: false, door: 0, lit: 0, hit: 0, clip: [-22, 140] });
+        else if (b.k === "tail") drawAC(t, { L: R.lost, fade: b.a, prop: false, door: 0, lit: 0, hit: 0, clip: [-140, -22] });
+        else if (b.k === "fin") { g.globalAlpha = b.a; g.fillStyle = "rgba(" + fgRGB + ",0.9)"; g.fill(P.fin); }
+        else if (b.k === "blade") { g.globalAlpha = b.a; g.strokeStyle = "rgba(" + fgRGB + ",0.9)"; g.lineWidth = 2; g.beginPath(); g.moveTo(0, -11); g.lineTo(0, 11); g.stroke(); }
+        else if (b.k === "glass") { g.globalAlpha = b.a; g.fillStyle = "rgba(190,225,255,0.85)"; g.beginPath(); g.moveTo(0, -3); g.lineTo(3.4, 2); g.lineTo(-2.6, 2.6); g.closePath(); g.fill(); }
+        g.restore();
+      }
+
+      var R = null, cool = 0, fgRGB = "229,229,229", bgCol = "#0a0a0a", CC = "84,160,240", telT = 0, keys = { up: false, dn: false };
+      function gunXs() {
+        var els = [document.getElementById("coord-display"), document.getElementById("pal-hint"), document.getElementById("rail")], xs = [];
+        els.forEach(function (e) { if (!e) return; var r = e.getBoundingClientRect(); if (r.width > 2 && r.right > 0 && r.left < innerWidth) xs.push(clamp(r.left + r.width / 2, 40, innerWidth - 40)); });
+        [0.34, 0.66].forEach(function (f) { xs.push(innerWidth * f + rnd(-50, 50)); });
+        xs.sort(function (a, b) { return a - b; }); var out = []; xs.forEach(function (x) { if (!out.length || x - out[out.length - 1] > 150) out.push(x); }); return out;
+      }
+      function tel(a, s, hi, hu, warn) { telB.alt.textContent = a; telB.spd.textContent = s; telB.hit.textContent = hi; telB.hull.textContent = hu; telB.alt.parentNode.classList.toggle("warn", !!warn); }
+      function launch(force) {
+        if ((R && !R.done && !R.kill) || reduce || coarse || root.getAttribute("data-motion") === "calm") return false;
+        if (!force && performance.now() < cool) return false;
+        cancelAnimationFrame(loopId); readFg(); var rc = card.getBoundingClientRect(), dirn = Math.random() < 0.5 ? 1 : -1, ground = Math.min(H - 34, Math.max(rc.bottom + 120, H * 0.74)), alt = Math.max(70, Math.min(rc.top - 110, H * 0.38));
+        var gs = gunXs().map(function (x, i) { return { x: x, next: 0.6 + i * 0.35, rec: 0, aim: -1.2 }; });
+        R = { t: 0, ts: 1, tsTarget: 1, tsHold: 0, dirn: dirn, ground: ground, alt: alt, cl: rc.left - 26, cr: rc.right + 26, cx: (rc.left + rc.right) / 2, pl: { x: dirn > 0 ? -150 : W + 150, y: alt, vy: 0, d: dirn, pitch: 0, fade: 1, lit: 0, hit: 0 }, speed: 215, speedMul: 1, sink: 0, dodge: 0, dv: 0, man: 0, manHold: 0, warnT: 0,
+          guns: gs, beams: [gs[0], gs[gs.length - 1]].filter(function (x, i, a) { return x && a.indexOf(x) === i; }).map(function (gn, i) { return { x: gn.x, ang: -Math.PI / 2 + rnd(-0.4, 0.4), ph: rnd(0, 6), lock: 0, dir: i ? -1 : 1 }; }),
+          gunA: 0, tracers: [], bursts: [], bombs: [], blasts: [], puffs: [], sparks: [], trail: [], bodies: [], released: 0, nA: 0, nD: 0, relT: 0, door: 0, phase: 1, done: false, kill: false, inView: false, jx: 0, jy: 0, shake: 0, flash: 0, cardFl: 0, flak: 0, eng: null,
+          hp: { eng: COMP.eng.hp, fin: COMP.fin.hp, nose: COMP.nose.hp }, lost: { eng: false, fin: false, nose: false }, integ: HULL0, hits: 0, fire: 0, fireT: 0, smokeT: 0, finT: -9, state: "fly", dyT: 0, spin: 0, breakAt: 0, outcome: "clean", endT: 0, crashed: false, broke: false, body: null };
+        cv.style.transition = "none"; cv.style.opacity = "1"; cv.style.display = "block"; againBtn.disabled = true; telEl.classList.add("on"); tel("00000", "000", "00", "100%"); for (var i = 0; i < dots.length; i++) dots[i].classList.remove("bad");
+        phase(1, "bomber <b>inbound</b>"); sfx("siren"); R.eng = sfx("engine"); R.last = performance.now(); loopId = requestAnimationFrame(step); return true;
+      }
+      function resetTel() { telEl.classList.remove("on"); tel("\u2014", "\u2014", "\u2014", "\u2014", false); }
+      function kill() {                                                    // you moved off the card: everything fades at once, trail and all
+        if (!R || R.kill) return; R.kill = true; if (R.eng) R.eng.stop(); cv.style.transition = "opacity 260ms ease"; cv.style.opacity = "0"; resetTel(); keys.up = keys.dn = false; kUp.classList.remove("down"); kDn.classList.remove("down");
+        card.style.setProperty("--jx", "0px"); card.style.setProperty("--jy", "0px"); card.style.setProperty("--fl", "0"); cool = performance.now() + 1500; var k = R;
+        setTimeout(function () { if (R !== k) return; cancelAnimationFrame(loopId); R = null; g.clearRect(0, 0, W, H); cv.style.display = "none"; cv.style.opacity = "1"; cv.style.transition = "none"; againBtn.disabled = false; resetTel(); idle(); }, 300);
+      }
+      // a bomb is a falling body: it leaves the aircraft with the aircraft's velocity and from there only gravity moves it
+      function newBomb(x, y, vx, vy) { R.bombs.push({ x: x, y: y, vx: vx, vy: vy, ang: Math.atan2(vy, vx), t: 0 }); }
+      function bombLanding(pl, vx) { var h = R.ground - (pl.y + 11) - 9, vy0 = pl.vy, T = (-vy0 + Math.sqrt(vy0 * vy0 + 2 * G * Math.max(h, 1))) / G; return pl.x + vx * T; }
+      function explodeAt(x, big) {
+        var y = R.ground, s = big ? 1.7 : 1; sfx("boom", panOf(x), big);
+        R.jx += rnd(-1, 1) * 1.8 * s; R.jy += rnd(0.4, 1.4) * 1.6 * s; R.shake = Math.min(1.4, R.shake + 0.5 * s); R.flash = Math.min(1, R.flash + 0.35 * s); R.cardFl = 1;
+        R.blasts.push({ x: x, y: y, t: 0, s: s });
+        for (var i = 0; i < (big ? 3 : 2); i++) R.puffs.push({ x: x + rnd(-12, 12) * s, y: y - 8, vx: rnd(-8, 8), vy: -rnd(20, 36), r: rnd(12, 18) * s, t: -i * 0.12, life: rnd(1.8, 2.4), smoke: true });
+        for (i = 0; i < (big ? 12 : 7); i++) { var a = -rnd(0.2, Math.PI - 0.2), v = rnd(90, 220) * (big ? 1.2 : 1); R.sparks.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0, life: rnd(0.45, 0.85), c: "255,196,110" }); }
+        if (big) { R.tsTarget = 0.28; R.tsHold = 0.8; document.dispatchEvent(new CustomEvent("grid-pulse", { detail: { x: x, y: y, color: "255,150,60", strong: true } })); }
+      }
+      function spark(x, y, n, c, sp) { for (var i = 0; i < n; i++) { var a = rnd(0, 6.2832), v = rnd(60, sp || 200); R.sparks.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0, life: rnd(0.25, 0.55), c: c || "255,196,110" }); } }
+      function note(txt) { phase(R.phase >= 3 ? 3 : 2, txt); }
+      // the pose of the flying aircraft, in the same terms as a body
+      function planePose() { var pl = R.pl; return { x: pl.x, y: pl.y, cx: 0, cy: 0, d: pl.d, rot: pl.d * pl.pitch }; }
+      function wp(lx, ly) { return wpb(planePose(), lx, ly); }
+      function loseComp(k, w) {
+        var pl = R.pl, vx = R.dirn * R.speed * R.speedMul; R.lost[k] = true; R.tsTarget = 0.45; R.tsHold = 0.14; spark(w.x, w.y, 10, "255,214,150", 240); var rot = pl.d * pl.pitch, org = { x: pl.x, y: pl.y };
+        if (k === "fin") { R.finT = R.t; R.integ -= 8; var fb = mkBody("fin", org.x, org.y, rot, pl.d, vx * 0.92 + rnd(-24, 24), pl.vy - rnd(30, 90), rnd(-3, 3), { drag: 0.7, e: 0.25, burn: 1.6 }); R.bodies.push(fb); note("tail <b>hit</b> \u00b7 fin gone"); }
+        else if (k === "eng") { R.integ -= 14; for (var i = 0; i < 2; i++) R.bodies.push(mkBody("blade", w.x, w.y, rnd(0, 6), pl.d, vx * 0.5 + rnd(-90, 90), pl.vy - rnd(80, 190), rnd(8, 14) * (i ? -1 : 1), { drag: 0.5, e: 0.3, cx: 0, cy: 0, x: w.x, y: w.y }));
+          if (Math.random() < 0.72) { R.fire = rnd(2.5, 7); R.fireT = 0; } note(R.fire > 0 ? "engine <b>out</b> \u00b7 on fire" : "engine <b>out</b>"); }
+        else if (k === "nose") { R.integ -= 5; for (var j = 0; j < 3; j++) R.bodies.push(mkBody("glass", w.x, w.y, rnd(0, 6), pl.d, vx * 0.6 + rnd(-90, 90), pl.vy - rnd(10, 130), rnd(-10, 10), { drag: 0.9, e: 0.3, cx: 0, cy: 0, x: w.x, y: w.y })); note("nose <b>shattered</b>"); }
+      }
+      function segDist(px, py, ax, ay, bx2, by2) { var dx = bx2 - ax, dy = by2 - ay, t = clamp(((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy), 0, 1); return Math.hypot(px - (ax + dx * t), py - (ay + dy * t)); }
+      var SPLINT = 92;                                                       // how far a burst's splinters carry
+      function hitPlane(bx, by) {                                          // a burst goes off: parts take a direct hit if it is on them; the hull takes splinter damage that falls off with distance
+        var any = false, nLost = (R.lost.eng ? 1 : 0) + (R.lost.fin ? 1 : 0) + (R.lost.nose ? 1 : 0), pl = R.pl;
+        ["eng", "fin", "nose"].forEach(function (k) {
+          if (R.lost[k]) return; var c = COMP[k], w = wp(c.x, c.y), d = Math.hypot(bx - w.x, by - w.y), reach = LR + c.r * PS * RK;
+          var sd = Math.max(0, 1 - d / 70), dm = (d < reach ? (1 - d / reach) * 1.6 + 0.55 : 0) + sd * sd * 1.05;
+          if (dm > 0.12) { R.hp[k] -= dm; any = true; if (d < reach) spark(w.x, w.y, 3, "255,214,150", 150); if (R.hp[k] <= 0) loseComp(k, w); }
+        });
+        var A = wp(-72, -6), B = wp(78, 3), hd = segDist(bx, by, A.x, A.y, B.x, B.y), dmg = hd < SPLINT ? 15 * Math.pow(1 - hd / SPLINT, 2) : 0;
+        if (dmg >= 1) { R.integ -= dmg; any = true; if (hd < SPLINT * 0.6) spark(clamp(bx, Math.min(A.x, B.x), Math.max(A.x, B.x)), by < pl.y ? pl.y - 6 : pl.y + 6, 2, "255,214,150", 130); }
+        if (any) { R.hits++; sfx("clang", panOf(bx)); R.shake = Math.min(1.4, R.shake + 0.3 + 0.4 * Math.min(1, dmg / 8)); pl.hit = Math.max(pl.hit, Math.min(1, 0.35 + dmg / 8)); R.flash = Math.min(1, R.flash + 0.1); R.jx += rnd(-1, 1) * 1.2; R.jy += rnd(-1, 1) * 1.2; if (R.phase < 2) R.phase = 2; if (R.phase <= 2 && nLost === (R.lost.eng ? 1 : 0) + (R.lost.fin ? 1 : 0) + (R.lost.nose ? 1 : 0)) phase(2, "<b>hit</b> \u00b7 hull " + Math.max(0, Math.round(R.integ / HULL0 * 100)) + "%"); }
+      }
+      function burst(x, y) {
+        sfx("flak", panOf(x)); R.flak++; R.bursts.push({ x: x, y: y, t: 0 }); R.puffs.push({ x: x, y: y, vx: rnd(-6, 6), vy: -rnd(2, 8), r: rnd(12, 17), t: 0, life: rnd(1.5, 2), smoke: true, light: true });
+        if (R.state === "fly" && Math.hypot(x - R.pl.x, y - R.pl.y) < 120) { R.shake = Math.min(1.4, R.shake + 0.35); R.pl.lit = 1; R.flash = Math.min(1, R.flash + 0.12); }
+        if (R.state === "fly") hitPlane(x, y);
+        if (R.phase < 2) { R.phase = 2; phase(2, "<b>flak</b> ahead"); }
+      }
+      function startDying() {                                              // the aircraft can no longer fly: from here it is just a body with momentum
+        if (R.state !== "fly") return; var pl = R.pl, vx = R.dirn * R.speed * R.speedMul; R.state = "dying"; R.dyT = 0; R.spin = rnd(0.5, 1.1) * (Math.random() < 0.5 ? -1 : 1); R.breakAt = rnd(0.8, 1.5);
+        R.outcome = "down"; R.tsTarget = 0.4; R.tsHold = 0.35; R.shake = 1.2; R.cardFl = 0.7; sfx("dive", 2.4, panOf(pl.x)); if (R.eng) R.eng.stop(); R.phase = 3; phase(3, "bomber <b>down</b>");
+        R.body = mkBody("plane", pl.x, pl.y, pl.d * pl.pitch, pl.d, vx, pl.vy, R.spin * 0.8, { drag: 0.2, e: 0.18, burn: 99 }); R.bodies.push(R.body); R.planeGone = true;
+        var left = 6 - R.released; for (var i = 0; i < left; i++) { var bw = wpb(R.body, rnd(-16, 16), 9); newBomb(bw.x, bw.y, vx + rnd(-8, 8), pl.vy + rnd(0, 20)); sfx("whistle", 1.1, panOf(bw.x)); } R.released = 6;      // the crew jettisons what is left
+      }
+      function breakUp() {                                                 // the airframe parts at the wing root: two bodies, each carrying exactly the motion of its half
+        var b = R.body; if (!b || R.broke) return; R.broke = true; var i, vcm = { x: b.vx, y: b.vy }, w = b.w, ox = wpb(b, 0, 0);
+        function piece(kind, lx, ly, sep, extra) { var q = wpb(b, lx, ly), rx = q.x - b.x, ry = q.y - b.y, nb = mkBody(kind, 0, 0, b.rot, b.d, vcm.x - w * ry + sep.x, vcm.y + w * rx + sep.y, w * 1.1, extra); nb.x = q.x; nb.y = q.y; return nb; }
+        var front = piece("front", COM.front[0], COM.front[1], { x: 0, y: 0 }, { drag: 0.15, e: 0.18, burn: 7 }), tail = piece("tail", COM.tail[0], COM.tail[1], { x: -b.d * 18, y: -14 }, { drag: 0.3, e: 0.2, burn: 3 });
+        var idx = R.bodies.indexOf(b); if (idx >= 0) R.bodies.splice(idx, 1); R.bodies.push(front, tail); R.body = front; R.shake = 1.1; R.flash = 0.8; sfx("clang", panOf(b.x)); spark(ox.x, ox.y, 8, "255,200,120", 240);
+      }
+      function crashAt(x) {
+        if (R.crashed) return; R.crashed = true; R.endT = 1.4; sfx("boom", panOf(x), true); R.blasts.push({ x: x, y: R.ground, t: 0, s: 1.7 }); R.shake = 1.4; R.flash = 1; R.cardFl = 1; R.jx += rnd(-1, 1) * 3; R.jy += rnd(0.5, 2) * 3;
+        for (var i = 0; i < 12; i++) { var a = -rnd(0.2, Math.PI - 0.2), v = rnd(90, 260); R.sparks.push({ x: x, y: R.ground, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0, life: rnd(0.45, 0.85), c: "255,196,110" }); }
+        R.puffs.push({ x: x, y: R.ground - 10, vx: rnd(-6, 6), vy: -rnd(24, 40), r: 20, t: 0, life: 2.6, smoke: true });
+        document.dispatchEvent(new CustomEvent("grid-pulse", { detail: { x: x, y: R.ground, color: "255,120,50", strong: true } })); R.tsTarget = 0.3; R.tsHold = 0.9;
+      }
+      function onImpact(b, x, vn) {                                        // the first thing to touch down is the crash; later touchdowns are only small scuffs
+        if (!R.crashed && (b.k === "plane" || b.k === "front" || b.k === "tail")) { if (b.k === "plane") breakUp(); crashAt(x); }
+        else if (vn > 130) { spark(x, R.ground, 3, "255,214,150", 130); }
+      }
+      function finish() {
+        if (R.done) return; R.done = true; var out = R.outcome; if (R.eng) R.eng.stop();
+        if (out === "down") { tel("00000", "000", ("0" + R.hits).slice(-2), "0%", false); var lost = 0; try { lost = parseInt(localStorage.getItem("lost") || "0", 10) || 0; localStorage.setItem("lost", String(lost + 1)); } catch (e) {} lost++; phase(4, "bomber <b>down</b> \u00b7 flown " + miss + " \u00b7 lost <b>" + lost + "</b>"); dots[3].classList.add("bad"); }
+        else { miss++; try { localStorage.setItem("missions", String(miss)); } catch (e) {} setNo(); phase(4, (out === "damaged" ? "limped home" : "mission complete") + " \u00b7 flown <b>" + miss + "</b>"); }
+        window.__raid.last = { outcome: out, hits: R.hits, lost: { eng: R.lost.eng, fin: R.lost.fin, nose: R.lost.nose }, integ: Math.round(R.integ / HULL0 * 100), flak: R.flak, t: +R.t.toFixed(1) };
+        cool = performance.now() + 9000; card.style.setProperty("--jx", "0px"); card.style.setProperty("--jy", "0px"); againBtn.disabled = false;
+      }
+      function step(now) {
+        if (!R) return; var raw = Math.min((now - R.last) / 1000, 0.033); R.last = now;
+        if (R.tsHold > 0) { R.tsHold -= raw; if (R.tsHold <= 0) R.tsTarget = 1; } R.ts += (R.tsTarget - R.ts) * (1 - Math.exp(-(R.tsTarget < R.ts ? 14 : 3.2) * raw));
+        var dt = raw * R.ts; R.t += dt; var pl = R.pl, i, fg = fgRGB, gy = R.ground, fly = R.state === "fly", dying = R.state === "dying";
+        g.clearRect(0, 0, W, H); g.save(); var sh = R.shake; if (sh > 0.01) g.translate((Math.random() - 0.5) * sh * 5, (Math.random() - 0.5) * sh * 5); R.shake *= Math.exp(-5 * raw);
+        if (R.gunA > 0.01) { var hz = g.createLinearGradient(0, gy - 150, 0, gy); hz.addColorStop(0, "rgba(255,140,60,0)"); hz.addColorStop(1, "rgba(255,140,60," + (0.085 * R.gunA).toFixed(3) + ")"); g.fillStyle = hz; g.fillRect(0, gy - 150, W, 150); }
+        g.save(); g.globalAlpha = R.gunA * 0.5; g.strokeStyle = "rgba(" + fg + ",0.35)"; g.lineWidth = 1; g.setLineDash([2, 7]); g.beginPath(); g.moveTo(0, gy + 0.5); g.lineTo(W, gy + 0.5); g.stroke(); g.restore();
+        // searchlights
+        var litNow = 0, planeUp = fly && !R.done;
+        R.beams.forEach(function (bm) {
+          var ta = Math.atan2(pl.y - (gy - 7), pl.x - bm.x), base = -Math.PI / 2 + 0.75 * Math.sin(R.t * 0.6 * bm.dir + bm.ph), seen = planeUp && pl.x > -20 && pl.x < W + 20 && Math.abs(ta - bm.ang) < 0.3;
+          bm.lock = seen ? Math.min(1, bm.lock + dt * 2.2) : Math.max(0, bm.lock - dt * 0.9); bm.ang += ((base * (1 - bm.lock) + ta * bm.lock) - bm.ang) * (1 - Math.exp(-5 * dt)); if (bm.lock > litNow) litNow = bm.lock;
+          if (R.gunA > 0.02) { var L = Math.max(H, W) * 1.2, hw = 0.065, x1 = bm.x + Math.cos(bm.ang - hw) * L, y1 = gy - 7 + Math.sin(bm.ang - hw) * L, x2 = bm.x + Math.cos(bm.ang + hw) * L, y2 = gy - 7 + Math.sin(bm.ang + hw) * L;
+            var bg2 = g.createLinearGradient(bm.x, gy - 7, bm.x + Math.cos(bm.ang) * L * 0.8, gy - 7 + Math.sin(bm.ang) * L * 0.8); bg2.addColorStop(0, "rgba(255,238,200," + ((0.11 + 0.07 * bm.lock) * R.gunA).toFixed(3) + ")"); bg2.addColorStop(1, "rgba(255,238,200,0)");
+            g.fillStyle = bg2; g.beginPath(); g.moveTo(bm.x, gy - 7); g.lineTo(x1, y1); g.lineTo(x2, y2); g.closePath(); g.fill(); }
+        });
+        pl.lit += (litNow * 0.9 - pl.lit) * (1 - Math.exp(-(pl.lit > litNow ? 3.5 : 7) * dt)); pl.hit *= Math.exp(-9 * raw);
+        R.guns.forEach(function (gn) {
+          if (R.gunA <= 0.02) return; var a = R.gunA; g.save(); g.translate(gn.x, gy); g.globalAlpha = a; g.strokeStyle = "rgba(" + CC + ",0.9)"; g.fillStyle = "rgba(" + CC + ",0.9)"; g.lineWidth = 1.5;
+          g.beginPath(); g.moveTo(-9, 0); g.lineTo(-6, -6); g.lineTo(6, -6); g.lineTo(9, 0); g.stroke(); g.save(); g.translate(0, -7); g.rotate(gn.aim); g.lineWidth = 2.4; g.beginPath(); g.moveTo(-gn.rec * 2.5, 0); g.lineTo(15 - gn.rec * 2.5, 0); g.stroke(); g.restore();
+          if (gn.rec > 0.75) { g.globalAlpha = a * (gn.rec - 0.6) * 2.2; g.fillStyle = "rgba(255,200,110,1)"; g.beginPath(); g.arc(Math.cos(gn.aim) * 18, -7 + Math.sin(gn.aim) * 18, 5, 0, 6.2832); g.fill(); }
+          g.restore();
+        });
+        var vis = pl.x > -40 && pl.x < W + 40, effSpeed = R.speed * R.speedMul, refY = pl.y;
+        if (fly) {
+          var vx = R.dirn * effSpeed, tgt = 0, inp = (keys.dn ? 1 : 0) - (keys.up ? 1 : 0), piloting = inp !== 0 || R.manHold > 0;
+          for (i = 0; i < R.bursts.length; i++) { var b = R.bursts[i], dx = (b.x - pl.x) * R.dirn, dy = pl.y - b.y; if (b.t < 1.2 && dx > -90 && dx < 300 && Math.abs(dy) < 120) tgt += (dy >= 0 ? 1 : -1) * (120 - Math.abs(dy)) * 0.8; }
+          if (R.lost.eng) tgt *= 0.5; if (inp !== 0) tgt = 0; else if (R.manHold > 0) tgt *= 0.5;       // the autopilot steps aside while a key is down, and half-helps just after
+          tgt = clamp(tgt, -75, 75); R.dv += ((tgt - R.dodge) * 7 - R.dv * 4.2) * dt * 0.5; R.dodge += R.dv * dt;
+          if (R.lost.eng) { R.speedMul += (0.62 - R.speedMul) * (1 - Math.exp(-0.6 * dt)); R.sink = Math.min(150, R.sink + 20 * dt); }
+          // the stick: up and down move the commanded altitude; let go and it eases back to the autopilot's altitude
+          var rate = 230 * (R.lost.eng ? 0.65 : 1); if (inp) { R.man += inp * rate * dt; R.manHold = 1.1; } else if (R.manHold > 0) R.manHold -= dt; else R.man *= Math.exp(-0.8 * dt);
+          var yMin = 46, yMax = gy - 74, yT = R.alt + R.dodge + R.sink + 4 * Math.sin(R.t * 1.5) + R.man; if (yT > yMax) { R.man -= yT - yMax; yT = yMax; R.warnT = 0.8; } else if (yT < yMin) { R.man += yMin - yT; yT = yMin; }
+          // a second-order response toward that altitude: limited climb rate and acceleration, so every movement is smooth and the nose follows the flight path
+          var ay = clamp(14 * (yT - pl.y) - 5.4 * pl.vy, -520, 520) * (R.lost.eng ? 0.7 : 1); pl.vy = clamp(pl.vy + ay * dt, -210, 210); pl.y += pl.vy * dt; pl.x += vx * dt;
+          var wob = R.lost.fin ? 0.15 * Math.min(1, (R.t - R.finT) / 1.4) * Math.sin(R.t * 2.8) + 0.04 * Math.sin(R.t * 7.1) : 0, nose = R.lost.eng ? 0.07 : 0;
+          pl.pitch += (clamp(Math.atan2(pl.vy, effSpeed) * 0.9, -0.3, 0.3) + wob + nose - pl.pitch) * (1 - Math.exp(-6 * dt)); R.warnT = Math.max(0, R.warnT - dt);
+          if (vis) R.inView = true; R.trail.push({ x: pl.x - R.dirn * 72, y: pl.y + 3, t: 0 }); if (R.trail.length > 140) R.trail.shift();
+          // bombs: three before the card and three after it, each let go only when it will land clear of the card
+          R.relT -= dt; if (R.inView && R.released < 6 && R.relT <= 0) {
+            var lx = bombLanding(pl, vx), appr = R.dirn > 0 ? [R.cl - 320, R.cl - 30] : [R.cr + 30, R.cr + 320], dep = R.dirn > 0 ? [R.cr + 30, R.cr + 320] : [R.cl - 320, R.cl - 30], past = (pl.x - R.cx) * R.dirn > 380, ok = false;
+            if (R.nA < 3 && lx > appr[0] && lx < appr[1]) { R.nA++; ok = true; } else if (R.nD < 3 && lx > dep[0] && lx < dep[1]) { R.nD++; ok = true; } else if (past && (lx < R.cl || lx > R.cr)) ok = true;
+            if (ok) { newBomb(pl.x, pl.y + 11, vx, pl.vy); sfx("whistle", 1.1, panOf(lx)); if (R.released === 0) { R.phase = 3; phase(3, "ordnance <b>away</b>"); } R.released++; R.relT = 0.28; }
+          }
+          R.door += ((R.released > 0 && R.released < 6 ? 1 : 0) - R.door) * (1 - Math.exp(-8 * dt));
+          // fire and smoke
+          if (R.fire > 0) { R.fire -= dt; R.fireT -= dt; R.integ -= 11 * dt; if (R.fireT <= 0) { R.fireT = 0.05; var ew = wp(44, 8); R.puffs.push({ x: ew.x, y: ew.y, vx: -vx * 0.15 + rnd(-12, 12), vy: -rnd(8, 26), r: rnd(5, 8), t: 0, life: rnd(0.35, 0.55), fire: true }); } R.smokeT -= dt; if (R.smokeT <= 0) { R.smokeT = 0.1; var sw = wp(40, 6); R.puffs.push({ x: sw.x, y: sw.y, vx: -vx * 0.2 + rnd(-8, 8), vy: -rnd(10, 26), r: rnd(7, 10), t: 0, life: rnd(1.2, 1.8), smoke: true }); } }
+          else if (R.integ < HULL0 * 0.62 || R.lost.eng) { R.smokeT -= dt; if (R.smokeT <= 0) { R.smokeT = R.integ < HULL0 * 0.38 ? 0.08 : 0.16; var hw2 = wp(10, 0); R.puffs.push({ x: hw2.x, y: hw2.y, vx: -vx * 0.18 + rnd(-6, 6), vy: -rnd(6, 20), r: rnd(6, 9), t: 0, life: rnd(1.1, 1.7), smoke: true }); } }
+          if (R.integ <= 0) startDying();
+          else if (R.inView && !vis && (pl.x - R.cx) * R.dirn > 0 || R.t > 30) { R.exitT = (R.exitT || 0) + dt; if (R.exitT > 0.4 && !R.bombs.length) { R.outcome = R.hits || R.lost.eng || R.lost.fin || R.lost.nose ? "damaged" : "clean"; finish(); } }
+          if (R.eng) { var dxr = (R.cx - pl.x) * R.dirn, doppler = (1 + 0.16 * clamp(dxr / 420, -1, 1)) * (R.lost.eng ? 0.78 + 0.05 * Math.sin(R.t * 9) : 1), prox = 1 - Math.min(1, Math.abs(pl.x - W / 2) / (W * 0.75)); R.eng.set(panOf(pl.x), vis ? (0.035 + 0.11 * prox) * (R.lost.eng ? 0.7 : 1) : 0.0001, doppler); }
+          if (vis) { R.gunA = Math.min(1, R.gunA + raw * 1.8); R.guns.forEach(function (gn) {
+            gn.rec = Math.max(0, gn.rec - dt * 4); gn.next -= dt; var dur = 0.8, lx2 = pl.x + vx * dur, ly = pl.y + pl.vy * dur * 0.6; gn.aim = Math.atan2(ly - (gy - 7), lx2 - gn.x);
+            if (gn.next <= 0 && lx2 > 30 && lx2 < W - 30) { var lit = pl.lit > 0.5; gn.next = lit ? rnd(0.7, 1.15) : rnd(1.1, 1.8); var agile = 1 + Math.min(1.1, Math.abs(pl.vy) / 70), off = (Math.random() < 0.5 ? -1 : 1) * (lit ? rnd(FLAK_LIT[0], FLAK_LIT[1]) : rnd(FLAK_NEAR[0], FLAK_NEAR[1])) * agile; R.tracers.push({ x0: gn.x, y0: gy - 7, x1: lx2 + rnd(-26, 26) * agile, y1: ly + off, t: 0, dur: dur }); gn.rec = 1; sfx("tracer", panOf(gn.x)); }
+          }); }
+        } else if (dying) {
+          R.dyT += dt; var b0 = R.body; refY = b0 ? lowest(b0).y : pl.y;
+          if (b0 && b0.k === "plane") {                                    // an uncontrolled aircraft weathervanes into its own airflow and noses over
+            var nose2 = b0.rot + (b0.d < 0 ? Math.PI : 0), want2 = Math.atan2(b0.vy, b0.vx), df = ((want2 - nose2 + Math.PI) % 6.2832 + 6.2832) % 6.2832 - Math.PI; b0.w += (df * 2.2 - b0.w * 0.9 + R.spin * (R.dyT < 1.2 ? 0.8 : 0)) * dt;
+            if (R.dyT >= R.breakAt) breakUp();
+          }
+          R.trail.push({ x: (b0 ? b0.x : pl.x) - R.dirn * 40, y: b0 ? b0.y : pl.y, t: 0 }); if (R.trail.length > 140) R.trail.shift();
+        }
+        // bodies: the whole physical world in one loop
+        for (i = R.bodies.length - 1; i >= 0; i--) {
+          var bd = R.bodies[i]; bd.t += dt; if (!bd.rest) stepBody(bd, dt, gy, onImpact);
+          if (bd.burn > 0 && !(bd.rest && bd.t > bd.burn + 3)) {
+            bd.smokeT -= dt; bd.fireT -= dt; var fl2 = bd.k === "front" || bd.k === "plane";
+            if (fl2 && bd.fireT <= 0) { bd.fireT = 0.05; var fq = wpb(bd, 36, 4); R.puffs.push({ x: fq.x, y: fq.y, vx: rnd(-10, 10), vy: -rnd(10, 34), r: rnd(6, 9), t: 0, life: rnd(0.35, 0.55), fire: true }); }
+            if (bd.smokeT <= 0 && bd.t < bd.burn + 3) { bd.smokeT = 0.1; var sq = wpb(bd, bd.k === "tail" ? -60 : 30, 0); R.puffs.push({ x: sq.x, y: sq.y, vx: rnd(-8, 8), vy: -rnd(10, 26), r: rnd(7, 11), t: 0, life: rnd(1.4, 2), smoke: true }); }
+          }
+          if (bd.rest) { bd.a = Math.max(0, 1 - Math.max(0, bd.t - 5) / 1.2); if (bd.a <= 0) { R.bodies.splice(i, 1); continue; } }
+          drawBody(bd, R.t);
+        }
+        if (R.crashed && !R.done) { var cb = R.body; tel("00000", "000", ("0" + R.hits).slice(-2), "0%", false); R.endT -= dt; if (R.endT <= 0) finish(); }
+        if (R.done) R.gunA = Math.max(0, R.gunA - raw * 1.2); else if (!fly && !R.crashed) R.gunA = Math.max(0, R.gunA - raw * 0.3);
+        // contrail
+        if (R.trail.length > 2) { g.lineWidth = 1; for (i = 1; i < R.trail.length; i++) { var tp = R.trail[i]; tp.t += dt; var ta2 = Math.max(0, 0.3 * (1 - tp.t / 2.4)) * (i / R.trail.length); if (ta2 <= 0.003) continue; g.strokeStyle = "rgba(" + fg + "," + ta2.toFixed(3) + ")"; g.beginPath(); g.moveTo(R.trail[i - 1].x, R.trail[i - 1].y); g.lineTo(tp.x, tp.y); g.stroke(); } }
+        for (i = R.tracers.length - 1; i >= 0; i--) {
+          var tr = R.tracers[i]; tr.t += dt; var q = Math.min(1, tr.t / tr.dur), q0 = Math.max(0, q - 0.16), xa = tr.x0 + (tr.x1 - tr.x0) * q0, ya = tr.y0 + (tr.y1 - tr.y0) * q0, xb = tr.x0 + (tr.x1 - tr.x0) * q, yb = tr.y0 + (tr.y1 - tr.y0) * q;
+          var rem = tr.dur - tr.t, pvx = R.dirn * effSpeed, near = fly && Math.hypot(tr.x1 - (pl.x + pvx * rem), tr.y1 - (pl.y + pl.vy * rem * 0.6)) < 105;
+          if (near && rem < 0.55) { var mk = 1 - rem / 0.55; g.strokeStyle = "rgba(255,120,70," + (0.55 * mk).toFixed(2) + ")"; g.lineWidth = 1.1; g.beginPath(); g.arc(tr.x1, tr.y1, 16 - 6 * mk, 0, 6.2832); g.stroke(); g.beginPath(); g.moveTo(tr.x1 - 22, tr.y1); g.lineTo(tr.x1 - 10, tr.y1); g.moveTo(tr.x1 + 10, tr.y1); g.lineTo(tr.x1 + 22, tr.y1); g.stroke(); }
+          g.save(); g.shadowColor = near ? "rgba(255,110,60,0.95)" : "rgba(255,170,70,0.9)"; g.shadowBlur = near ? 11 : 8; g.strokeStyle = (near ? "rgba(255,150,100," : "rgba(255,206,130,") + (0.95 * Math.min(1, q * 4)).toFixed(2) + ")"; g.lineWidth = near ? 2.1 : 1.7; g.beginPath(); g.moveTo(xa, ya); g.lineTo(xb, yb); g.stroke(); g.restore();
+          if (tr.t >= tr.dur) { burst(tr.x1, tr.y1); R.tracers.splice(i, 1); }
+        }
+        for (i = R.bursts.length - 1; i >= 0; i--) {
+          var bu = R.bursts[i]; bu.t += dt; if (bu.t > 0.9) { R.bursts.splice(i, 1); continue; }
+          var f1 = Math.max(0, 1 - bu.t / 0.16); if (f1 > 0) { var fl = g.createRadialGradient(bu.x, bu.y, 0, bu.x, bu.y, 46); fl.addColorStop(0, "rgba(255,226,160," + (0.8 * f1).toFixed(2) + ")"); fl.addColorStop(1, "rgba(255,150,60,0)"); g.fillStyle = fl; g.beginPath(); g.arc(bu.x, bu.y, 46, 0, 6.2832); g.fill(); g.fillStyle = "rgba(255,238,200," + (0.9 * f1).toFixed(2) + ")"; g.beginPath(); g.arc(bu.x, bu.y, 4 + 10 * (1 - f1), 0, 6.2832); g.fill(); }
+          var rq = Math.min(1, bu.t / 0.6), ease = 1 - Math.pow(1 - rq, 3); g.strokeStyle = "rgba(" + fg + "," + (0.5 * (1 - rq)).toFixed(3) + ")"; g.lineWidth = 1.1; g.beginPath(); g.arc(bu.x, bu.y, 6 + 42 * ease, 0, 6.2832); g.stroke();
+          g.strokeStyle = "rgba(255,196,110," + (0.8 * (1 - rq)).toFixed(3) + ")"; g.lineWidth = 1.2; g.beginPath(); for (var k = 0; k < 8; k++) { var an = k * 0.7854 + 0.3, r0 = 8 + 10 * ease, r1 = 16 + 22 * ease; g.moveTo(bu.x + Math.cos(an) * r0, bu.y + Math.sin(an) * r0); g.lineTo(bu.x + Math.cos(an) * r1, bu.y + Math.sin(an) * r1); } g.stroke();
+        }
+        // bombs: ballistic bodies pointing along their own flight path, exploding where the nose meets the ground line
+        for (i = R.bombs.length - 1; i >= 0; i--) {
+          var bo = R.bombs[i], n2 = Math.max(1, Math.ceil(dt / 0.008)), h2 = dt / n2, hit = false, ix = 0;
+          for (var s = 0; s < n2 && !hit; s++) {
+            var tx0 = bo.x + Math.cos(bo.ang) * 9, ty0 = bo.y + Math.sin(bo.ang) * 9; bo.vy += G * h2; bo.x += bo.vx * h2; bo.y += bo.vy * h2; bo.ang = Math.atan2(bo.vy, bo.vx); var tx1 = bo.x + Math.cos(bo.ang) * 9, ty1 = bo.y + Math.sin(bo.ang) * 9;
+            if (ty1 >= gy) { var fr = clamp((gy - ty0) / Math.max(ty1 - ty0, 1e-6), 0, 1); ix = tx0 + (tx1 - tx0) * fr; hit = true; }          // the exact point where the nose crosses the ground line
+          }
+          bo.t += dt; var speed = Math.hypot(bo.vx, bo.vy);
+          g.strokeStyle = "rgba(" + fg + "," + clamp(0.1 + 0.2 * (speed / 600), 0, 0.3).toFixed(3) + ")"; g.lineWidth = 1; g.beginPath(); g.moveTo(bo.x - bo.vx / speed * 30, bo.y - bo.vy / speed * 30); g.lineTo(bo.x, bo.y); g.stroke();
+          g.save(); g.translate(bo.x, bo.y); g.rotate(bo.ang); g.fillStyle = "rgba(" + fg + ",0.92)"; g.beginPath(); g.moveTo(9, 0); g.bezierCurveTo(7, -3.6, -3, -3.6, -8, -2); g.lineTo(-8, 2); g.bezierCurveTo(-3, 3.6, 7, 3.6, 9, 0); g.fill();
+          g.strokeStyle = "rgba(" + fg + ",0.92)"; g.lineWidth = 1.3; g.beginPath(); g.moveTo(-8, -3.8); g.lineTo(-12, -5.2); g.moveTo(-8, 3.8); g.lineTo(-12, 5.2); g.stroke(); g.restore();
+          if (hit) { explodeAt(ix, R.bombs.length === 1 && R.released >= 6 && R.state === "fly"); R.bombs.splice(i, 1); }
+        }
+        for (i = R.blasts.length - 1; i >= 0; i--) {
+          var bm2 = R.blasts[i]; bm2.t += dt; var S = bm2.s; if (bm2.t > 1.2) { R.blasts.splice(i, 1); continue; }
+          var fq2 = Math.max(0, 1 - bm2.t / 0.34); if (fq2 > 0) { g.fillStyle = "rgba(255,170,70," + (0.75 * fq2).toFixed(2) + ")"; g.beginPath(); g.arc(bm2.x, gy, (12 + 34 * (1 - fq2)) * S, Math.PI, 0); g.closePath(); g.fill(); g.fillStyle = "rgba(255,240,200," + (0.9 * fq2).toFixed(2) + ")"; g.beginPath(); g.arc(bm2.x, gy, (6 + 12 * (1 - fq2)) * S, Math.PI, 0); g.closePath(); g.fill(); }
+          var sq2 = Math.min(1, bm2.t / 0.85), ez = 1 - Math.pow(1 - sq2, 3); g.strokeStyle = "rgba(255,196,110," + (0.7 * (1 - sq2)).toFixed(3) + ")"; g.lineWidth = (1.6 * (1 - sq2) + 0.5) * Math.min(S, 1.4); g.beginPath(); g.arc(bm2.x, gy, (14 + 96 * ez) * S, Math.PI, 0); g.stroke();
+          g.strokeStyle = "rgba(" + fg + "," + (0.5 * (1 - sq2)).toFixed(3) + ")"; g.lineWidth = 1; g.beginPath(); g.moveTo(bm2.x - (20 + 150 * ez) * S, gy + 0.5); g.lineTo(bm2.x + (20 + 150 * ez) * S, gy + 0.5); g.stroke();
+        }
+        // smoke is soft and has no outline; flame is a small warm glow; both drift upward with a little drag
+        for (i = R.puffs.length - 1; i >= 0; i--) {
+          var pf = R.puffs[i]; pf.t += dt; if (pf.t < 0) continue; if (pf.t > pf.life) { R.puffs.splice(i, 1); continue; }
+          if (pf.smoke) { pf.vy -= 10 * dt; var kd2 = Math.exp(-0.9 * dt); pf.vx *= kd2; pf.vy *= kd2; } pf.x += pf.vx * dt; pf.y += pf.vy * dt; var kq = pf.t / pf.life;
+          if (pf.fire) { var rr = pf.r * (1 - 0.5 * kq), fg2 = g.createRadialGradient(pf.x, pf.y, 0, pf.x, pf.y, rr); fg2.addColorStop(0, "rgba(255,236,170," + (0.95 * (1 - kq)).toFixed(2) + ")"); fg2.addColorStop(0.5, "rgba(255,140,50," + (0.7 * (1 - kq)).toFixed(2) + ")"); fg2.addColorStop(1, "rgba(255,70,20,0)"); g.fillStyle = fg2; g.beginPath(); g.arc(pf.x, pf.y, rr, 0, 6.2832); g.fill(); }
+          else { var sr = pf.r * (1 + 1.4 * kq), sg = g.createRadialGradient(pf.x, pf.y, 0, pf.x, pf.y, sr), sa = (pf.light ? 0.12 : 0.15) * (1 - kq) * Math.min(1, pf.t * 5); sg.addColorStop(0, "rgba(" + fg + "," + sa.toFixed(3) + ")"); sg.addColorStop(1, "rgba(" + fg + ",0)"); g.fillStyle = sg; g.beginPath(); g.arc(pf.x, pf.y, sr, 0, 6.2832); g.fill(); }
+        }
+        // sparks: ballistic, they bounce once off the ground and die
+        g.lineWidth = 1.2; for (i = R.sparks.length - 1; i >= 0; i--) {
+          var sk = R.sparks[i]; sk.t += dt; if (sk.t > sk.life) { R.sparks.splice(i, 1); continue; }
+          sk.vy += G * 0.6 * dt; var ox = sk.x, oy = sk.y; sk.x += sk.vx * dt; sk.y += sk.vy * dt; if (sk.y > gy) { sk.y = gy; sk.vy *= -0.3; sk.vx *= 0.6; } g.strokeStyle = "rgba(" + sk.c + "," + (1 - sk.t / sk.life).toFixed(2) + ")"; g.beginPath(); g.moveTo(ox, oy); g.lineTo(sk.x, sk.y); g.stroke();
+        }
+        if (fly && pl.fade > 0 && pl.x > -170 && pl.x < W + 170) { g.save(); g.translate(pl.x, pl.y); g.rotate(pl.d * pl.pitch); g.scale(pl.d, 1); g.scale(PS, PS); drawAC(R.t, { L: R.lost, fade: pl.fade, prop: !R.lost.eng, door: R.door, lit: pl.lit, hit: pl.hit }); g.restore(); }
+        if (R.flash > 0.01) { g.fillStyle = "rgba(255,196,120," + (0.1 * R.flash).toFixed(3) + ")"; g.fillRect(-12, -12, W + 24, H + 24); R.flash *= Math.exp(-6 * raw); }
+        g.restore();
+        R.jx *= Math.exp(-9 * raw); R.jy *= Math.exp(-9 * raw); R.cardFl *= Math.exp(-5 * raw); card.style.setProperty("--jx", R.jx.toFixed(2) + "px"); card.style.setProperty("--jy", R.jy.toFixed(2) + "px"); card.style.setProperty("--fl", R.cardFl.toFixed(3));
+        telT -= raw; if (telT <= 0 && !R.done && !R.kill) { telT = 0.08; var alt = Math.max(0, Math.round((gy - refY) / gy * 7800 / 10) * 10), kt = Math.max(0, Math.round((dying ? Math.hypot(R.body ? R.body.vx : 0, R.body ? R.body.vy : 0) : effSpeed) * 0.55)); tel(("0000" + alt).slice(-5), ("00" + kt).slice(-3), ("0" + R.hits).slice(-2), Math.max(0, Math.round(R.integ / HULL0 * 100)) + "%", R.warnT > 0); }
+        if (R.done && !R.puffs.length && !R.blasts.length && !R.sparks.length && !R.bodies.length && !R.bombs.length && R.gunA <= 0.01 && !R.trail.some(function (q) { return q.t < 2.4; })) { R = null; g.clearRect(0, 0, W, H); cv.style.display = "none"; card.style.setProperty("--fl", "0"); setTimeout(resetTel, 1200); return; }
+        loopId = requestAnimationFrame(step);
+      }
+      // arrow keys fly the aircraft while it is up and the card is open; they never scroll the page then
+      function pilotKey(e, down) {
+        if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return; if (!card.classList.contains("open") || !R || R.done || R.kill) return;
+        var t = e.target; if (t && /INPUT|TEXTAREA|SELECT/.test(t.tagName || "") || (t && t.isContentEditable)) return;
+        e.preventDefault(); e.stopPropagation(); if (e.key === "ArrowUp") { keys.up = down; kUp.classList.toggle("down", down); } else { keys.dn = down; kDn.classList.toggle("down", down); }
+      }
+      document.addEventListener("keydown", function (e) {
+        pilotKey(e, true);
+        if ((e.key === "r" || e.key === "R") && !e.ctrlKey && !e.metaKey && !e.altKey && !e.repeat && card.classList.contains("open")) {      // R sends the bomber again, whenever the card is up
+          var t = e.target; if (t && (/INPUT|TEXTAREA|SELECT/.test(t.tagName || "") || t.isContentEditable)) return;
+          e.preventDefault(); kR.classList.add("down"); setTimeout(function () { kR.classList.remove("down"); }, 160); launch(true);
+        }
+      }, true); document.addEventListener("keyup", function (e) { if (e.key === "ArrowUp") { keys.up = false; kUp.classList.remove("down"); } else if (e.key === "ArrowDown") { keys.dn = false; kDn.classList.remove("down"); } }, true);
+      window.addEventListener("blur", function () { keys.up = keys.dn = false; kUp.classList.remove("down"); kDn.classList.remove("down"); });
+
+      // ---------- card open and close ----------
+      var openT = 0, closeT = 0, raidT = 0;
+      function readFg() { var cs = getComputedStyle(root), v = cs.getPropertyValue("--fg-rgb"), bg = cs.getPropertyValue("--bg").trim(), cc = cs.getPropertyValue("--cc-rgb").replace(/\s/g, ""); fgRGB = (v && v.replace(/\s/g, "")) || "229,229,229"; if (bg) bgCol = bg; if (cc) CC = cc; }
+      function show() {
+        clearTimeout(closeT); clearTimeout(openT); if (card.classList.contains("open")) return;
+        openT = setTimeout(function () {
+          readFg(); zone.classList.add("on"); place(); card.removeAttribute("inert"); card.classList.add("open"); setNo(); if (!R) idle();
+          clearTimeout(raidT); raidT = setTimeout(function () { if (card.classList.contains("open")) launch(false); }, 650);
+        }, 140);
+      }
+      function hide(now) {
+        clearTimeout(openT); clearTimeout(closeT); clearTimeout(raidT);
+        closeT = setTimeout(function () { card.classList.remove("open"); card.setAttribute("inert", ""); zone.classList.remove("on"); if (R) kill(); else idle(); }, now ? 0 : 220);
+      }
+      if (!coarse) {
+        zone.addEventListener("pointerenter", function () { if (!window.__hoverOk || window.__hoverOk()) show(); else zone.__pend = true; });
+        zone.addEventListener("pointermove", function () { if (zone.__pend && (!window.__hoverOk || window.__hoverOk())) { zone.__pend = false; show(); } }, { passive: true });
+        zone.addEventListener("pointerleave", function () { zone.__pend = false; hide(); });
+      }
+      zone.addEventListener("focus", show); zone.addEventListener("blur", function () { hide(); });
+      zone.addEventListener("keydown", function (e) { if ((e.key === "Enter" || e.key === " ") && e.target === zone) { e.preventDefault(); launch(true); } });
+      if (coarse) zone.addEventListener("click", function () { if (card.classList.contains("open")) hide(true); else show(); });
+      card.addEventListener("pointerenter", function () { clearTimeout(closeT); }); card.addEventListener("pointerleave", function () { hide(); });
+      againBtn.addEventListener("click", function (e) { e.stopPropagation(); launch(true); });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape" && card.classList.contains("open")) hide(true); });
+      document.addEventListener("pointerdown", function (e) { if (card.classList.contains("open") && !(e.target.closest && e.target.closest("#catch-card,.cc-zone"))) hide(true); });
+      window.addEventListener("scroll", function () { if (card.classList.contains("open")) hide(true); }, { passive: true });
+      window.addEventListener("resize", function () { if (card.classList.contains("open")) hide(true); });
+      document.addEventListener("themechange", readFg);
+      document.addEventListener("visibilitychange", function () { if (document.hidden && R) kill(); });
+      window.__raid = { launch: function () { return launch(true); }, card: card, last: null, hurt: function () { if (R) R.integ = -1; }, keys: function (u, d) { keys.up = !!u; keys.dn = !!d; }, dbg: function () { return R && { state: R.state, plane: R.pl, ground: R.ground, tracers: R.tracers.map(function (t) { return { x1: t.x1, y1: t.y1, rem: t.dur - t.t }; }), speed: R.speed * R.speedMul, dirn: R.dirn, integ: Math.round(R.integ / HULL0 * 100), bodies: R.bodies.map(function (b) { var lo = lowest(b); return { k: b.k, x: b.x, y: b.y, low: lo.y, rest: b.rest, vx: b.vx, vy: b.vy }; }), man: R.man }; } };      // test hook
     })();
   </script>
 
