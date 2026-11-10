@@ -2755,7 +2755,7 @@
         function rgbOf(a) { var m = /#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i.exec(hexOf(a)); return m ? parseInt(m[1], 16) + "," + parseInt(m[2], 16) + "," + parseInt(m[3], 16) : null; }
         var lastInk = 0, born = performance.now();
         function ink(a) {
-          var n = performance.now(); if (calm() || n - born < 1500 || n - lastInk < 700) return; lastInk = n;
+          var n = performance.now(); if (calm() || n - born < 1500 || n - lastInk < 220) return; lastInk = n;
           var r = a.getBoundingClientRect(); document.dispatchEvent(new CustomEvent("grid-pulse", { detail: { x: r.left + r.width / 2, y: r.top + r.height / 2, color: rgbOf(a) } }));
         }
 
@@ -2864,7 +2864,7 @@
           if (a !== active) {
             var first = !active; active = a; placePill(a, first || calm());
             var f = FACTS[a.getAttribute("aria-label")]; if (f) { var v = f(); setCap(v[0], v[1], false); }
-            if (first) ink(a); else sfx("tick");              // the grid ring marks arriving at the bar, not every hop between icons
+            if (!first) sfx("tick"); ink(a);                // every arrival ripples out in that icon's colour, including hops between icons
           }
           ensureCard(a);                                   // also re-arms the card if it was cancelled while the same icon stayed active
         }
