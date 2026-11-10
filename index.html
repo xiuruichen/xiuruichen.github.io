@@ -616,6 +616,7 @@
     #imargin .mn-d { display: block; width: 4px; height: 4px; margin-left: -8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; transform: scale(0); transition: transform 320ms var(--spring) 180ms; }
     #imargin.on .mn-d { transform: scale(1); }
     @media (prefers-reduced-motion: reduce) { #imargin, #imargin .mn-r, #imargin .mn-d { transition-duration: 1ms; } }
+    #franks { position: fixed; inset: 0; z-index: 34; pointer-events: none; display: none; }
     #ilight { position: fixed; left: 0; top: 0; width: 280px; height: 280px; margin: -140px 0 0 -140px; border-radius: 50%; pointer-events: none; z-index: 5; opacity: 0; mix-blend-mode: screen;
       background: radial-gradient(circle, rgba(var(--lc, 167,139,250), 0.34) 0%, rgba(var(--lc, 167,139,250), 0.12) 38%, transparent 68%); transition: opacity 480ms var(--ease); will-change: transform, opacity; }
     #ilight.on { opacity: 1; }
@@ -4500,6 +4501,70 @@
         a.addEventListener("focus", function () { if (a.matches(":focus-visible")) glowAll(0.75); });
         a.addEventListener("blur", function () { if (!inside) glowAll(0); });
         window.addEventListener("scroll", function () { if (inside) measure(); }, { passive: true });
+      });
+    })();
+  </script>
+
+  <script>
+    // While Self Control plays, Franks drift out of the album card and travel the whole page in slow, curving lines, turning off every edge of the window.
+    // Each one has its own speed, curve and depth, and they ease away from each other, so the group keeps covering new ground without ever settling into a pattern.
+    (function () {
+      var ac = window.__ac; if (!ac || !ac.card) return;
+      var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, root = document.documentElement;
+      var cv = document.createElement("canvas"); cv.id = "franks"; cv.setAttribute("aria-hidden", "true"); document.body.appendChild(cv);
+      var cx = cv.getContext("2d"), W = 0, H = 0, dpr = 1;
+      function size() { dpr = Math.min(window.devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + "px"; cv.style.height = H + "px"; cx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+      size(); window.addEventListener("resize", size);
+      var fig = new Image(), figOk = false; fig.onload = function () { figOk = true; }; fig.src = "img/frank.webp";     // his figure, cut out clean (no background, no frame)
+      var PHI = 0.6180339887, N = 7, F = [], playing = false, raf = 0, last = 0, spawnT = [], be = 0, clock = 0;
+      function cast(i) {
+        var u = (i * PHI) % 1, depth = 0.74 + 0.26 * ((i * 0.43 + 0.15) % 1);
+        return { depth: depth, speed: (150 + 70 * ((i * PHI * 2.3) % 1)) * (0.8 + 0.2 * depth), turn: (i % 2 ? 1 : -1) * (0.16 + 0.22 * u), ph: i * 2.399, ang: -Math.PI / 2 + i * 2.399 };
+      }
+      function spawn(i) {
+        var r = ac.card.getBoundingClientRect(), c = cast(i), w = 66 * c.depth, hh = w * 455 / 305;
+        F.push({ x: r.left + r.width / 2, y: r.top + r.height * 0.45, w: w, hh: hh, depth: c.depth, speed: c.speed, turn: c.turn, ph: c.ph, ang: c.ang, boost: 2.4, born: performance.now(), out: 0, sq: 0, sqx: 0, sqy: 0, rot: 0 });
+        F.sort(function (a, b) { return a.depth - b.depth; });
+      }
+      function beatEnv() { var s = window.__songSync; if (!s || !s.ready() || !s.playing()) return 0; var t = s.time() + 0.03, l = s.beats, lo = 0, hi = l.length - 1, k = -1, v = 0; while (lo <= hi) { var m = (lo + hi) >> 1; if (l[m][0] <= t) { k = m; lo = m + 1; } else hi = m - 1; } if (k >= 0) v = l[k][1] * Math.exp(-(t - l[k][0]) / 0.35); if (k + 1 < l.length) { var x = 1 - (l[k + 1][0] - t) / 0.24; if (x > 0) v = Math.max(v, l[k + 1][1] * x * x * (3 - 2 * x)); } return v; }
+      function step(now) {
+        raf = 0; var dt = Math.min((now - last) / 1000, 0.033); last = now; clock += dt; cx.clearRect(0, 0, W, H);
+        be += (beatEnv() - be) * (1 - Math.exp(-8 * dt)); var i, j;
+        for (i = 0; i < F.length; i++) {                                   // a gentle push apart, so they fan out across the page instead of bunching
+          for (j = i + 1; j < F.length; j++) {
+            var dx = F[j].x - F[i].x, dy = F[j].y - F[i].y, d = Math.hypot(dx, dy) || 1, R = 150;
+            if (d < R) { var f = (1 - d / R) * 90 * dt; F[i].x -= dx / d * f; F[i].y -= dy / d * f; F[j].x += dx / d * f; F[j].y += dy / d * f; }
+          }
+        }
+        for (i = F.length - 1; i >= 0; i--) {
+          var f = F[i], age = (now - f.born) / 1000, pop = Math.min(1, age / 0.5), grow = 1 + 1.7 * Math.pow(pop - 1, 3) + 0.9 * Math.pow(pop - 1, 2);
+          if (f.out) { f.out += dt; if (f.out > 0.45) { F.splice(i, 1); continue; } }
+          f.boost += (1 - f.boost) * (1 - Math.exp(-1.6 * dt));            // bursts out of the card, then settles to its own pace
+          f.ang += f.turn * (0.55 + 0.45 * Math.sin(clock * 0.37 + f.ph)) * dt;      // the path curves, and the curve itself slowly changes
+          var vx = Math.cos(f.ang) * f.speed * f.boost, vy = Math.sin(f.ang) * f.speed * f.boost;
+          f.x += vx * dt; f.y += vy * dt;
+          var hx = f.w / 2, hy = f.hh / 2;
+          if (f.x < hx) { f.x = hx; f.ang = Math.PI - f.ang; f.sqx = 1; } else if (f.x > W - hx) { f.x = W - hx; f.ang = Math.PI - f.ang; f.sqx = 1; }       // every edge turns it, top and sides as much as the floor
+          if (f.y < hy) { f.y = hy; f.ang = -f.ang; f.sqy = 1; } else if (f.y > H - hy) { f.y = H - hy; f.ang = -f.ang; f.sqy = 1; }
+          f.sqx = Math.max(0, f.sqx - dt * 3.4); f.sqy = Math.max(0, f.sqy - dt * 3.4);
+          var lean = Math.max(-0.3, Math.min(0.3, vx * 0.0014)) + 0.06 * Math.sin(clock * 0.9 + f.ph); f.rot += (lean - f.rot) * (1 - Math.exp(-4 * dt));
+          var out = f.out ? Math.max(0, 1 - f.out / 0.45) : 1, sc = grow * out * (1 + 0.07 * be), bob = 5 * f.depth * Math.sin(clock * 1.5 + f.ph);
+          var sx = sc * (1 - 0.08 * f.sqx + 0.05 * f.sqy), sy = sc * (1 - 0.08 * f.sqy + 0.05 * f.sqx);
+          cx.save(); cx.globalAlpha = (0.8 + 0.2 * ((f.depth - 0.74) / 0.26)) * Math.min(1, pop * 1.6) * out;
+          cx.translate(f.x, f.y + bob); cx.rotate(f.rot); cx.scale(sx, sy);
+          cx.shadowColor = "rgba(0,0,0,0.35)"; cx.shadowBlur = 16 * f.depth; cx.shadowOffsetY = 6 * f.depth; cx.drawImage(fig, -f.w / 2, -f.hh / 2, f.w, f.hh); cx.restore();
+        }
+        if (F.length || playing) raf = requestAnimationFrame(step); else cv.style.display = "none";
+      }
+      function begin() {
+        if (reduce || root.getAttribute("data-motion") === "calm" || !figOk) return;
+        cv.style.display = "block"; spawnT.forEach(clearTimeout); spawnT = [];
+        for (var i = 0; i < N; i++) (function (k) { spawnT.push(setTimeout(function () { if (playing) spawn(k); }, k * 240)); })(i);
+        last = performance.now(); if (!raf) raf = requestAnimationFrame(step);
+      }
+      function end() { spawnT.forEach(clearTimeout); spawnT = []; F.forEach(function (f) { if (!f.out) f.out = 0.001; }); }
+      document.addEventListener("song", function (e) {
+        var on = !!(e.detail && e.detail.playing); if (on === playing) return; playing = on; if (on) begin(); else end();
       });
     })();
   </script>
