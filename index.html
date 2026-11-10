@@ -1507,15 +1507,31 @@
           }
         });
       }
-      function drawSong() {                             // two album-coloured pools breathe with a synthetic beat
-        var t = song.t, beat = Math.pow(0.5 + 0.5 * Math.sin(t * 5.65), 3), swell = 0.5 + 0.5 * Math.sin(t * 0.9 + 1), a = song.on * (0.045 + 0.05 * beat + 0.02 * swell), g;
-        g = gctx.createRadialGradient(W * 0.2, -H * 0.1, 0, W * 0.2, -H * 0.1, Math.max(W, H) * 0.9); g.addColorStop(0, "rgba(" + song.a + "," + a.toFixed(3) + ")"); g.addColorStop(1, "rgba(" + song.a + ",0)"); gctx.fillStyle = g; gctx.fillRect(0, 0, W, H);
-        g = gctx.createRadialGradient(W * 0.85, H * 1.1, 0, W * 0.85, H * 1.1, Math.max(W, H) * 0.9); g.addColorStop(0, "rgba(" + song.b + "," + a.toFixed(3) + ")"); g.addColorStop(1, "rgba(" + song.b + ",0)"); gctx.fillStyle = g; gctx.fillRect(0, 0, W, H);
+      // The song's real rhythm: beat and strum times were measured from the track (audio/self-control.beats.json). The envelope jumps on each hit and relaxes.
+      var beatEnv = 0, strumEnv = 0;
+      function envAt(list, t, rise, tau) {              // a soft swell: it starts building just before each hit, peaks on it, then eases away (never a jump)
+        var lo = 0, hi = list.length - 1, k = -1, v = 0, x;
+        while (lo <= hi) { var m = (lo + hi) >> 1; if (list[m][0] <= t) { k = m; lo = m + 1; } else hi = m - 1; }
+        if (k >= 0) v = list[k][1] * Math.exp(-(t - list[k][0]) / tau);
+        if (k + 1 < list.length) { x = 1 - (list[k + 1][0] - t) / rise; if (x > 0) { x = x * x * (3 - 2 * x); v = Math.max(v, list[k + 1][1] * x); } }
+        return v;
+      }
+      function stepSongEnv(dt) {
+        var sy = window.__songSync, tb = 0, ts = 0;
+        if (sy && sy.ready() && sy.playing()) { var t = sy.time() + 0.03; tb = envAt(sy.beats, t, 0.26, 0.4); ts = envAt(sy.strums, t, 0.15, 0.2); }
+        else { tb = Math.pow(0.5 + 0.5 * Math.sin(song.t * 5.65), 3); ts = tb * 0.6; }   // until the measurements load: a steady stand-in pulse
+        var k = 1 - Math.exp(-7 * dt); beatEnv += (tb - beatEnv) * k; strumEnv += (ts - strumEnv) * k;     // and a little inertia on top, so it breathes
+      }
+      function drawSong() {                             // two album-coloured pools: the brown one swells on the beat, the green one flickers with the guitar
+        var swell = 0.5 + 0.5 * Math.sin(song.t * 0.9 + 1), g;
+        var aTop = song.on * (0.035 + 0.07 * strumEnv + 0.03 * beatEnv + 0.012 * swell), aBot = song.on * (0.035 + 0.1 * beatEnv + 0.02 * strumEnv + 0.012 * swell);
+        g = gctx.createRadialGradient(W * 0.2, -H * 0.1, 0, W * 0.2, -H * 0.1, Math.max(W, H) * 0.9); g.addColorStop(0, "rgba(" + song.a + "," + aTop.toFixed(3) + ")"); g.addColorStop(1, "rgba(" + song.a + ",0)"); gctx.fillStyle = g; gctx.fillRect(0, 0, W, H);
+        g = gctx.createRadialGradient(W * 0.85, H * 1.1, 0, W * 0.85, H * 1.1, Math.max(W, H) * 0.9); g.addColorStop(0, "rgba(" + song.b + "," + aBot.toFixed(3) + ")"); g.addColorStop(1, "rgba(" + song.b + ",0)"); gctx.fillStyle = g; gctx.fillRect(0, 0, W, H);
       }
 
       function drawGrid() {
         gctx.clearRect(0, 0, W, H);
-        var ga = (FG.charAt(0) === "4" ? 0.05 : 0.08) + (song.on > 0.01 ? song.on * 0.035 * Math.pow(0.5 + 0.5 * Math.sin(song.t * 5.65), 3) : 0);   // dark ink on cream needs a lighter touch
+        var ga = (FG.charAt(0) === "4" ? 0.05 : 0.08) + (song.on > 0.01 ? song.on * (0.045 * beatEnv + 0.02 * strumEnv) : 0);   // dark ink on cream needs a lighter touch
         var st = "rgba(" + INK + "," + ga + ")";
         if (sp.a > 0.01) {
           var gr = gctx.createRadialGradient(sp.x, sp.y, 0, sp.x, sp.y, 160);
@@ -1677,7 +1693,7 @@
         if (stepSky(dt)) gridDirty = true;
         if (pulses.length) { pulses.forEach(function (p) { p.t += dt; }); pulses = pulses.filter(function (p) { return p.t < PULSE_DUR; }); gridDirty = true; }
         if (rings.length) { rings.forEach(function (q) { q.t += dt; }); rings = rings.filter(function (q) { return q.t < 1.6; }); gridDirty = true; }
-        if (song.on > 0.002 || song.to) { song.on += (song.to - song.on) * ease(2.2, dt); song.t += dt; gridDirty = true; if (song.on < 0.002 && !song.to) song.on = 0; }
+        if (song.on > 0.002 || song.to) { song.on += (song.to - song.on) * ease(2.2, dt); song.t += dt; stepSongEnv(dt); gridDirty = true; if (song.on < 0.002 && !song.to) song.on = 0; }
         stepMorph(dt);
         drawShape();
 
